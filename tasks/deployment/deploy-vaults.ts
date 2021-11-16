@@ -1,5 +1,6 @@
 import { task, types } from "hardhat/config";
-import { RISK_PROFILES, VAULT_TOKENS } from "../../helpers/constants";
+import { RISK_PROFILES } from "../../helpers/constants/contracts-data";
+import { VAULT_TOKENS } from "../../helpers/constants/tokens";
 import { isAddress } from "../../helpers/helpers";
 import { DEPLOY_VAULT, DEPLOY_VAULTS } from "../task-names";
 

@@ -3,14 +3,10 @@ import { solidity } from "ethereum-waffle";
 import hre from "hardhat";
 import { Contract, Signer, BigNumber, utils } from "ethers";
 import { CONTRACTS } from "../../../helpers/type";
-import {
-  VAULT_TOKENS,
-  ADDRESS_ZERO,
-  TESTING_DEPLOYMENT_ONCE,
-  AAVE_V1_ADAPTER_NAME,
-  CONTRACT_ADDRESSES,
-} from "../../../helpers/constants";
-import { TypedAdapterStrategies, TypedDefiPools, TypedTokens } from "../../../helpers/data";
+import { ADDRESS_ZERO, TESTING_DEPLOYMENT_ONCE } from "../../../helpers/constants/utils";
+import { VAULT_TOKENS } from "../../../helpers/constants/tokens";
+import { AAVE_V1_ADAPTER_NAME } from "../../../helpers/constants/adapters";
+import { TypedAdapterStrategies, TypedDefiPools, TypedTokens, TypedContracts } from "../../../helpers/data";
 import { deployAdapter, deployAdapterPrerequisites } from "../../../helpers/contracts-deployments";
 import { fundWalletToken, getBlockTimestamp } from "../../../helpers/contracts-actions";
 import {
@@ -72,7 +68,7 @@ describe(`${AAVE_V1_ADAPTER_NAME} Unit test`, () => {
   for (let i = 0; i < strategies.length; i++) {
     describe(`test getCodes() for ${strategies[i].strategyName}`, async () => {
       const strategy = strategies[i];
-      const token = VAULT_TOKENS[strategy.token];
+      const token = VAULT_TOKENS[strategy.token].address;
       let lpProvider: Contract;
       let lpContract: Contract;
       let lpCoreAddress: string;
@@ -274,17 +270,17 @@ describe(`${AAVE_V1_ADAPTER_NAME} Unit test`, () => {
                 }
                 const lendingPoolInstance = await hre.ethers.getContractAt(
                   "IAaveV1",
-                  CONTRACT_ADDRESSES.AAVE_V1_LENDING_POOL,
+                  TypedContracts.AAVE_V1_LENDING_POOL,
                 );
                 const priceOracle = await hre.ethers.getContractAt(
                   "IAaveV1PriceOracle",
-                  CONTRACT_ADDRESSES.AAVE_V1_PRICE_ORACLE,
+                  TypedContracts.AAVE_V1_PRICE_ORACLE,
                 );
                 const lendingPoolCoreInstance = <IAaveV1LendingPoolCore>(
-                  await hre.ethers.getContractAt("IAaveV1LendingPoolCore", CONTRACT_ADDRESSES.AAVE_V1_LENDING_POOL_CORE)
+                  await hre.ethers.getContractAt("IAaveV1LendingPoolCore", TypedContracts.AAVE_V1_LENDING_POOL_CORE)
                 );
                 const uniswapInstance = new hre.ethers.Contract(
-                  CONTRACT_ADDRESSES.UNISWAPV2_ROUTER,
+                  TypedContracts.UNISWAPV2_ROUTER,
                   IUniswapV2Router02.abi,
                   users["owner"],
                 );

@@ -3,16 +3,13 @@ import hre from "hardhat";
 import { Contract, Signer, BigNumber, utils } from "ethers";
 import { setUp } from "./setup";
 import { CONTRACTS } from "../../helpers/type";
-import {
-  VAULT_TOKENS,
-  TESTING_DEPLOYMENT_ONCE,
-  REWARD_TOKENS,
-  ESSENTIAL_CONTRACTS,
-  TESTING_CONTRACTS,
-  COMPOUND_ADAPTER_NAME,
-  HARVEST_V1_ADAPTER_NAME,
-} from "../../helpers/constants";
-import { TypedAdapterStrategies } from "../../helpers/data";
+import { TESTING_DEPLOYMENT_ONCE } from "../../helpers/constants/utils";
+import { VAULT_TOKENS, REWARD_TOKENS } from "../../helpers/constants/tokens";
+
+import { ESSENTIAL_CONTRACTS } from "../../helpers/constants/essential-contracts-name";
+import { TESTING_CONTRACTS } from "../../helpers/constants/test-contracts-name";
+import { COMPOUND_ADAPTER_NAME, HARVEST_V1_ADAPTER_NAME } from "../../helpers/constants/adapters";
+import { TypedAdapterStrategies, TypedTokens } from "../../helpers/data";
 import { delay } from "../../helpers/utils";
 import { executeFunc, deployContract } from "../../helpers/helpers";
 import { deployVault } from "../../helpers/contracts-deployments";
@@ -104,7 +101,10 @@ describe(scenario.title, () => {
   before(async () => {
     try {
       users = await hre.ethers.getSigners();
-      [essentialContracts, adapters] = await setUp(users[0], Object.values(VAULT_TOKENS));
+      [essentialContracts, adapters] = await setUp(
+        users[0],
+        Object.values(VAULT_TOKENS).map(token => token.address),
+      );
       assert.isDefined(essentialContracts, "Essential contracts not deployed");
       assert.isDefined(adapters, "Adapters not deployed");
     } catch (error: any) {
@@ -126,7 +126,7 @@ describe(scenario.title, () => {
         describe(`${adapterName}`, async () => {
           for (let i = 0; i < strategies.length; i++) {
             const TOKEN_STRATEGY = strategies[i];
-            const tokenAddress = VAULT_TOKENS[TOKEN_STRATEGY.token];
+            const tokenAddress = VAULT_TOKENS[TOKEN_STRATEGY.token].address;
             const rewardTokenAdapterNames = Object.keys(REWARD_TOKENS).map(rewardTokenAdapterName =>
               rewardTokenAdapterName.toLowerCase(),
             );
@@ -157,7 +157,7 @@ describe(scenario.title, () => {
 
               const Token_ERC20Instance = await hre.ethers.getContractAt("ERC20", tokenAddress);
 
-              const CHIInstance = await hre.ethers.getContractAt("IChi", VAULT_TOKENS["CHI"]);
+              const CHIInstance = await hre.ethers.getContractAt("IChi", TypedTokens["CHI"]);
               Vault = await deployVault(
                 hre,
                 essentialContracts.registry.address,

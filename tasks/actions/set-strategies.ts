@@ -1,7 +1,8 @@
 import { task, types } from "hardhat/config";
 import { setStrategy } from "../../helpers/contracts-actions";
 import { isAddress } from "../../helpers/helpers";
-import { ESSENTIAL_CONTRACTS, VAULT_TOKENS } from "../../helpers/constants";
+import { VAULT_TOKENS } from "../../helpers/constants/tokens";
+import { ESSENTIAL_CONTRACTS } from "../../helpers/constants/essential-contracts-name";
 import { TypedStrategies } from "../../helpers/data";
 import { STRATEGY } from "../../helpers/type";
 import fs from "fs";
@@ -69,7 +70,7 @@ task(SET_STRATEGIES, "Set strategies")
         try {
           const hash = await setStrategy(
             strategies[i].strategy,
-            [VAULT_TOKENS[strategies[i].token]],
+            [VAULT_TOKENS[strategies[i].token].address],
             investStrategyRegistryContract,
           );
           console.log("-----------------");

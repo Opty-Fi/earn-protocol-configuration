@@ -4,7 +4,7 @@ import { getAddress } from "ethers/lib/utils";
 import Compound from "@compound-finance/compound-js";
 import { Provider } from "@compound-finance/compound-js/dist/nodejs/types";
 import { STRATEGY_DATA } from "./type";
-import { TypedCurveTokens, TypedMultiAssetTokens, TypedTokens } from "./data";
+import { TypedCurveTokens, TypedMultiAssetTokens, TypedTokens, TypedTokenHolders, TypedContracts } from "./data";
 import {
   executeFunc,
   generateStrategyHash,
@@ -14,7 +14,8 @@ import {
   isAddress,
 } from "./helpers";
 import { amountInHex } from "./utils";
-import { RISK_PROFILES, TOKEN_HOLDERS, CONTRACT_ADDRESSES, HARVEST_GOVERNANCE } from "./constants";
+import { TypedEOA } from "./data";
+import { RISK_PROFILES } from "./constants/contracts-data";
 
 export async function approveLiquidityPoolAndMapAdapter(
   owner: Signer,
@@ -171,12 +172,9 @@ export async function fundWalletToken(
   const ValidatedCurveTokens = Object.values(TypedCurveTokens).map(({ address }) => getAddress(address));
   const uniswapV2Router02Instance = await hre.ethers.getContractAt(
     "IUniswapV2Router02",
-    CONTRACT_ADDRESSES.UNISWAPV2_ROUTER,
+    TypedContracts.UNISWAPV2_ROUTER,
   );
-  const sushiswapRouterInstance = await hre.ethers.getContractAt(
-    "IUniswapV2Router02",
-    CONTRACT_ADDRESSES.SUSHISWAP_ROUTER,
-  );
+  const sushiswapRouterInstance = await hre.ethers.getContractAt("IUniswapV2Router02", TypedContracts.SUSHISWAP_ROUTER);
   const tokenInstance = await hre.ethers.getContractAt("ERC20", tokenAddress);
   const walletAddress = await wallet.getAddress();
   try {
@@ -207,7 +205,7 @@ export async function fundWalletToken(
         }
         const routerInstance = await hre.ethers.getContractAt(
           "IUniswapV2Router02",
-          pairSymbol === "SLP" ? CONTRACT_ADDRESSES.SUSHISWAP_ROUTER : CONTRACT_ADDRESSES.UNISWAP_V2_ROUTER,
+          pairSymbol === "SLP" ? TypedContracts.SUSHISWAP_ROUTER : TypedContracts.UNISWAP_V2_ROUTER,
         );
 
         if (getAddress(TOKEN1) === getAddress(TypedTokens["WETH"])) {
@@ -253,10 +251,7 @@ export async function fundWalletToken(
         const pool = curveToken.pool;
         const swap = curveToken?.swap;
         const old = curveToken?.old;
-        const curveRegistryInstance = await hre.ethers.getContractAt(
-          "ICurveRegistry",
-          CONTRACT_ADDRESSES.CURVE_REGISTRY,
-        );
+        const curveRegistryInstance = await hre.ethers.getContractAt("ICurveRegistry", TypedContracts.CURVE_REGISTRY);
         const tokenAddressInstance = await hre.ethers.getContractAt("ERC20", tokenAddress);
         const instance = await hre.ethers.getContractAt(swap ? "ICurveSwap" : "ICurveDeposit", pool);
         const coin = swap
@@ -342,11 +337,17 @@ export async function fundWalletToken(
       }
     }
   } catch (error) {
-    const tokenHolder = Object.keys(TOKEN_HOLDERS).filter(
+    const tokenHolder = Object.keys(TypedTokenHolders).filter(
       holder => getAddress(TypedTokens[holder]) === getAddress(tokenAddress),
     );
     if (tokenHolder.length > 0) {
-      await fundWalletFromImpersonatedAccount(hre, tokenAddress, TOKEN_HOLDERS[tokenHolder[0]], fundAmount, address);
+      await fundWalletFromImpersonatedAccount(
+        hre,
+        tokenAddress,
+        TypedTokenHolders[tokenHolder[0]],
+        fundAmount,
+        address,
+      );
     } else {
       throw error;
     }
@@ -572,15 +573,15 @@ export async function addWhiteListForHarvest(
 ): Promise<void> {
   await hre.network.provider.request({
     method: "hardhat_impersonateAccount",
-    params: [HARVEST_GOVERNANCE],
+    params: [TypedEOA.HARVEST_GOVERNANCE],
   });
   const harvestController = await hre.ethers.getContractAt(
     "IHarvestController",
-    CONTRACT_ADDRESSES.HARVEST_CONTROLLER,
-    await hre.ethers.getSigner(HARVEST_GOVERNANCE),
+    TypedContracts.HARVEST_CONTROLLER,
+    await hre.ethers.getSigner(TypedEOA.HARVEST_GOVERNANCE),
   );
   await admin.sendTransaction({
-    to: HARVEST_GOVERNANCE,
+    to: TypedEOA.HARVEST_GOVERNANCE,
     value: hre.ethers.utils.parseEther("1000"),
   });
   await harvestController.addToWhitelist(contractAddress);

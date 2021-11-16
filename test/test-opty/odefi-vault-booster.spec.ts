@@ -3,8 +3,10 @@ import hre from "hardhat";
 import { solidity } from "ethereum-waffle";
 import { Signer, BigNumber } from "ethers";
 import { CONTRACTS } from "../../helpers/type";
-import { VAULT_TOKENS, TESTING_DEPLOYMENT_ONCE } from "../../helpers/constants";
-import { ESSENTIAL_CONTRACTS, TESTING_CONTRACTS } from "../../helpers/constants";
+import { TESTING_DEPLOYMENT_ONCE } from "../../helpers/constants/utils";
+import { VAULT_TOKENS } from "../../helpers/constants/tokens";
+import { ESSENTIAL_CONTRACTS } from "../../helpers/constants/essential-contracts-name";
+import { TESTING_CONTRACTS } from "../../helpers/constants/test-contracts-name";
 import { deployContract, executeFunc, moveToNextBlock } from "../../helpers/helpers";
 import { deployVault, deployEssentialContracts } from "../../helpers/contracts-deployments";
 import {
@@ -29,7 +31,7 @@ type ARGUMENTS = {
 };
 describe(scenario.title, () => {
   const token = "DAI";
-  const tokenAddr = VAULT_TOKENS["DAI"];
+  const tokenAddr = VAULT_TOKENS["DAI"].address;
   const MAX_AMOUNT = "100000000000000000000000";
   let essentialContracts: CONTRACTS;
   const contracts: CONTRACTS = {};

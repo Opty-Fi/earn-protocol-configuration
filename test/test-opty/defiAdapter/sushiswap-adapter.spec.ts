@@ -3,14 +3,10 @@ import chai, { expect, assert } from "chai";
 import { solidity } from "ethereum-waffle";
 import { Contract, Signer, utils, BigNumber } from "ethers";
 import { CONTRACTS } from "../../../helpers/type";
-import {
-  VAULT_TOKENS,
-  TESTING_DEPLOYMENT_ONCE,
-  SUSHISWAP_ADAPTER_NAME,
-  CONTRACT_ADDRESSES,
-  ADDRESS_ZERO,
-} from "../../../helpers/constants";
-import { TypedAdapterStrategies, TypedTokens, TypedDefiPools } from "../../../helpers/data";
+import { TESTING_DEPLOYMENT_ONCE, ADDRESS_ZERO } from "../../../helpers/constants/utils";
+import { VAULT_TOKENS } from "../../../helpers/constants/tokens";
+import { SUSHISWAP_ADAPTER_NAME } from "../../../helpers/constants/adapters";
+import { TypedAdapterStrategies, TypedTokens, TypedDefiPools, TypedContracts } from "../../../helpers/data";
 import { deployAdapter, deployAdapterPrerequisites } from "../../../helpers/contracts-deployments";
 import { deployContract, getDefaultFundAmountInDecimal } from "../../../helpers/helpers";
 import { to_10powNumber_BN } from "../../../helpers/utils";
@@ -62,7 +58,7 @@ describe(`${SUSHISWAP_ADAPTER_NAME} Unit test`, () => {
   for (let i = 0; i < strategies.length; i++) {
     describe(`test getCodes() for ${strategies[i].strategyName}`, async () => {
       const strategy = strategies[i];
-      const token = VAULT_TOKENS[strategy.token];
+      const token = VAULT_TOKENS[strategy.token].address;
       const masterChef = "0xc2EdaD668740f1aA35E4D8f227fB8E17dcA888Cd";
       for (let i = 0; i < scenarios.stories.length; i++) {
         it(scenarios.stories[i].description, async () => {
@@ -156,7 +152,7 @@ describe(`${SUSHISWAP_ADAPTER_NAME} Unit test`, () => {
 
     before(async () => {
       testDeFiAdapter = await deployContract(hre, "TestDeFiAdapter", false, users["owner"], []);
-      masterChefInstance = await hre.ethers.getContractAt("ISushiswapMasterChef", CONTRACT_ADDRESSES.SUSHI_MASTER_CHEF);
+      masterChefInstance = await hre.ethers.getContractAt("ISushiswapMasterChef", TypedContracts.SUSHI_MASTER_CHEF);
     });
 
     for (const adapterName of adapterNames) {

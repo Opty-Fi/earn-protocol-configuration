@@ -4,14 +4,10 @@ import hre from "hardhat";
 import { Contract, Signer, BigNumber, utils } from "ethers";
 import IUniswapV2Router02 from "@uniswap/v2-periphery/build/IUniswapV2Router02.json";
 import { CONTRACTS } from "../../../helpers/type";
-import {
-  VAULT_TOKENS,
-  TESTING_DEPLOYMENT_ONCE,
-  AAVE_V2_ADAPTER_NAME,
-  CONTRACT_ADDRESSES,
-  ADDRESS_ZERO,
-} from "../../../helpers/constants";
-import { TypedAdapterStrategies, TypedDefiPools, TypedTokens } from "../../../helpers/data";
+import { TESTING_DEPLOYMENT_ONCE, ADDRESS_ZERO } from "../../../helpers/constants/utils";
+import { VAULT_TOKENS } from "../../../helpers/constants/tokens";
+import { AAVE_V2_ADAPTER_NAME } from "../../../helpers/constants/adapters";
+import { TypedAdapterStrategies, TypedDefiPools, TypedTokens, TypedContracts } from "../../../helpers/data";
 import { deployAdapter, deployAdapterPrerequisites } from "../../../helpers/contracts-deployments";
 import { fundWalletToken, getBlockTimestamp } from "../../../helpers/contracts-actions";
 import {
@@ -71,7 +67,7 @@ describe(`${AAVE_V2_ADAPTER_NAME} Unit test`, () => {
   for (let i = 0; i < strategies.length; i++) {
     describe(`test getCodes() for ${strategies[i].strategyName}`, async () => {
       const strategy = strategies[i];
-      const token = VAULT_TOKENS[strategy.token];
+      const token = VAULT_TOKENS[strategy.token].address;
       let lpProvider: Contract;
       let lpContract: Contract;
       let lpAddress: string;
@@ -276,18 +272,18 @@ describe(`${AAVE_V2_ADAPTER_NAME} Unit test`, () => {
                 const borrowTokenInstance = await hre.ethers.getContractAt("ERC20", borrowToken);
                 const lendingPoolInstance = await hre.ethers.getContractAt(
                   "IAaveV2",
-                  CONTRACT_ADDRESSES.AAVE_V2_LENDING_POOL,
+                  TypedContracts.AAVE_V2_LENDING_POOL,
                 );
                 const protocolDataProviderInstance = await hre.ethers.getContractAt(
                   "IAaveV2ProtocolDataProvider",
-                  CONTRACT_ADDRESSES.AAVE_V2_PROTOCOL_DATA_PROVIDER,
+                  TypedContracts.AAVE_V2_PROTOCOL_DATA_PROVIDER,
                 );
                 const priceOracle = await hre.ethers.getContractAt(
                   "IAaveV2PriceOracle",
-                  CONTRACT_ADDRESSES.AAVE_V2_PRICE_ORACLE,
+                  TypedContracts.AAVE_V2_PRICE_ORACLE,
                 );
                 const uniswapInstance = new hre.ethers.Contract(
-                  CONTRACT_ADDRESSES.UNISWAPV2_ROUTER,
+                  TypedContracts.UNISWAPV2_ROUTER,
                   IUniswapV2Router02.abi,
                   users["owner"],
                 );

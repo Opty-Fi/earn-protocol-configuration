@@ -3,9 +3,10 @@ import hre from "hardhat";
 import { Signer, BigNumber } from "ethers";
 import { setUp } from "./setup";
 import { CONTRACTS } from "../../helpers/type";
-import { VAULT_TOKENS, TESTING_DEPLOYMENT_ONCE } from "../../helpers/constants";
+import { TESTING_DEPLOYMENT_ONCE } from "../../helpers/constants/utils";
+import { VAULT_TOKENS } from "../../helpers/constants/tokens";
 import { TypedAdapterStrategies } from "../../helpers/data";
-import { ESSENTIAL_CONTRACTS } from "../../helpers/constants";
+import { ESSENTIAL_CONTRACTS } from "../../helpers/constants/essential-contracts-name";
 import { deployContract, executeFunc, moveToNextBlock } from "../../helpers/helpers";
 import { deployVault } from "../../helpers/contracts-deployments";
 import {
@@ -28,7 +29,7 @@ type ARGUMENTS = {
 };
 describe(scenario.title, () => {
   const token = "DAI";
-  const tokenAddr = VAULT_TOKENS["DAI"];
+  const tokenAddr = VAULT_TOKENS["DAI"].address;
   const MAX_AMOUNT = "100000000000000000000000";
   let essentialContracts: CONTRACTS;
   let adapters: CONTRACTS;
@@ -41,7 +42,10 @@ describe(scenario.title, () => {
     try {
       const [owner, admin, user1] = await hre.ethers.getSigners();
       users = { owner, admin, user1 };
-      [essentialContracts, adapters] = await setUp(users["owner"], Object.values(VAULT_TOKENS));
+      [essentialContracts, adapters] = await setUp(
+        users["owner"],
+        Object.values(VAULT_TOKENS).map(token => token.address),
+      );
       await approveLiquidityPoolAndMapAdapter(
         users["owner"],
         essentialContracts.registry,

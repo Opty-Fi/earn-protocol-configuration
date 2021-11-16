@@ -3,13 +3,10 @@ import { solidity } from "ethereum-waffle";
 import hre from "hardhat";
 import { Contract, Signer, BigNumber, utils } from "ethers";
 import { CONTRACTS } from "../../../helpers/type";
-import {
-  VAULT_TOKENS,
-  TESTING_DEPLOYMENT_ONCE,
-  ADDRESS_ZERO,
-  HARVEST_V1_ADAPTER_NAME,
-  TESTING_CONTRACTS,
-} from "../../../helpers/constants";
+import { TESTING_DEPLOYMENT_ONCE, ADDRESS_ZERO } from "../../../helpers/constants/utils";
+import { VAULT_TOKENS } from "../../../helpers/constants/tokens";
+import { TESTING_CONTRACTS } from "../../../helpers/constants/test-contracts-name";
+import { HARVEST_V1_ADAPTER_NAME } from "../../../helpers/constants/adapters";
 import { TypedAdapterStrategies, TypedMultiAssetTokens, TypedCurveTokens, TypedDefiPools } from "../../../helpers/data";
 import { deployAdapter, deployAdapterPrerequisites } from "../../../helpers/contracts-deployments";
 import { fundWalletToken, getBlockTimestamp, addWhiteListForHarvest } from "../../../helpers/contracts-actions";
@@ -65,7 +62,7 @@ describe(`${HARVEST_V1_ADAPTER_NAME} Unit test`, () => {
   for (let i = 0; i < strategies.length; i++) {
     describe(`test getCodes() for ${strategies[i].strategyName}`, async () => {
       const strategy = strategies[i];
-      const token = VAULT_TOKENS[strategy.token];
+      const token = VAULT_TOKENS[strategy.token].address;
       let lpToken: string;
       before(async () => {
         try {
