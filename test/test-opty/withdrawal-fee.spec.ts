@@ -48,7 +48,7 @@ describe(scenario.title, () => {
       let underlyingTokenName: string;
       let underlyingTokenSymbol: string;
       const vault = scenario.vaults[i];
-      const profile = vault.profile;
+      const profile = vault.riskProfileCode;
       const TOKEN_STRATEGY = TypedAdapterStrategies["CompoundAdapter"][0];
       let ERC20Instance: Contract;
 
@@ -65,7 +65,7 @@ describe(scenario.title, () => {
           VAULT_TOKENS[token],
           essentialContracts.investStrategyRegistry,
           essentialContracts.strategyProvider,
-          "RP1",
+          profile,
           false,
         );
         const timestamp = (await getBlockTimestamp(hre)) * 2;

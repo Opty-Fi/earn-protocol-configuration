@@ -50,7 +50,7 @@ describe(scenario.title, () => {
         users["admin"],
         underlyingTokenName,
         underlyingTokenSymbol,
-        "RP1",
+        1,
         TESTING_DEPLOYMENT_ONCE,
       );
       await unpauseVault(users["owner"], contracts["registry"], Vault.address, true);

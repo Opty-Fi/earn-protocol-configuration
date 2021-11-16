@@ -22,10 +22,10 @@ task(DEPLOY_VAULTS, "Deploy Core Vaults")
         if (token === "CHI") {
           continue;
         }
-        for (const riskProfile of Object.keys(RISK_PROFILES)) {
+        for (const riskProfile of RISK_PROFILES) {
           await hre.run(DEPLOY_VAULT, {
             token: VAULT_TOKENS[token],
-            riskprofile: riskProfile,
+            riskprofilecode: riskProfile.code,
             registry: registry,
             unpause: unpause,
             insertindb: insertindb,

@@ -37,7 +37,7 @@ describe(scenario.title, () => {
         admin,
         "TestDummyTokenTransferFee",
         "TDTTF",
-        "RP1",
+        1,
         TESTING_DEPLOYMENT_ONCE,
       );
       await unpauseVault(operator, essentialContracts.registry, Vault.address, true);

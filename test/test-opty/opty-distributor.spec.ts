@@ -36,6 +36,7 @@ describe(scenario.title, () => {
   let users: { [key: string]: Signer };
   const TOKEN_STRATEGY = TypedAdapterStrategies["CompoundAdapter"][0];
   let currentOpty = 0;
+  const riskProfileCode = 1;
   before(async () => {
     try {
       const [owner, admin, user1] = await hre.ethers.getSigners();
@@ -52,7 +53,7 @@ describe(scenario.title, () => {
         tokenAddr,
         essentialContracts.investStrategyRegistry,
         essentialContracts.strategyProvider,
-        "RP1",
+        riskProfileCode,
         false,
       );
       const timestamp = (await getBlockTimestamp(hre)) * 2;
@@ -85,7 +86,7 @@ describe(scenario.title, () => {
       users["admin"],
       underlyingTokenName,
       underlyingTokenSymbol,
-      "RP1",
+      riskProfileCode,
       TESTING_DEPLOYMENT_ONCE,
     );
     await unpauseVault(users["owner"], essentialContracts.registry, Vault.address, true);
@@ -98,7 +99,7 @@ describe(scenario.title, () => {
       users["admin"],
       underlyingTokenName,
       underlyingTokenSymbol,
-      "RP1",
+      riskProfileCode,
       TESTING_DEPLOYMENT_ONCE,
     );
     await unpauseVault(users["owner"], essentialContracts.registry, Vault2.address, true);

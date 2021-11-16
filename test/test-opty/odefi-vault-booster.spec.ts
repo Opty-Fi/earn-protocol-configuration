@@ -69,7 +69,7 @@ describe(scenario.title, () => {
         odefiVaultBooster.address,
         2000000000000000,
       ]);
-
+      const riskProfileCode = 1;
       const Vault = await deployVault(
         hre,
         essentialContracts.registry.address,
@@ -78,7 +78,7 @@ describe(scenario.title, () => {
         users["admin"],
         underlyingTokenName,
         underlyingTokenSymbol,
-        "RP1",
+        riskProfileCode,
         TESTING_DEPLOYMENT_ONCE,
       );
       await unpauseVault(users["owner"], essentialContracts.registry, Vault.address, true);
@@ -91,7 +91,7 @@ describe(scenario.title, () => {
         users["admin"],
         underlyingTokenName,
         underlyingTokenSymbol,
-        "RP1",
+        riskProfileCode,
         TESTING_DEPLOYMENT_ONCE,
       );
       await unpauseVault(users["owner"], essentialContracts.registry, Vault2.address, true);
