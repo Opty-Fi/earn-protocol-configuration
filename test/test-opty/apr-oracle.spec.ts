@@ -4,18 +4,12 @@ import hre from "hardhat";
 import { Signer } from "ethers";
 import { CONTRACTS } from "../../helpers/type";
 import { TypedTokens, TypedDefiPools } from "../../helpers/data";
-import {
-  generateStrategyHash,
-  deployContract,
-  executeFunc,
-  generateTokenHash,
-  generateStrategyStep,
-} from "../../helpers/helpers";
+import { generateStrategyHash, deployContract, executeFunc, generateTokenHash } from "../../helpers/helpers";
 import { getSoliditySHA3Hash } from "../../helpers/utils";
 import { TESTING_DEPLOYMENT_ONCE, ZERO_BYTES32 } from "../../helpers/constants/utils";
 import { ESSENTIAL_CONTRACTS } from "../../helpers/constants/essential-contracts-name";
 import { deployRegistry, deployRiskManager } from "../../helpers/contracts-deployments";
-import { approveAndSetTokenHashToTokens } from "../../helpers/contracts-actions";
+import { approveAndSetTokenHashToTokens, setStrategy } from "../../helpers/contracts-actions";
 import scenario from "./scenarios/apr-oracle.json";
 import { RISK_PROFILES } from "../../helpers/constants/contracts-data";
 chai.use(solidity);
@@ -103,9 +97,11 @@ describe(scenario.title, async () => {
             outputToken: TypedDefiPools[strategyInfo.adapterName][strategyInfo.token.toLowerCase()].lpToken,
             isBorrow: false,
           };
-          await contracts["investStrategyRegistry"]["setStrategy(bytes32,(address,address,bool)[])"](
-            generateTokenHash([TypedTokens[strategyInfo.token.toUpperCase()]]),
-            generateStrategyStep([strategy]),
+          await setStrategy(
+            [strategy],
+            users["owner"],
+            [TypedTokens[strategyInfo.token.toUpperCase()]],
+            contracts["investStrategyRegistry"],
           );
         }
       }
@@ -116,7 +112,16 @@ describe(scenario.title, async () => {
             const { riskProfileCode, poolRatingRange }: ARGUMENTS = action.args;
             if (riskProfileCode && poolRatingRange) {
               if (action.expect === "success") {
-                await contracts[action.contract][action.action](riskProfileCode, poolRatingRange);
+                const value = await contracts[action.contract].getRiskProfile(riskProfileCode);
+                const riskProfileIndex = value.index;
+                await expect(contracts[action.contract][action.action](riskProfileCode, poolRatingRange))
+                  .to.emit(contracts[action.contract], "LogRPPoolRatings")
+                  .withArgs(
+                    riskProfileIndex,
+                    poolRatingRange[0],
+                    poolRatingRange[1],
+                    await users["owner"].getAddress(),
+                  );
               } else {
                 await expect(
                   contracts[action.contract][action.action](riskProfileCode, poolRatingRange),
@@ -132,9 +137,17 @@ describe(scenario.title, async () => {
             if (token && adapterName) {
               if (TypedDefiPools[adapterName][token.toLowerCase()].lpToken) {
                 if (action.expect === "success") {
-                  await contracts[action.contract][action.action](
-                    TypedDefiPools[adapterName][token.toLowerCase()].lpToken,
-                  );
+                  await expect(
+                    contracts[action.contract]
+                      .connect(users["owner"])
+                      ["approveLiquidityPool(address)"](TypedDefiPools[adapterName][token.toLowerCase()].lpToken),
+                  )
+                    .to.emit(contracts[action.contract], "LogLiquidityPool")
+                    .withArgs(
+                      hre.ethers.utils.getAddress(TypedDefiPools[adapterName][token.toLowerCase()].lpToken),
+                      true,
+                      await users["owner"].getAddress(),
+                    );
                 } else {
                   await expect(
                     contracts[action.contract][action.action](TypedDefiPools[adapterName][token.toLowerCase()].lpToken),
@@ -154,10 +167,18 @@ describe(scenario.title, async () => {
             if (token && adapterName && score) {
               if (TypedDefiPools[adapterName][token.toLowerCase()].lpToken) {
                 if (action.expect === "success") {
-                  await contracts[action.contract][action.action](
-                    TypedDefiPools[adapterName][token.toLowerCase()].lpToken,
-                    score,
-                  );
+                  await expect(
+                    contracts[action.contract][action.action](
+                      TypedDefiPools[adapterName][token.toLowerCase()].lpToken,
+                      score,
+                    ),
+                  )
+                    .to.emit(contracts[action.contract], "LogRateLiquidityPool")
+                    .withArgs(
+                      hre.ethers.utils.getAddress(TypedDefiPools[adapterName][token.toLowerCase()].lpToken),
+                      score,
+                      await users["owner"].getAddress(),
+                    );
                 } else {
                   await expect(
                     contracts[action.contract][action.action](

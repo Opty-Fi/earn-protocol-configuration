@@ -40,6 +40,7 @@ describe(scenario.title, () => {
   before(async () => {
     try {
       const [owner, user1] = await hre.ethers.getSigners();
+      const ownerAddress = await owner.getAddress();
       const strategyOperator = owner;
       signers = { owner, strategyOperator, user1 };
       const registry = await deployRegistry(hre, owner, TESTING_DEPLOYMENT_ONCE);
@@ -62,9 +63,12 @@ describe(scenario.title, () => {
         RISK_PROFILES[1].poolRating,
       );
 
-      await registry["approveToken(address)"](DAI_TOKEN);
-      await registry["setTokensHashToTokens(address[])"]([DAI_TOKEN]);
-
+      await expect(registry["approveToken(address)"](DAI_TOKEN))
+        .to.emit(registry, "LogToken")
+        .withArgs(hre.ethers.utils.getAddress(DAI_TOKEN), true, ownerAddress);
+      await expect(registry.connect(owner)["setTokensHashToTokens(address[])"]([DAI_TOKEN]))
+        .to.emit(registry, "LogTokensToTokensHash")
+        .withArgs(generateTokenHash([DAI_TOKEN]), ownerAddress);
       const strategyProvider = await deployContract(
         hre,
         ESSENTIAL_CONTRACTS.STRATEGY_PROVIDER,
@@ -140,15 +144,17 @@ describe(scenario.title, () => {
     switch (action.action) {
       case "setStrategyOperator(address)": {
         const { newStrategyOperator }: ARGUMENTS = action.args;
-        const tempNewStrategyOperatorrAddr = await signers[<any>newStrategyOperator].getAddress();
+        const tempNewStrategyOperatorAddr = await signers[<any>newStrategyOperator].getAddress();
         if (newStrategyOperator) {
           if (action.expect === "success") {
-            await contracts[action.contract]
-              .connect(signers[action.executor])
-              [action.action](tempNewStrategyOperatorrAddr);
+            await expect(
+              contracts[action.contract].connect(signers[action.executor])[action.action](tempNewStrategyOperatorAddr),
+            )
+              .to.emit(contracts[action.contract], "TransferStrategyOperator")
+              .withArgs(tempNewStrategyOperatorAddr, await signers[action.executor].getAddress());
           } else {
             await expect(
-              contracts[action.contract].connect(signers[action.executor])[action.action](tempNewStrategyOperatorrAddr),
+              contracts[action.contract].connect(signers[action.executor])[action.action](tempNewStrategyOperatorAddr),
             ).to.be.revertedWith(action.message);
           }
         }

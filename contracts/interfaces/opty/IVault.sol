@@ -3,6 +3,9 @@
 pragma solidity ^0.6.12;
 pragma experimental ABIEncoderV2;
 
+//  libraries
+import { DataTypes } from "../../libraries/types/DataTypes.sol";
+
 /**
  * @title Interface for opty.fi's interest bearing vault
  * @author opty.fi
@@ -179,4 +182,10 @@ interface IVault {
      * @return return true on successful admin call
      */
     function adminCall(bytes[] memory _codes) external returns (bool);
+
+    /**
+     * @notice A function to get deposit queue
+     * @return return queue
+     */
+    function getDepositQueue() external view returns (DataTypes.UserDepositOperation[] memory);
 }

@@ -43,6 +43,8 @@ task(SET_STRATEGIES, "Set strategies")
   .addParam("investstrategyregistry", "the address of investStrategyRegistry", "", types.string)
   .addParam("fromfile", "path to strategies json file", "", types.string)
   .setAction(async ({ investstrategyregistry, fromfile }, hre) => {
+    const [owner] = await hre.ethers.getSigners();
+
     if (investstrategyregistry === "") {
       throw new Error("investstrategyregistry cannot be empty");
     }
@@ -70,6 +72,7 @@ task(SET_STRATEGIES, "Set strategies")
         try {
           const hash = await setStrategy(
             strategies[i].strategy,
+            owner,
             [VAULT_TOKENS[strategies[i].token].address],
             investStrategyRegistryContract,
           );

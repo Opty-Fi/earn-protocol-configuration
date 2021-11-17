@@ -99,6 +99,7 @@ describe(scenario.title, () => {
 
                 await setBestStrategy(
                   strategy.strategy,
+                  owner,
                   VAULT_TOKENS[strategy.token].address,
                   essentialContracts.investStrategyRegistry,
                   essentialContracts.strategyProvider,
@@ -181,7 +182,11 @@ describe(scenario.title, () => {
                       const { addressName }: ARGUMENTS = action.args;
                       if (addressName) {
                         if (action.expect === "success") {
-                          await contracts[action.contract.toLowerCase()][action.action](contracts[addressName].address);
+                          await expect(
+                            contracts[action.contract.toLowerCase()][action.action](contracts[addressName].address),
+                          )
+                            .to.emit(contracts[action.contract.toLowerCase()], "LogDiscontinueVault")
+                            .withArgs(contracts[addressName].address, true, await owner.getAddress());
                         }
                       }
                       assert.isDefined(addressName, `args is wrong in ${action.action} testcase`);
@@ -191,10 +196,14 @@ describe(scenario.title, () => {
                       const { addressName, unpause }: ARGUMENTS = action.args;
                       if (addressName && unpause !== undefined) {
                         if (action.expect === "success") {
-                          await contracts[action.contract.toLowerCase()][action.action](
-                            contracts[addressName].address,
-                            unpause,
-                          );
+                          await expect(
+                            contracts[action.contract.toLowerCase()][action.action](
+                              contracts[addressName].address,
+                              unpause,
+                            ),
+                          )
+                            .to.emit(contracts[action.contract.toLowerCase()], "LogUnpauseVault")
+                            .withArgs(contracts[addressName].address, unpause, await owner.getAddress());
                         }
                       }
                       assert.isDefined(addressName, `args is wrong in ${action.action} testcase`);
@@ -248,7 +257,11 @@ describe(scenario.title, () => {
                 const { addressName }: ARGUMENTS = action.args;
                 if (addressName) {
                   if (action.expect === "success") {
-                    await contracts[action.contract.toLowerCase()][action.action](contracts[addressName].address);
+                    await expect(
+                      contracts[action.contract.toLowerCase()][action.action](contracts[addressName].address),
+                    )
+                      .to.emit(contracts[action.contract.toLowerCase()], "LogDiscontinueVault")
+                      .withArgs(contracts[addressName].address, true, await owner.getAddress());
                   }
                 }
 
@@ -259,10 +272,11 @@ describe(scenario.title, () => {
                 const { addressName, unpause }: ARGUMENTS = action.args;
                 if (addressName && unpause !== undefined) {
                   if (action.expect === "success") {
-                    await contracts[action.contract.toLowerCase()][action.action](
-                      contracts[addressName].address,
-                      unpause,
-                    );
+                    await expect(
+                      contracts[action.contract.toLowerCase()][action.action](contracts[addressName].address, unpause),
+                    )
+                      .to.emit(contracts[action.contract.toLowerCase()], "LogUnpauseVault")
+                      .withArgs(contracts[addressName].address, unpause, await owner.getAddress());
                   }
                 }
                 assert.isDefined(addressName, `args is wrong in ${action.action} testcase`);

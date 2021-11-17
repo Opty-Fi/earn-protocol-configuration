@@ -91,6 +91,7 @@ describe(scenarios.title, () => {
                 );
                 await setBestStrategy(
                   strategy.strategy,
+                  users["owner"],
                   token,
                   essentialContracts.investStrategyRegistry,
                   essentialContracts.strategyProvider,

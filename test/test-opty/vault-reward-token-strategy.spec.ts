@@ -130,6 +130,7 @@ describe(scenario.title, () => {
 
               investStrategyHash = await setBestStrategy(
                 TOKEN_STRATEGY.strategy,
+                users["owner"],
                 token,
                 essentialContracts.investStrategyRegistry,
                 essentialContracts.strategyProvider,

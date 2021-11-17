@@ -1,9 +1,9 @@
 import { task, types } from "hardhat/config";
 import { isAddress } from "../../helpers/helpers";
+import { ESSENTIAL_CONTRACTS } from "../../helpers/constants/essential-contracts-name";
 import { RISK_PROFILES } from "../../helpers/constants/contracts-data";
 import { addRiskProfile } from "../../helpers/contracts-actions";
 import { ADD_RISK_PROFILE } from "../task-names";
-import { ESSENTIAL_CONTRACTS } from "../../helpers/constants/essential-contracts-name";
 
 task(ADD_RISK_PROFILE, "Add Risk Profile")
   .addParam("registry", "the address of registry", "", types.string)

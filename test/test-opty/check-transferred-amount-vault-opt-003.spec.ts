@@ -25,7 +25,6 @@ describe(scenario.title, () => {
       [operator, admin] = await hre.ethers.getSigners();
       essentialContracts = await deployEssentialContracts(hre, operator, TESTING_DEPLOYMENT_ONCE);
       assert.isDefined(essentialContracts, "Essential contracts not deployed");
-
       const dummyToken = await deployContract(hre, TESTING_CONTRACTS.TEST_DUMMY_TOKEN_TRANSFER_FEE, false, operator, [
         "30000000000000000",
       ]);
@@ -41,6 +40,7 @@ describe(scenario.title, () => {
         1,
         TESTING_DEPLOYMENT_ONCE,
       );
+      console.log("Vault", Vault.address);
       await unpauseVault(operator, essentialContracts.registry, Vault.address, true);
 
       contracts["strategyProvider"] = essentialContracts.strategyProvider;
@@ -85,7 +85,24 @@ describe(scenario.title, () => {
             currentBalance = await contracts["vault"].balance();
             try {
               if (amount) {
-                await contracts[action.contract].connect(operator)[action.action](amount);
+                if (action.action === "userDeposit(uint256)") {
+                  const queue = await contracts[action.contract].getDepositQueue();
+                  const balanceBefore = await contracts["erc20"].balanceOf(contracts[action.contract].address);
+                  const _tx = await contracts[action.contract].connect(operator)[action.action](amount);
+                  const balanceAfter = await contracts["erc20"].balanceOf(contracts[action.contract].address);
+
+                  const tx = await _tx.wait(1);
+                  expect(tx.events[0].event).to.equal("Transfer");
+                  expect(tx.events[0].args[0]).to.equal(await operator.getAddress());
+                  expect(tx.events[0].args[1]).to.equal(contracts[action.contract].address);
+                  expect(tx.events[0].args[2]).to.equal(balanceAfter.sub(balanceBefore));
+                  expect(tx.events[1].event).to.equal("DepositQueue");
+                  expect(tx.events[1].args[0]).to.equal(await operator.getAddress());
+                  expect(tx.events[1].args[1]).to.equal(queue.length + 1);
+                  expect(tx.events[1].args[2]).to.equal(balanceAfter.sub(balanceBefore));
+                } else {
+                  await contracts[action.contract].connect(operator)[action.action](amount);
+                }
               }
             } catch (error: any) {
               if (action.expect === "success") {

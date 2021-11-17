@@ -291,7 +291,23 @@ describe(scenario.title, () => {
             const { amount }: ARGUMENTS = action.args;
             if (amount) {
               if (action.expect === "success") {
-                await executeFunc(contracts[action.contract], users[action.executer], action.action, [amount]);
+                if (action.action === "userDeposit(uint256)") {
+                  const queue = await contracts[action.contract].getDepositQueue();
+                  const balanceBefore = await contracts["erc20"].balanceOf(contracts[action.contract].address);
+                  const _tx = await contracts[action.contract].connect(users[action.executer])[action.action](amount);
+                  const balanceAfter = await contracts["erc20"].balanceOf(contracts[action.contract].address);
+                  const tx = await _tx.wait(1);
+                  expect(tx.events[0].event).to.equal("Transfer");
+                  expect(tx.events[0].args[0]).to.equal(await users[action.executer].getAddress());
+                  expect(tx.events[0].args[1]).to.equal(contracts[action.contract].address);
+                  expect(tx.events[0].args[2]).to.equal(balanceAfter.sub(balanceBefore));
+                  expect(tx.events[1].event).to.equal("DepositQueue");
+                  expect(tx.events[1].args[0]).to.equal(await users[action.executer].getAddress());
+                  expect(tx.events[1].args[1]).to.equal(queue.length + 1);
+                  expect(tx.events[1].args[2]).to.equal(balanceAfter.sub(balanceBefore));
+                } else {
+                  await executeFunc(contracts[action.contract], users[action.executer], action.action, [amount]);
+                }
               } else {
                 await expect(
                   executeFunc(contracts[action.contract], users[action.executer], action.action, [amount]),

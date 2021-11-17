@@ -13,6 +13,7 @@ import { TESTING_DEPLOYMENT_ONCE } from "../../helpers/constants/utils";
 import { ESSENTIAL_CONTRACTS } from "../../helpers/constants/essential-contracts-name";
 import { TESTING_CONTRACTS } from "../../helpers/constants/test-contracts-name";
 import { deployContract, executeFunc } from "../../helpers/helpers";
+import { getAddress } from "ethers/lib/utils";
 
 type ARGUMENTS = {
   spender?: string;
@@ -36,7 +37,9 @@ describe(scenario.title, () => {
         [1500000000000000],
       );
 
-      await executeFunc(registry, users["owner"], "approveToken(address)", [opty.address]);
+      await expect(executeFunc(registry, users["owner"], "approveToken(address)", [opty.address]))
+        .to.emit(registry, "LogToken")
+        .withArgs(getAddress(opty.address), true, await owner.getAddress());
 
       const optyDistributor = await deployContract(
         hre,

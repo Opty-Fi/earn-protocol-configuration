@@ -67,6 +67,7 @@ describe(scenario.title, () => {
 
         await setBestStrategy(
           TOKEN_STRATEGY.strategy,
+          users["owner"],
           tokenAddress,
           essentialContracts.investStrategyRegistry,
           essentialContracts.strategyProvider,
@@ -109,9 +110,13 @@ describe(scenario.title, () => {
                   const tempNewFinanceOperatorrAddr = await users[newFinanceOperator].getAddress();
                   if (newFinanceOperator) {
                     if (action.expect === "success") {
-                      await contracts[action.contract]
-                        .connect(users[action.executer])
-                        [action.action](tempNewFinanceOperatorrAddr);
+                      await expect(
+                        contracts[action.contract]
+                          .connect(users[action.executer])
+                          [action.action](tempNewFinanceOperatorrAddr),
+                      )
+                        .to.emit(contracts[action.contract], "TransferFinanceOperator")
+                        .withArgs(tempNewFinanceOperatorrAddr, await users[action.executer].getAddress());
                     } else {
                       await expect(
                         contracts[action.contract]

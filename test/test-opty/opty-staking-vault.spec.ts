@@ -195,7 +195,9 @@ describe(testStakingVaultScenario.title, () => {
 
     mockContracts = { dummyToken, optyDistributor, optyStakingRateBalancer };
     await executeFunc(registry, owner, "setOPTY(address)", [dummyToken.address]);
-    await executeFunc(registry, owner, "setOPTYDistributor(address)", [optyDistributor.address]);
+    await expect(registry["setOPTYDistributor(address)"](optyDistributor.address))
+      .to.emit(registry, "TransferOPTYDistributor")
+      .withArgs(optyDistributor.address, await owner.getAddress());
     await executeFunc(registry, owner, "setOPTYStakingRateBalancer(address)", [optyStakingRateBalancer.address]);
     await unpauseVault(owner, registry, optyStakingVault.address, true);
     await mockContracts["optyStakingRateBalancer"].updateStakedOPTY.returns(true);

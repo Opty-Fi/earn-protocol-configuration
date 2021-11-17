@@ -103,6 +103,7 @@ describe(scenario.title, () => {
 
             await setBestStrategy(
               TOKEN_STRATEGY.strategy,
+              users["owner"],
               VAULT_TOKENS[TOKEN_STRATEGY.token].address,
               essentialContracts.investStrategyRegistry,
               essentialContracts.strategyProvider,

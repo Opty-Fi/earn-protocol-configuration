@@ -20,13 +20,10 @@ task(DEPLOY_VAULTS, "Deploy Core Vaults")
     try {
       console.log("Deploying Vaults...");
       for (const token in VAULT_TOKENS) {
-        if (token === "CHI") {
-          continue;
-        }
-        for (const riskProfile of RISK_PROFILES) {
+        for (const riskProfile of Object.keys(RISK_PROFILES)) {
           await hre.run(DEPLOY_VAULT, {
-            token: VAULT_TOKENS[token],
-            riskprofilecode: riskProfile.code,
+            token: VAULT_TOKENS[token].address,
+            riskprofile: riskProfile,
             registry: registry,
             unpause: unpause,
             insertindb: insertindb,
