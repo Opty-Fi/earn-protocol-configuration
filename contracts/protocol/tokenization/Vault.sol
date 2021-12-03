@@ -66,7 +66,7 @@ contract Vault is
         Modifiers(_registry)
     {}
 
-    /* solhint-disable no-empty-blocks */
+    /* solhint-enable no-empty-blocks */
 
     /**
      * @dev Initialize the vault
@@ -83,8 +83,8 @@ contract Vault is
         string memory _symbol,
         uint256 _riskProfileCode
     ) external virtual initializer {
-        require(bytes(_name).length > 0, "Name_Empty!");
-        require(bytes(_symbol).length > 0, "Symbol_Empty!");
+        require(bytes(_name).length > 0, "!name");
+        require(bytes(_symbol).length > 0, "!symbol");
         registryContract = IRegistry(_registry);
         setRiskProfileCode(_riskProfileCode);
         setToken(_underlyingToken); //  underlying token contract address (for example DAI)
@@ -96,9 +96,8 @@ contract Vault is
     /**
      * @inheritdoc IVault
      */
-    function setMaxVaultValueJump(uint256 _maxVaultValueJump) external override onlyGovernance returns (bool) {
+    function setMaxVaultValueJump(uint256 _maxVaultValueJump) external override onlyGovernance {
         maxVaultValueJump = _maxVaultValueJump;
-        return true;
     }
 
     /**
@@ -119,7 +118,6 @@ contract Vault is
             investStrategyHash != Constants.ZERO_BYTES32
         ) {
             _withdrawAll(_vaultStrategyConfiguration);
-            _harvest(investStrategyHash, _vaultStrategyConfiguration);
             if (msg.sender == _vaultStrategyConfiguration.operator && gasOwedToOperator != uint256(0)) {
                 IERC20(underlyingToken).safeTransfer(
                     _vaultStrategyConfiguration.operator,
@@ -159,125 +157,89 @@ contract Vault is
     /**
      * @inheritdoc IVault
      */
-    function userDepositAll() external override returns (bool) {
-        require(_userDeposit(IERC20(underlyingToken).balanceOf(msg.sender)), "userDepositAll");
-        return true;
+    function userDepositAll() external override {
+        uint256 _amount = IERC20(underlyingToken).balanceOf(msg.sender);
+        _userDeposit(_amount);
     }
 
     /**
      * @inheritdoc IVault
      */
-    function userDeposit(uint256 _amount) external override returns (bool) {
-        require(_userDeposit(_amount), "userDeposit");
-        return true;
+    function userDeposit(uint256 _amount) external override {
+        _userDeposit(_amount);
     }
 
     /**
      * @inheritdoc IVault
      */
-    function userDepositAllRebalance() external override returns (bool) {
-        DataTypes.VaultStrategyConfiguration memory _vaultStrategyConfiguration =
-            registryContract.getVaultStrategyConfiguration();
-        require(
-            _userDepositRebalance(IERC20(underlyingToken).balanceOf(msg.sender), _vaultStrategyConfiguration),
-            "userDepositAllRebalance"
-        );
-        return true;
+    function userDepositAllRebalance() external override {
+        uint256 _amount = IERC20(underlyingToken).balanceOf(msg.sender);
+        _userDepositRebalance(_amount);
     }
 
     /**
      * @inheritdoc IVault
      */
-    function userDepositRebalance(uint256 _amount) external override returns (bool) {
-        DataTypes.VaultStrategyConfiguration memory _vaultStrategyConfiguration =
-            registryContract.getVaultStrategyConfiguration();
-        require(_userDepositRebalance(_amount, _vaultStrategyConfiguration), "!userDepositRebalance");
-        return true;
+    function userDepositRebalance(uint256 _amount) external override {
+        _userDepositRebalance(_amount);
     }
 
     /**
      * @inheritdoc IVault
      */
-    function userWithdrawAllRebalance() external override returns (bool) {
-        DataTypes.VaultStrategyConfiguration memory _vaultStrategyConfiguration =
-            registryContract.getVaultStrategyConfiguration();
-        require(
-            _userWithdrawRebalance(balanceOf(msg.sender), _vaultStrategyConfiguration),
-            "!userWithdrawAllRebalance"
-        );
-        return true;
+    function userWithdrawAllRebalance() external override {
+        _userWithdrawRebalance(balanceOf(msg.sender));
     }
 
     /**
      * @inheritdoc IVault
      */
-    function userWithdrawRebalance(uint256 _redeemAmount) external override returns (bool) {
-        DataTypes.VaultStrategyConfiguration memory _vaultStrategyConfiguration =
-            registryContract.getVaultStrategyConfiguration();
-        require(_userWithdrawRebalance(_redeemAmount, _vaultStrategyConfiguration), "!userWithdrawRebalance");
-        return true;
+    function userWithdrawRebalance(uint256 _redeemAmount) external override {
+        _userWithdrawRebalance(_redeemAmount);
     }
 
     /**
      * @inheritdoc IVault
      */
-    function userDepositAllWithCHI() external override discountCHI returns (bool) {
-        require(_userDeposit(IERC20(underlyingToken).balanceOf(msg.sender)), "!userDepositAllWithCHI");
-        return true;
+    function userDepositAllWithCHI() external override discountCHI {
+        uint256 _amount = IERC20(underlyingToken).balanceOf(msg.sender);
+        _userDeposit(_amount);
     }
 
     /**
      * @inheritdoc IVault
      */
-    function userDepositWithCHI(uint256 _amount) external override discountCHI returns (bool) {
-        require(_userDeposit(_amount), "!userDepositWithCHI");
-        return true;
+    function userDepositWithCHI(uint256 _amount) external override discountCHI {
+        _userDeposit(_amount);
     }
 
     /**
      * @inheritdoc IVault
      */
-    function userDepositAllRebalanceWithCHI() external override discountCHI returns (bool) {
-        DataTypes.VaultStrategyConfiguration memory _vaultStrategyConfiguration =
-            registryContract.getVaultStrategyConfiguration();
-        require(
-            _userDepositRebalance(IERC20(underlyingToken).balanceOf(msg.sender), _vaultStrategyConfiguration),
-            "!userDepositAllRebalanceWithCHI"
-        );
-        return true;
+    function userDepositAllRebalanceWithCHI() external override discountCHI {
+        uint256 _amount = IERC20(underlyingToken).balanceOf(msg.sender);
+        _userDepositRebalance(_amount);
     }
 
     /**
      * @inheritdoc IVault
      */
-    function userDepositRebalanceWithCHI(uint256 _amount) external override discountCHI returns (bool) {
-        DataTypes.VaultStrategyConfiguration memory _vaultStrategyConfiguration =
-            registryContract.getVaultStrategyConfiguration();
-        require(_userDepositRebalance(_amount, _vaultStrategyConfiguration), "!userDepositRebalanceWithCHI");
-        return true;
+    function userDepositRebalanceWithCHI(uint256 _amount) external override discountCHI {
+        _userDepositRebalance(_amount);
     }
 
     /**
      * @inheritdoc IVault
      */
-    function userWithdrawRebalanceWithCHI(uint256 _redeemAmount) external override discountCHI returns (bool) {
-        DataTypes.VaultStrategyConfiguration memory _vaultStrategyConfiguration =
-            registryContract.getVaultStrategyConfiguration();
-        require(_userWithdrawRebalance(_redeemAmount, _vaultStrategyConfiguration), "!userWithdrawRebalanceWithCHI");
-        return true;
+    function userWithdrawRebalanceWithCHI(uint256 _redeemAmount) external override discountCHI {
+        _userWithdrawRebalance(_redeemAmount);
     }
 
     /**
      * @inheritdoc IVault
      */
-    function userWithdrawAllRebalanceWithCHI() external override discountCHI returns (bool) {
-        DataTypes.VaultStrategyConfiguration memory _vaultStrategyConfiguration =
-            registryContract.getVaultStrategyConfiguration();
-        require(
-            _userWithdrawRebalance(balanceOf(msg.sender), _vaultStrategyConfiguration),
-            "!userWithdrawAllRebalanceWithCHI"
-        );
-        return true;
+    function userWithdrawAllRebalanceWithCHI() external override discountCHI {
+        _userWithdrawRebalance(balanceOf(msg.sender));
     }
 
     /**
@@ -288,7 +250,6 @@ contract Vault is
             registryContract.getVaultStrategyConfiguration();
         if (investStrategyHash != Constants.ZERO_BYTES32) {
             _withdrawAll(_vaultStrategyConfiguration);
-            _harvest(investStrategyHash, _vaultStrategyConfiguration);
         }
     }
 
@@ -300,7 +261,6 @@ contract Vault is
             registryContract.getVaultStrategyConfiguration();
         if (!_unpaused && investStrategyHash != Constants.ZERO_BYTES32) {
             _withdrawAll(_vaultStrategyConfiguration);
-            _harvest(investStrategyHash, _vaultStrategyConfiguration);
         }
     }
 
@@ -353,21 +313,19 @@ contract Vault is
     /**
      * @inheritdoc IVault
      */
-    function setRiskProfileCode(uint256 _riskProfileCode) public override onlyOperator returns (bool) {
+    function setRiskProfileCode(uint256 _riskProfileCode) public override onlyOperator {
         DataTypes.RiskProfile memory _riskProfile = registryContract.getRiskProfile(_riskProfileCode);
         require(_riskProfile.exists, "!Rp_Exists");
         riskProfileCode = _riskProfileCode;
-        return true;
     }
 
     /**
      * @inheritdoc IVault
      */
-    function setToken(address _underlyingToken) public override onlyOperator returns (bool) {
-        require(_underlyingToken.isContract(), "!_underlyingToken.isContract");
+    function setToken(address _underlyingToken) public override onlyOperator {
+        require(_underlyingToken.isContract(), "!contract");
         require(registryContract.isApprovedToken(_underlyingToken), "!tokens");
         underlyingToken = _underlyingToken;
-        return true;
     }
 
     /**
@@ -380,9 +338,8 @@ contract Vault is
     /**
      * @inheritdoc IVault
      */
-    function adminCall(bytes[] memory _codes) external override onlyOperator returns (bool) {
-        executeCodes(_codes, "!adminCall");
-        return true;
+    function adminCall(bytes[] memory _codes) external override onlyOperator {
+        executeCodes(_codes, "!call");
     }
 
     /**
@@ -481,36 +438,32 @@ contract Vault is
      * @dev Transfer underlying tokens to vault without rebalance
      *      User will have to wait for shares until next rebalance
      * @param _amount The amount of underlying asset to deposit
-     * @return returns true on successful deposit of the underlying asset
      */
-    function _userDeposit(uint256 _amount)
-        internal
-        ifNotPausedAndDiscontinued(address(this))
-        nonReentrant
-        returns (bool)
-    {
-        require(_amount > 0, "!(_amount>0)");
+    function _userDeposit(uint256 _amount) internal ifNotPausedAndDiscontinued(address(this)) nonReentrant {
+        DataTypes.VaultConfiguration memory _vaultConfiguration = registryContract.getVaultConfiguration(address(this));
+        if (_vaultConfiguration.allowWhitelistedState) {
+            require(_isUserWhitelisted(msg.sender), "!user");
+        }
+        require(_checkDepositCap(_vaultConfiguration, _amount), "!cap");
+        require(_isQueueFull(_vaultConfiguration), "!q");
+        require(_amount >= _vaultConfiguration.minimumDepositAmount, "!minDep");
         uint256 _tokenBalanceBefore = _balance();
         IERC20(underlyingToken).safeTransferFrom(msg.sender, address(this), _amount);
         uint256 _tokenBalanceAfter = _balance();
         uint256 _actualDepositAmount = _tokenBalanceAfter.sub(_tokenBalanceBefore);
         queue.push(DataTypes.UserDepositOperation(msg.sender, _actualDepositAmount));
+        totalDeposits[msg.sender] = totalDeposits[msg.sender].add(_actualDepositAmount);
         pendingDeposits[msg.sender] = pendingDeposits[msg.sender].add(_actualDepositAmount);
         depositQueue = depositQueue.add(_actualDepositAmount);
         emit DepositQueue(msg.sender, queue.length, _actualDepositAmount);
-        return true;
     }
 
     /**
      * @dev Mint the shares for the users who deposited without rebalancing
      *      It also updates the user rewards
      * @param _vaultStrategyConfiguration the configuration for executing vault invest strategy
-     * @return returns true on successful minting of shares and updating protocol rewards
      */
-    function _batchMint(DataTypes.VaultStrategyConfiguration memory _vaultStrategyConfiguration)
-        internal
-        returns (bool)
-    {
+    function _batchMint(DataTypes.VaultStrategyConfiguration memory _vaultStrategyConfiguration) internal {
         for (uint256 i; i < queue.length; i++) {
             executeCodes(
                 IStrategyManager(_vaultStrategyConfiguration.strategyManager).getUpdateUserRewardsCodes(
@@ -527,42 +480,42 @@ contract Vault is
                     address(this),
                     queue[i].account
                 ),
-                "!updateUserStateInVault"
+                "!uusv"
             );
         }
         executeCodes(
             IStrategyManager(_vaultStrategyConfiguration.strategyManager).getUpdateRewardVaultRateAndIndexCodes(
                 address(this)
             ),
-            "!updateOptyVaultRateAndIndex"
+            "!uovri"
         );
         delete queue;
-        return true;
     }
 
     /**
      * @dev Transfer the underlying assets and immediately mints the shares
      *      It also updates the user rewards
      * @param _amount The amount of underlying asset to deposit
-     * @param _vaultStrategyConfiguration the configuration for executing vault invest strategy
-     * @return return true on successful execution of user deposit with rebalance
      */
-    function _userDepositRebalance(
-        uint256 _amount,
-        DataTypes.VaultStrategyConfiguration memory _vaultStrategyConfiguration
-    ) internal ifNotPausedAndDiscontinued(address(this)) nonReentrant returns (bool) {
+    function _userDepositRebalance(uint256 _amount) internal ifNotPausedAndDiscontinued(address(this)) nonReentrant {
+        DataTypes.VaultConfiguration memory _vaultConfiguration = registryContract.getVaultConfiguration(address(this));
+        DataTypes.VaultStrategyConfiguration memory _vaultStrategyConfiguration =
+            registryContract.getVaultStrategyConfiguration();
+        if (_vaultConfiguration.allowWhitelistedState) {
+            require(_isUserWhitelisted(msg.sender), "!user");
+        }
+        require(_checkDepositCap(_vaultConfiguration, _amount), "!cap");
         require(_amount > 0, "!(_amount>0)");
 
         if (investStrategyHash != Constants.ZERO_BYTES32) {
             _withdrawAll(_vaultStrategyConfiguration);
-            _harvest(investStrategyHash, _vaultStrategyConfiguration);
         }
 
         uint256 _tokenBalanceBefore = _balance();
         IERC20(underlyingToken).safeTransferFrom(msg.sender, address(this), _amount);
         uint256 _tokenBalanceAfter = _balance();
         uint256 _actualDepositAmount = _tokenBalanceAfter.sub(_tokenBalanceBefore);
-
+        totalDeposits[msg.sender] = totalDeposits[msg.sender].add(_actualDepositAmount);
         uint256 shares = 0;
         if (_tokenBalanceBefore == 0 || totalSupply() == 0) {
             shares = _actualDepositAmount;
@@ -582,14 +535,14 @@ contract Vault is
             IStrategyManager(_vaultStrategyConfiguration.strategyManager).getUpdateRewardVaultRateAndIndexCodes(
                 address(this)
             ),
-            "!updateOptyVaultRateAndIndex"
+            "!uovri"
         );
         executeCodes(
             IStrategyManager(_vaultStrategyConfiguration.strategyManager).getUpdateUserStateInVaultCodes(
                 address(this),
                 msg.sender
             ),
-            "!updateUserStateInVault"
+            "!uusv"
         );
         if (_balance() > 0) {
             _emergencyBrake(_balance());
@@ -601,27 +554,22 @@ contract Vault is
             );
             _supplyAll(_vaultStrategyConfiguration);
         }
-        return true;
     }
 
     /**
      * @dev Redeem the shares from the vault
      * @param _redeemAmount The amount of shares to be burned
-     * @param _vaultStrategyConfiguration the configuration for executing vault invest strategy
-     * @return returns true on successful user withdraw with rebalance
      */
-    function _userWithdrawRebalance(
-        uint256 _redeemAmount,
-        DataTypes.VaultStrategyConfiguration memory _vaultStrategyConfiguration
-    ) internal nonReentrant returns (bool) {
+    function _userWithdrawRebalance(uint256 _redeemAmount) internal nonReentrant {
         DataTypes.VaultConfiguration memory _vaultConfiguration = registryContract.getVaultConfiguration(address(this));
+        DataTypes.VaultStrategyConfiguration memory _vaultStrategyConfiguration =
+            registryContract.getVaultStrategyConfiguration();
         require(_vaultConfiguration.unpaused, "unpause");
         require(_redeemAmount > 0, "!_redeemAmount>0");
         uint256 opBalance = balanceOf(msg.sender);
         require(_redeemAmount <= opBalance, "!!balance");
         if (!_vaultConfiguration.discontinued && investStrategyHash != Constants.ZERO_BYTES32) {
             _withdrawAll(_vaultStrategyConfiguration);
-            _harvest(investStrategyHash, _vaultStrategyConfiguration);
         }
         executeCodes(
             IStrategyManager(_vaultStrategyConfiguration.strategyManager).getUpdateUserRewardsCodes(
@@ -637,14 +585,14 @@ contract Vault is
             IStrategyManager(_vaultStrategyConfiguration.strategyManager).getUpdateRewardVaultRateAndIndexCodes(
                 address(this)
             ),
-            "!updateOptyVaultRateAndIndex"
+            "!uovri"
         );
         executeCodes(
             IStrategyManager(_vaultStrategyConfiguration.strategyManager).getUpdateUserStateInVaultCodes(
                 address(this),
                 msg.sender
             ),
-            "!updateUserStateInVault"
+            "!uusv"
         );
 
         if (!_vaultConfiguration.discontinued && (_balance() > 0)) {
@@ -657,7 +605,6 @@ contract Vault is
             );
             _supplyAll(_vaultStrategyConfiguration);
         }
-        return true;
     }
 
     function _beforeTokenTransfer(
@@ -667,20 +614,20 @@ contract Vault is
     ) internal override {
         executeCodes(
             IStrategyManager(registryContract.getStrategyManager()).getUpdateUserRewardsCodes(address(this), from),
-            "!_beforeTokenTransfer (updateUserRewards)"
+            "!ur"
         );
         executeCodes(
             IStrategyManager(registryContract.getStrategyManager()).getUpdateRewardVaultRateAndIndexCodes(
                 address(this)
             ),
-            "!updateOptyVaultRateAndIndex"
+            "!uovri"
         );
         executeCodes(
             IStrategyManager(registryContract.getStrategyManager()).getUpdateUserStateInVaultCodes(
                 address(this),
                 msg.sender
             ),
-            "!updateUserStateInVault"
+            "!uusv"
         );
     }
 
@@ -729,6 +676,34 @@ contract Vault is
         } else {
             _vaultValue = _balance().sub(depositQueue);
         }
+    }
+
+    /**
+     * @notice Function to check whether the depositQueue is full or not
+     */
+    function _isQueueFull(DataTypes.VaultConfiguration memory _vaultConfiguration) internal view returns (bool) {
+        return getDepositQueue().length < _vaultConfiguration.queueCap;
+    }
+
+    /**
+     * @notice Function to check whether the user is whitelisted or not
+     */
+    function _isUserWhitelisted(address _user) internal view returns (bool) {
+        return registryContract.isUserWhitelisted(address(this), _user);
+    }
+
+    /**
+     * @notice Function to check whether the amount exceeds deposit cap or not
+     */
+    function _checkDepositCap(DataTypes.VaultConfiguration memory _vaultConfiguration, uint256 _amount)
+        internal
+        view
+        returns (bool)
+    {
+        if (_vaultConfiguration.isLimitedState) {
+            return _amount <= _vaultConfiguration.userDepositCap.sub(totalDeposits[msg.sender]);
+        }
+        return true;
     }
 
     /**
