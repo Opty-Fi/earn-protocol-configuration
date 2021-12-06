@@ -331,7 +331,8 @@ contract Registry is IRegistry, ModifiersController {
         DataTypes.TreasuryShare[] memory _treasuryShares,
         uint256 _withdrawalFee,
         uint256 _userDepositCap,
-        uint256 _minimumDepositAmount
+        uint256 _minimumDepositAmount,
+        uint256 _totalValueLockedLimitInUnderlying
     ) external override onlyFinanceOperator {
         require(_vault.isContract(), "!isContract");
         _setIsLimitedState(_vault, _isLimitedState);
@@ -340,6 +341,7 @@ contract Registry is IRegistry, ModifiersController {
         _setTreasuryShares(_vault, _treasuryShares);
         _setUserDepositCap(_vault, _userDepositCap);
         _setMinimumDepositAmount(_vault, _minimumDepositAmount);
+        _setTotalValueLockedLimitInUnderlying(_vault, _totalValueLockedLimitInUnderlying);
     }
 
     /**
@@ -416,6 +418,18 @@ contract Registry is IRegistry, ModifiersController {
     {
         require(_vault.isContract(), "!isContract");
         _setMinimumDepositAmount(_vault, _minimumDepositAmount);
+    }
+
+    /**
+     * @inheritdoc IRegistry
+     */
+    function setTotalValueLockedLimitInUnderlying(address _vault, uint256 _totalValueLockedLimitInUnderlying)
+        external
+        override
+        onlyFinanceOperator
+    {
+        require(_vault.isContract(), "!isContract");
+        _setTotalValueLockedLimitInUnderlying(_vault, _totalValueLockedLimitInUnderlying);
     }
 
     /**
@@ -897,6 +911,17 @@ contract Registry is IRegistry, ModifiersController {
     function _setMinimumDepositAmount(address _vault, uint256 _minimumDepositAmount) internal {
         vaultToVaultConfiguration[_vault].minimumDepositAmount = _minimumDepositAmount;
         emit LogMinimumDepositAmountVault(_vault, vaultToVaultConfiguration[_vault].minimumDepositAmount, msg.sender);
+    }
+
+    function _setTotalValueLockedLimitInUnderlying(address _vault, uint256 _totalValueLockedLimitInUnderlying)
+        internal
+    {
+        vaultToVaultConfiguration[_vault].totalValueLockedLimitInUnderlying = _totalValueLockedLimitInUnderlying;
+        emit LogVaultTotalValueLockedLimitInUnderlying(
+            _vault,
+            vaultToVaultConfiguration[_vault].totalValueLockedLimitInUnderlying,
+            msg.sender
+        );
     }
 
     function _setQueueCap(address _vault, uint256 _queueCap) internal {
