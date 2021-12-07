@@ -1,6 +1,6 @@
-# Earn protocol
+# Earn protocol Configuration
 
-Core smart contract of OptyFi's Earn protocol
+Smart contracts for opty.fi protocol configuration
 
 ## Prerequisite
 
@@ -16,7 +16,7 @@ To run the project :
 Clone earn-protocol
 
 ```bash
-git clone https://github.com/Opty-Fi/earn-protocol.git
+git clone https://github.com/Opty-Fi/earn-protocol-configuration.git
 ```
 
 Run `yarn install` to install necessary dependencies.

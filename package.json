@@ -1,11 +1,11 @@
 {
-  "name": "earn-protocol",
-  "description": "Core smart contract of OptyFi's Earn protocol",
+  "name": "@optyfi/earn-protocol-configuration",
+  "description": "Earn protocol configuration contracts",
   "version": "1.0.0",
   "homepage": "https://opty.fi",
   "repository": {
     "type": "git",
-    "url": "https://github.com/opty-fi/earn-protocol"
+    "url": "https://github.com/opty-fi/earn-protocol-configuration"
   },
   "keywords": [
     "optyfi",
