@@ -61,10 +61,6 @@ jobs:
     steps:
       - name: Checkout Use Node.js ${{ matrix.node-version}}
         uses: actions/checkout@v2
-        with:
-         token: ${{secrets.TEAM_DEFI_ADAPTERS}}
-         submodules: recursive
-         ref: ${{ github.event.inputs.git-ref }}
       - name: Cache node modules
         uses: actions/cache@v2
         id: cache
@@ -102,10 +98,6 @@ jobs:
     steps:
       - name: Checkout Use Node.js ${{ matrix.node-version}}
         uses: actions/checkout@v2
-        with:
-         token: ${{secrets.TEAM_DEFI_ADAPTERS}}
-         submodules: recursive
-         ref: ${{ github.event.inputs.git-ref }}
       - name: Cache node modules
         uses: actions/cache@v2
         id: cache
