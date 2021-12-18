@@ -1,4 +1,4 @@
-name: Earn protocol Install, lint, test and deploy pipeline
+name: Install, lint, test and deploy pipeline
 
 on:
   push:
@@ -87,7 +87,6 @@ jobs:
       REPORT_GAS: true
       MNEMONIC: ${{ secrets.MNEMONIC}}
       STAGING_NETWORK_URL: ${{secrets.STAGING_NETWORK_URL}}
-      STRATEGY_DIVISOR: 2
 
     steps:
       - name: Checkout Use Node.js ${{ matrix.node-version}}

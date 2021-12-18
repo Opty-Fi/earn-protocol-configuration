@@ -1,4 +1,4 @@
-name: Manual Earn protocol staging deployment
+name: Staging deployment
 
 on:
   workflow_dispatch:
@@ -20,15 +20,10 @@ jobs:
       REPORT_GAS: true
       MNEMONIC: ${{ secrets.MNEMONIC}}
       STAGING_NETWORK_URL: ${{secrets.STAGING_NETWORK_URL}}
-      STRATEGY_DIVISOR: 2
 
     steps:
       - name: Checkout Use Node.js ${{ matrix.node-version}}
         uses: actions/checkout@v2
-        with:
-         token: ${{secrets.TEAM_DEFI_ADAPTERS}}
-         submodules: recursive
-         ref: ${{ github.event.inputs.git-ref }}
       - name: Add public IP to AWS security group
         uses: sohelamin/aws-security-group-add-ip-action@master
         with:
