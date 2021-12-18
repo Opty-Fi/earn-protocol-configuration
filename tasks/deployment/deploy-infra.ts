@@ -1,13 +1,11 @@
 import { task, types } from "hardhat/config";
 import { CONTRACTS } from "../../helpers/type";
 import { deployEssentialContracts } from "../../helpers/contracts-deployments";
-import { insertContractIntoDB } from "../../helpers/db";
 import { DEPLOY_INFRA } from "../task-names";
 
 task(DEPLOY_INFRA, "Deploy infrastructure contracts")
   .addParam("deployedonce", "allow checking whether contracts were deployed previously", true, types.boolean)
-  .addParam("insertindb", "allow inserting to database", false, types.boolean)
-  .setAction(async ({ deployedonce, insertindb }, hre) => {
+  .setAction(async ({ deployedonce }, hre) => {
     try {
       console.log(`\tDeploying Infrastructure contracts ...`);
       const [owner] = await hre.ethers.getSigners();
@@ -19,15 +17,6 @@ task(DEPLOY_INFRA, "Deploy infrastructure contracts")
             essentialContracts[essentialContractNames[i]].address
           }`,
         );
-        if (insertindb) {
-          const err = await insertContractIntoDB(
-            essentialContractNames[i],
-            essentialContracts[essentialContractNames[i]].address,
-          );
-          if (err !== "") {
-            throw err;
-          }
-        }
       }
       console.log("Finished deploying infrastructure contracts");
     } catch (error) {

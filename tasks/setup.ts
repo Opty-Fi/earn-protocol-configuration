@@ -2,15 +2,11 @@ import { task, types } from "hardhat/config";
 
 import { CONTRACTS } from "../helpers/type";
 import { deployEssentialContracts } from "../helpers/contracts-deployments";
-import { insertContractIntoDB } from "../helpers/db";
-import { TESTING_CONTRACTS } from "../helpers/constants/test-contracts-name";
-import { deployContract } from "../helpers/helpers";
-import { APPROVE_TOKEN, APPROVE_TOKENS, MAP_LIQUIDITYPOOLS_ADAPTER, SETUP, SET_STRATEGIES } from "./task-names";
+import { APPROVE_TOKENS, SETUP, SET_STRATEGIES } from "./task-names";
 
 task(SETUP, "Deploy infrastructure, adapter and vault contracts and setup all necessary actions")
   .addParam("deployedonce", "allow checking whether contracts were deployed previously", false, types.boolean)
-  .addParam("insertindb", "allow inserting to database", false, types.boolean)
-  .setAction(async ({ deployedonce, insertindb }, hre) => {
+  .setAction(async ({ deployedonce }, hre) => {
     console.log(`\tDeploying Infrastructure contracts ...`);
     const [owner] = await hre.ethers.getSigners();
     let essentialContracts: CONTRACTS;
@@ -24,15 +20,6 @@ task(SETUP, "Deploy infrastructure, adapter and vault contracts and setup all ne
             essentialContracts[essentialContractNames[i]].address
           }`,
         );
-        if (insertindb) {
-          const err = await insertContractIntoDB(
-            essentialContractNames[i],
-            essentialContracts[essentialContractNames[i]].address,
-          );
-          if (err !== "") {
-            console.log(err);
-          }
-        }
       }
       console.log("********************");
     } catch (error) {

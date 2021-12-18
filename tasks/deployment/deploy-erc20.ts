@@ -1,6 +1,5 @@
 import { task, types } from "hardhat/config";
 import { deployContract } from "../../helpers/helpers";
-import { insertContractIntoDB } from "../../helpers/db";
 import { TESTING_CONTRACTS } from "../../helpers/constants/test-contracts-name";
 import { DEPLOY_ERC20 } from "../task-names";
 
@@ -10,8 +9,7 @@ task(DEPLOY_ERC20, "Deploy ERC20")
   .addOptionalParam("total", "the totalSupply of token", "0", types.string)
   .addOptionalParam("decimal", "the decimal of token", 18, types.int)
   .addParam("deployedonce", "allow checking whether contracts were deployed previously", false, types.boolean)
-  .addParam("insertindb", "allow inserting to database", false, types.boolean)
-  .setAction(async ({ name, symbol, total, decimal, deployedonce, insertindb }, hre) => {
+  .setAction(async ({ name, symbol, total, decimal, deployedonce }, hre) => {
     if (name === "") {
       throw new Error("name cannot be empty");
     }
@@ -32,13 +30,6 @@ task(DEPLOY_ERC20, "Deploy ERC20")
       console.log("Finished deploying erc20");
 
       console.log(`Contract ${name} token : ${erc20Contract.address}`);
-
-      if (insertindb) {
-        const err = await insertContractIntoDB(`symbol`, erc20Contract.address);
-        if (err !== "") {
-          throw err;
-        }
-      }
     } catch (error) {
       console.error(`${DEPLOY_ERC20}: `, error);
       throw error;
