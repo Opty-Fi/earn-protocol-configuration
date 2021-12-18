@@ -2,13 +2,13 @@ import chai, { expect, assert } from "chai";
 import { solidity } from "ethereum-waffle";
 import hre from "hardhat";
 import { Contract, Signer, BigNumber } from "ethers";
-import { deployRegistry } from "../../helpers/contracts-deployments";
-import { CONTRACTS, TESTING_DEFAULT_DATA } from "../../helpers/type";
-import { deployContract, executeFunc, generateTokenHash } from "../../helpers/helpers";
-import { TESTING_DEPLOYMENT_ONCE, ADDRESS_ZERO } from "../../helpers/constants/utils";
-import { ESSENTIAL_CONTRACTS } from "../../helpers/constants/essential-contracts-name";
-import { TESTING_CONTRACTS } from "../../helpers/constants/test-contracts-name";
-import { RISK_PROFILES } from "../../helpers/constants/contracts-data";
+import { deployRegistry } from "../helpers/contracts-deployments";
+import { CONTRACTS, TESTING_DEFAULT_DATA } from "../helpers/type";
+import { deployContract, executeFunc, generateTokenHash } from "../helpers/helpers";
+import { TESTING_DEPLOYMENT_ONCE, ADDRESS_ZERO } from "../helpers/constants/utils";
+import { ESSENTIAL_CONTRACTS } from "../helpers/constants/essential-contracts-name";
+import { TESTING_CONTRACTS } from "../helpers/constants/test-contracts-name";
+import { RISK_PROFILES } from "../helpers/constants/contracts-data";
 import scenario from "./scenarios/registry.json";
 
 chai.use(solidity);
@@ -24,7 +24,6 @@ describe(scenario.title, () => {
   let riskOperator: Signer;
   let strategyOperator: Signer;
   let operator: Signer;
-  let optyDistributor: Signer;
   let user0: Signer;
   let user1: Signer;
   let signers: any;
@@ -34,9 +33,8 @@ describe(scenario.title, () => {
   const callerNames = ["owner", "financeOperator", "riskOperator", "strategyOperator", "operator", "user0", "user1"];
   before(async () => {
     try {
-      [owner, financeOperator, riskOperator, strategyOperator, operator, optyDistributor, user0, user1] =
-        await hre.ethers.getSigners();
-      signers = { owner, financeOperator, riskOperator, strategyOperator, operator, optyDistributor, user0, user1 };
+      [owner, financeOperator, riskOperator, strategyOperator, operator, user0, user1] = await hre.ethers.getSigners();
+      signers = { owner, financeOperator, riskOperator, strategyOperator, operator, user0, user1 };
 
       registryContract = await deployRegistry(hre, owner, TESTING_DEPLOYMENT_ONCE);
       const DUMMY_EMPTY_CONTRACT = await deployContract(
