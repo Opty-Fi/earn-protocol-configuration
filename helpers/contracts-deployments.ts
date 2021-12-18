@@ -1,7 +1,7 @@
 import { ESSENTIAL_CONTRACTS as ESSENTIAL_CONTRACTS_DATA } from "./constants/essential-contracts-name";
 import { Contract, Signer } from "ethers";
 import { CONTRACTS } from "./type";
-import { addRiskProfiles, getBlockTimestamp } from "./contracts-actions";
+import { addRiskProfiles } from "./contracts-actions";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
 import { deployContract, executeFunc } from "./helpers";
 
@@ -70,8 +70,6 @@ export async function deployEssentialContracts(
   await executeFunc(registry, owner, "setStrategyProvider(address)", [strategyProvider.address]);
   const riskManager = await deployRiskManager(hre, owner, isDeployedOnce, registry.address);
   await executeFunc(registry, owner, "setRiskManager(address)", [riskManager.address]);
-
-  const timestamp = (await getBlockTimestamp(hre)) + 450000;
 
   const essentialContracts: CONTRACTS = {
     registry,

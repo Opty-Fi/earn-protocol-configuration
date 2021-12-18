@@ -1,5 +1,4 @@
 import { Contract, Signer } from "ethers";
-import { HardhatRuntimeEnvironment } from "hardhat/types";
 import { getAddress } from "ethers/lib/utils";
 import { expect } from "chai";
 import { STRATEGY_DATA } from "./type";
@@ -153,13 +152,6 @@ export async function setBestStrategy(
     await strategyProvider.setBestStrategy(riskProfileCode, tokenHash, strategyHash);
   }
   return strategyHash;
-}
-
-export async function getBlockTimestamp(hre: HardhatRuntimeEnvironment): Promise<number> {
-  const blockNumber = await hre.ethers.provider.getBlockNumber();
-  const block = await hre.ethers.provider.getBlock(blockNumber);
-  const timestamp = block.timestamp;
-  return timestamp;
 }
 
 export async function unpauseVault(

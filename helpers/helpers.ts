@@ -1,4 +1,4 @@
-import { Contract, Signer, ContractFactory, utils, BigNumber, BigNumberish } from "ethers";
+import { Contract, Signer, ContractFactory, utils } from "ethers";
 import { Artifact, HardhatRuntimeEnvironment } from "hardhat/types";
 import { STRATEGY_DATA } from "./type";
 import { getSoliditySHA3Hash } from "./utils";
