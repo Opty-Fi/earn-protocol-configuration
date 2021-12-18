@@ -2,7 +2,7 @@ import chai, { expect, assert } from "chai";
 import { solidity } from "ethereum-waffle";
 import hre from "hardhat";
 import { Contract, Signer, BigNumber } from "ethers";
-import { deployAdapters, deployRegistry } from "../../helpers/contracts-deployments";
+import { deployRegistry } from "../../helpers/contracts-deployments";
 import { CONTRACTS, TESTING_DEFAULT_DATA } from "../../helpers/type";
 import { deployContract, executeFunc, generateTokenHash } from "../../helpers/helpers";
 import { TESTING_DEPLOYMENT_ONCE, ADDRESS_ZERO } from "../../helpers/constants/utils";
@@ -19,7 +19,6 @@ type ARGUMENTS = {
 
 describe(scenario.title, () => {
   let registryContract: Contract;
-  let adapters: CONTRACTS;
   let owner: Signer;
   let financeOperator: Signer;
   let riskOperator: Signer;
@@ -31,20 +30,7 @@ describe(scenario.title, () => {
   let signers: any;
   const contracts: CONTRACTS = {};
   const callers: { [key: string]: string } = {};
-  const contractNames = [
-    "treasury",
-    "investStrategyRegistry",
-    "aprOracle",
-    "strategyProvider",
-    "riskManager",
-    "harvestCodeProvider",
-    "strategyManager",
-    "opty",
-    "optyStakingRateBalancer",
-    "optyDistributor",
-    "odefiVaultBooster",
-    "vault",
-  ];
+  const contractNames = ["treasury", "investStrategyRegistry", "strategyProvider", "riskManager"];
   const callerNames = ["owner", "financeOperator", "riskOperator", "strategyOperator", "operator", "user0", "user1"];
   before(async () => {
     try {
@@ -64,12 +50,10 @@ describe(scenario.title, () => {
         DUMMY_EMPTY_CONTRACT,
         `Dummy contract (to be used for testing Contract setter functions) not deployed`,
       );
-      adapters = await deployAdapters(hre, owner, registryContract.address, TESTING_DEPLOYMENT_ONCE);
       contractNames.forEach(contractName => {
         contracts[contractName] = DUMMY_EMPTY_CONTRACT;
       });
       assert.isDefined(registryContract, "Registry contract not deployed");
-      assert.isDefined(adapters, "Adapters not deployed");
 
       await registryContract["setOperator(address)"](await operator.getAddress());
       await registryContract["setRiskOperator(address)"](await riskOperator.getAddress());

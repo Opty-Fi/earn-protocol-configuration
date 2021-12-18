@@ -5,7 +5,7 @@ pragma experimental ABIEncoderV2;
 
 //  libraries
 import { Address } from "@openzeppelin/contracts/utils/Address.sol";
-import { DataTypes } from "../../libraries/types/DataTypes.sol";
+import { DataTypes } from "./libraries/types/DataTypes.sol";
 
 //  helper contracts
 import { Modifiers } from "./Modifiers.sol";
@@ -13,11 +13,11 @@ import { RiskManagerStorage } from "./RiskManagerStorage.sol";
 import { RiskManagerProxy } from "./RiskManagerProxy.sol";
 
 //  interfaces
-import { IInvestStrategyRegistry } from "../../interfaces/opty/IInvestStrategyRegistry.sol";
-import { IStrategyProvider } from "../../interfaces/opty/IStrategyProvider.sol";
-import { IAPROracle } from "../../interfaces/opty/IAPROracle.sol";
-import { IRiskManager } from "../../interfaces/opty/IRiskManager.sol";
-import { Constants } from "../../utils/Constants.sol";
+import { IInvestStrategyRegistry } from "./interfaces/opty/IInvestStrategyRegistry.sol";
+import { IStrategyProvider } from "./interfaces/opty/IStrategyProvider.sol";
+import { IAPROracle } from "./interfaces/opty/IAPROracle.sol";
+import { IRiskManager } from "./interfaces/opty/IRiskManager.sol";
+import { Constants } from "./utils/Constants.sol";
 
 /**
  * @title RiskManager Contract

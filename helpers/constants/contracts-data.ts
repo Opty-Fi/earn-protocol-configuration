@@ -1,4 +1,4 @@
-import { RISK_PROFILE_DATA, OPTY_STAKING_VAULT } from "../type";
+import { RISK_PROFILE_DATA } from "../type";
 
 export const RISK_PROFILES: RISK_PROFILE_DATA = [
   {

@@ -4,15 +4,15 @@ pragma solidity ^0.6.12;
 pragma experimental ABIEncoderV2;
 
 //  libraries
-import { DataTypes } from "../../libraries/types/DataTypes.sol";
+import { DataTypes } from "./libraries/types/DataTypes.sol";
 import { SafeMath } from "@openzeppelin/contracts/math/SafeMath.sol";
 
 //  helper contracts
 import { Modifiers } from "./Modifiers.sol";
 
 //  interfaces
-import { IStrategyProvider } from "../../interfaces/opty/IStrategyProvider.sol";
-import { Constants } from "../../utils/Constants.sol";
+import { IStrategyProvider } from "./interfaces/opty/IStrategyProvider.sol";
+import { Constants } from "./utils/Constants.sol";
 
 /**
  * @title StrategyProvider Contract

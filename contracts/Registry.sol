@@ -6,16 +6,16 @@ pragma experimental ABIEncoderV2;
 //  libraries
 import { Address } from "@openzeppelin/contracts/utils/Address.sol";
 import { SafeMath } from "@openzeppelin/contracts/math/SafeMath.sol";
-import { DataTypes } from "../../libraries/types/DataTypes.sol";
+import { DataTypes } from "./libraries/types/DataTypes.sol";
 
 //  helper contracts
 import { ModifiersController } from "./ModifiersController.sol";
 import { RegistryProxy } from "./RegistryProxy.sol";
 
 //  interfaces
-import { IVault } from "../../interfaces/opty/IVault.sol";
-import { IRegistry } from "../../interfaces/opty/IRegistry.sol";
-import { Constants } from "../../utils/Constants.sol";
+import { IVault } from "./interfaces/opty/IVault.sol";
+import { IRegistry } from "./interfaces/opty/IRegistry.sol";
+import { Constants } from "./utils/Constants.sol";
 
 /**
  * @title Registry Contract

@@ -3,9 +3,9 @@
 pragma solidity ^0.6.12;
 pragma experimental ABIEncoderV2;
 
-import { RiskManagerStorage } from "../../protocol/configuration/RiskManagerStorage.sol";
-import { RiskManagerProxy } from "../../protocol/configuration/RiskManagerProxy.sol";
-import { Modifiers } from "../../protocol/configuration/Modifiers.sol";
+import { RiskManagerStorage } from "../../RiskManagerStorage.sol";
+import { RiskManagerProxy } from "../../RiskManagerProxy.sol";
+import { Modifiers } from "../../Modifiers.sol";
 import { TestStorageV2 } from "./TestStorageV2.sol";
 
 contract TestRiskManagerNewImplementation is RiskManagerStorage, TestStorageV2, Modifiers {

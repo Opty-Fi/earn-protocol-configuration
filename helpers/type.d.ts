@@ -37,12 +37,6 @@ export type RISK_PROFILE_DATA = {
   poolRating: number[];
 }[];
 
-export type REWARD_TOKEN_DATA_OBJECT = {
-  [name: string]: {
-    [name: string]: string | boolean;
-  };
-};
-
 export type STRATEGY = {
   strategyName: string;
   token: string;
@@ -69,10 +63,6 @@ export type DEFI_POOLS_DATA = {
   };
 };
 
-export type ADAPTER_WITH_STRATEGIES_DATA = {
-  [key: string]: STRATEGY[];
-};
-
 export type TESTING_DEFAULT_DATA = {
   setFunction: string;
   input: any[];
@@ -83,54 +73,9 @@ export type TESTING_DEFAULT_DATA = {
   }[];
 };
 
-export type MULTI_ASSET_TOKEN_DATA = {
-  [token: string]: {
-    address: string;
-    path0?: string[];
-    path1?: string[];
-  };
-};
-
-export type CURVE_TOKEN_DATA = {
-  [token: string]: {
-    address: string;
-    pool: string;
-    swap?: boolean;
-    old?: boolean;
-  };
-};
-
-export type OPTY_STAKING_VAULT = {
-  name: string;
-  numberOfDays: string;
-  lockTime: number;
-  multiplier: number;
-};
-
 export type TOKENS_DATA = {
   [name: string]: {
     address: string;
     pair: boolean;
   };
-};
-
-export type TOKEN_STRATEGIES = {
-  [token: string]: {
-    hash: string;
-    underlyingTokens: {
-      address: string;
-      symbol: string;
-      name: string;
-    }[];
-    steps: {
-      protocol: {
-        name: string;
-        logoURL: string;
-      };
-      poolContractAddress: string;
-      lpToken: string;
-      isBorrow: boolean;
-      underlyingTokens: string[];
-    }[];
-  }[];
 };

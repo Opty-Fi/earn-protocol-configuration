@@ -9,7 +9,7 @@ import { Address } from "@openzeppelin/contracts/utils/Address.sol";
 import { RegistryStorage } from "./RegistryStorage.sol";
 
 //  interfaces
-import { IModifiersController } from "../../interfaces/opty/IModifiersController.sol";
+import { IModifiersController } from "./interfaces/opty/IModifiersController.sol";
 
 /**
  * @title ModifiersController Contract

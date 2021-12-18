@@ -3,9 +3,9 @@
 pragma solidity ^0.6.12;
 pragma experimental ABIEncoderV2;
 
-import { ModifiersController } from "../../protocol/configuration/ModifiersController.sol";
-import { RegistryProxy } from "../../protocol/configuration/RegistryProxy.sol";
-import { RegistryStorage } from "../../protocol/configuration/RegistryStorage.sol";
+import { ModifiersController } from "../../ModifiersController.sol";
+import { RegistryProxy } from "../../RegistryProxy.sol";
+import { RegistryStorage } from "../../RegistryStorage.sol";
 import { TestStorageV2 } from "./TestStorageV2.sol";
 
 contract TestRegistryNewImplementation is RegistryStorage, TestStorageV2, ModifiersController {

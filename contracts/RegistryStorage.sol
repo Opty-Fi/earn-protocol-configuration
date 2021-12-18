@@ -4,7 +4,7 @@ pragma solidity ^0.6.12;
 pragma experimental ABIEncoderV2;
 
 //  libraries
-import { DataTypes } from "../../libraries/types/DataTypes.sol";
+import { DataTypes } from "./libraries/types/DataTypes.sol";
 
 /**
  * @title RegistryAdminStorage Contract

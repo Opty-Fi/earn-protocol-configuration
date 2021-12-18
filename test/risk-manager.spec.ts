@@ -3,8 +3,8 @@ import { solidity } from "ethereum-waffle";
 import hre from "hardhat";
 import { Signer, Contract } from "ethers";
 import { smock } from "@defi-wonderland/smock";
-import { MOCK_CONTRACTS } from "../../helpers/type";
-import { TypedStrategies, TypedTokens } from "../../helpers/data";
+import { MOCK_CONTRACTS } from "../helpers/type";
+import { TypedStrategies, TypedTokens } from "../helpers/data";
 import {
   generateStrategyHash,
   generateStrategyStep,
@@ -12,14 +12,14 @@ import {
   executeFunc,
   deploySmockContract,
   deployContract,
-} from "../../helpers/helpers";
-import { TESTING_DEPLOYMENT_ONCE } from "../../helpers/constants/utils";
-import { ESSENTIAL_CONTRACTS } from "../../helpers/constants/essential-contracts-name";
-import { TESTING_CONTRACTS } from "../../helpers/constants/test-contracts-name";
-import { deployRegistry, deployRiskManager } from "../../helpers/contracts-deployments";
-import { approveAndSetTokenHashToToken, addRiskProfile } from "../../helpers/contracts-actions";
+} from "../helpers/helpers";
+import { TESTING_DEPLOYMENT_ONCE } from "../helpers/constants/utils";
+import { ESSENTIAL_CONTRACTS } from "../helpers/constants/essential-contracts-name";
+import { TESTING_CONTRACTS } from "../helpers/constants/test-contracts-name";
+import { deployRegistry, deployRiskManager } from "../helpers/contracts-deployments";
+import { approveAndSetTokenHashToToken, addRiskProfile } from "../helpers/contracts-actions";
 import scenario from "./scenarios/risk-manager.json";
-import { RISK_PROFILES } from "../../helpers/constants/contracts-data";
+import { RISK_PROFILES } from "../helpers/constants/contracts-data";
 
 chai.use(solidity);
 

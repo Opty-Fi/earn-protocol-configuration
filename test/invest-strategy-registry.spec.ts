@@ -2,12 +2,12 @@ import chai, { expect, assert } from "chai";
 import { solidity } from "ethereum-waffle";
 import hre from "hardhat";
 import { Contract, Signer } from "ethers";
-import { TESTING_DEPLOYMENT_ONCE } from "../../helpers/constants/utils";
-import { ESSENTIAL_CONTRACTS } from "../../helpers/constants/essential-contracts-name";
+import { TESTING_DEPLOYMENT_ONCE } from "../helpers/constants/utils";
+import { ESSENTIAL_CONTRACTS } from "../helpers/constants/essential-contracts-name";
 import scenario from "./scenarios/invest-strategy-registry.json";
-import { deployContract, deploySmockContract, generateTokenHash, generateStrategyHash } from "../../helpers/helpers";
+import { deployContract, deploySmockContract, generateTokenHash, generateStrategyHash } from "../helpers/helpers";
 import { smock } from "@defi-wonderland/smock";
-import { TypedStrategies, TypedTokens } from "../../helpers/data";
+import { TypedStrategies, TypedTokens } from "../helpers/data";
 
 chai.use(solidity);
 

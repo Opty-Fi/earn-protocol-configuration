@@ -4,11 +4,11 @@ pragma solidity ^0.6.12;
 
 //  libraries
 import { Address } from "@openzeppelin/contracts/utils/Address.sol";
-import { DataTypes } from "../../libraries/types/DataTypes.sol";
+import { DataTypes } from "./libraries/types/DataTypes.sol";
 
 //  interfaces
-import { IRegistry } from "../../interfaces/opty/IRegistry.sol";
-import { IModifiers } from "../../interfaces/opty/IModifiers.sol";
+import { IRegistry } from "./interfaces/opty/IRegistry.sol";
+import { IModifiers } from "./interfaces/opty/IModifiers.sol";
 
 /**
  * @title Modifiers Contract
