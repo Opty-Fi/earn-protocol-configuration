@@ -1,4 +1,4 @@
-name: Manual Earn protocol test coverage
+name: Manual test coverage
 
 on:
   workflow_dispatch:
@@ -20,14 +20,9 @@ jobs:
       REPORT_GAS: true
       MNEMONIC: ${{ secrets.MNEMONIC}}
       STAGING_NETWORK_URL: ${{secrets.STAGING_NETWORK_URL}}
-      STRATEGY_DIVISOR: 2
     steps:
       - name: Checkout Use Node.js ${{ matrix.node-version}}
         uses: actions/checkout@v2
-        with:
-         token: ${{secrets.TEAM_DEFI_ADAPTERS}}
-         submodules: recursive
-         ref: ${{ github.event.inputs.git-ref }}
       - name: Cache node modules
         uses: actions/cache@v2
         id: cache
