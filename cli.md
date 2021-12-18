@@ -19,7 +19,6 @@ Usage: deploy Registry contract
 
 Options:
 --deployedonce optional <bool>   allow checking whether contracts were deployed previously (default: true)
---insertindb   optional <bool>   allow inserting to database(default: false)
 --network      optional <string> name of the network provider (default: hardhat)
 ```
 
@@ -39,7 +38,6 @@ Usage: deploy InvestStrategyRegistry contract
 Options:
 --registry     required <address> the address of registry
 --deployedonce optional <bool>    allow checking whether contracts were deployed previously (default: true)
---insertindb   optional <bool>    allow inserting to database
 --network      optional <string>  name of the network provider (default: hardhat)
 ```
 
@@ -60,7 +58,6 @@ Usage: deploy RiskManager contract
 Options:
 --registry     required <string>  the address of registry
 --deployedonce optional <bool>    allow checking whether contracts were deployed previously (default: true)
---insertindb   optional <bool>    allow inserting to database
 --network      optional <string>  name of the network provider (default: hardhat) (default: hardhat)
 ```
 
@@ -83,7 +80,6 @@ Options:
 Options:
 --registry     required <address> the address of registry
 --deployedonce optional <bool>    allow checking whether contracts were deployed previously (default: true)
---insertindb   optional <bool>    allow inserting to database
 --network      optional <string>  name of the network provider (default: hardhat)
 ```
 
@@ -103,7 +99,6 @@ Usage: deploy StrategyProvider contract
 Options:
 --registry     required <address> the address of registry
 --deployedonce optional <bool>    allow checking whether contracts were deployed previously (default: true)
---insertindb   optional <bool>    allow inserting to database
 --network      optional <string>  name of the network provider (default: hardhat)
 ```
 
@@ -123,7 +118,6 @@ Usage: deploy AprOracle contract
 Options:
 --registry     required <address> the address of registry
 --deployedonce optional <bool>    allow checking whether contracts were deployed previously (default: true)
---insertindb   optional <bool>    allow inserting to database
 --network      optional <string>  name of the network provider (default: hardhat)
 ```
 
@@ -146,7 +140,6 @@ Options:
 --total        optional <number> the totalSupply of token (default: 0)
 --decimal      required <number> the decimal of token(defaukt: 18)
 --deployedonce optional <bool>   allow checking whether contracts were deployed previously (default: true)
---insertindb   optional <bool>   allow inserting to database
 --network      optional <string> name of the network provider (default: hardhat)
 
 ```
