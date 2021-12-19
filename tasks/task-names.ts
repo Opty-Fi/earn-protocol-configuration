@@ -9,6 +9,7 @@ export const DEPLOY_RISK_MANAGER: string = "deploy-risk-manager";
 export const DEPLOY_STRATEGY_MANAGER: string = "deploy-strategy-manager";
 export const DEPLOY_STRATEGY_PROVIDER: string = "deploy-strategy-provider";
 export const DEPLOY_INVEST_STRATEGY_REGISTRY: string = "deploy-invest-strategy-registry";
+export const DEPLOY_APR_ORACLE = "deploy-apr-oracle";
 
 /** ACTION TASKS */
 export const APPROVE_TOKEN: string = "approve-token";
