@@ -2,6 +2,8 @@
 
 Smart contracts for opty.fi protocol configuration
 
+[![Install, lint, test and deploy pipeline](https://github.com/Opty-Fi/earn-protocol-configuration/actions/workflows/ci.yml/badge.svg)](https://github.com/Opty-Fi/earn-protocol-configuration/actions/workflows/ci.yml)
+
 ## Prerequisite
 
 To run the project :
