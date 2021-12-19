@@ -2,7 +2,7 @@
 
 Smart contracts for opty.fi protocol configuration
 
-[![Install, lint, test and deploy pipeline](https://github.com/Opty-Fi/earn-protocol-configuration/actions/workflows/ci.yml/badge.svg)](https://github.com/Opty-Fi/earn-protocol-configuration/actions/workflows/ci.yml)
+[![Install, lint, test and deploy pipeline](https://github.com/Opty-Fi/earn-protocol-configuration/actions/workflows/ci.yml/badge.svg)](https://github.com/Opty-Fi/earn-protocol-configuration/actions/workflows/ci.yml)[![Yarn](https://img.shields.io/badge/maintained%20with-yarn-2d8dbb.svg)](https://yarnpkg.com/) [![Styled with Prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg)](https://prettier.io) [![Commitizen Friendly](https://img.shields.io/badge/commitizen-friendly-brightgreen.svg)](http://commitizen.github.io/cz-cli/) [![license: GPL3.0](https://img.shields.io/badge/license-GPL3.0-yellow.svg)](https://opensource.org/licenses/gpl-3.0)
 
 ## Prerequisite
 
