@@ -17,6 +17,19 @@ type ARGUMENTS = {
   [key: string]: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 };
 
+const adapters: {
+  [name: string]: {
+    address: string;
+  };
+} = {
+  CompoundAdapter: {
+    address: "0x5d3a536E4D6DbD6114cc1Ead35777bAB948E3643",
+  },
+  AaveV1Adapter: {
+    address: "0x24a42fD28C976A61Df5D00D0599C34c4f90748c8",
+  },
+};
+
 describe(scenario.title, () => {
   let registryContract: Contract;
   let owner: Signer;
@@ -29,7 +42,20 @@ describe(scenario.title, () => {
   let signers: any;
   const contracts: CONTRACTS = {};
   const callers: { [key: string]: string } = {};
-  const contractNames = ["treasury", "investStrategyRegistry", "strategyProvider", "riskManager"];
+  const contractNames = [
+    "treasury",
+    "investStrategyRegistry",
+    "strategyProvider",
+    "riskManager",
+    "optyDistributor",
+    "aprOracle",
+    "harvestCodeProvider",
+    "strategyManager",
+    "opty",
+    "optyStakingRateBalancer",
+    "odefiVaultBooster",
+    "vault",
+  ];
   const callerNames = ["owner", "financeOperator", "riskOperator", "strategyOperator", "operator", "user0", "user1"];
   before(async () => {
     try {
