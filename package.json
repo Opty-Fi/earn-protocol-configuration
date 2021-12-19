@@ -115,6 +115,7 @@
     "access": "public"
   },
   "dependencies": {
-    "@openzeppelin/contracts": "3.4.0"
+    "@openzeppelin/contracts": "3.4.0",
+    "@optyfi/defi-legos": "0.1.0-rc.9"
   }
 }

@@ -7,6 +7,7 @@ export const ESSENTIAL_CONTRACTS: DATA_OBJECT = {
   STRATEGY_MANAGER: "StrategyManager",
   RISK_MANAGER: "RiskManager",
   STRATEGY_PROVIDER: "StrategyProvider",
+  APR_ORACLE: "APROracle",
   RISK_MANAGER_PROXY: "RiskManagerProxy",
   ERC20: "ERC20",
 };
