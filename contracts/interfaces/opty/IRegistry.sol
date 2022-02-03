@@ -212,15 +212,21 @@ interface IRegistry {
 
     /**
      * @notice Maps multiple token pairs to their keccak256 hash
-     * @param _setOfTokens List of mulitple token addresses to map with their (paired tokens) hashes
+     * @param _tokensHashesDetails List of mulitple tokens' hashes details
      */
-    function setTokensHashToTokens(address[][] memory _setOfTokens) external;
+    function setTokensHashToTokens(DataTypes.TokensHashDetail[] memory _tokensHashesDetails) external;
 
     /**
      * @notice Sets token pair to its keccak256 hash
-     * @param _tokens List of token addresses to map with their hashes
+     * @param _tokensHashDetail Tokens hash detail
      */
-    function setTokensHashToTokens(address[] memory _tokens) external;
+    function setTokensHashToTokens(DataTypes.TokensHashDetail memory _tokensHashDetail) external;
+
+    /**
+     * @notice Approve token and map tokens hash
+     * @param _tokensHashDetail Tokens hash detail
+     */
+    function approveTokenAndMapToTokensHash(DataTypes.TokensHashDetail memory _tokensHashDetail) external;
 
     /**
      * @notice Set the withdrawal fee's range

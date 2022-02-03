@@ -291,17 +291,36 @@ contract Registry is IRegistry, ModifiersController {
     /**
      * @inheritdoc IRegistry
      */
-    function setTokensHashToTokens(address[][] memory _setOfTokens) external override onlyOperator {
-        for (uint256 _i = 0; _i < _setOfTokens.length; _i++) {
-            _setTokensHashToTokens(_setOfTokens[_i]);
+    function approveTokenAndMapToTokensHash(DataTypes.TokensHashDetail memory _tokensHashDetail)
+        external
+        override
+        onlyOperator
+    {
+        for (uint256 _i = 0; _i < _tokensHashDetail.tokens.length; _i++) {
+            _approveToken(_tokensHashDetail.tokens[_i]);
+        }
+        _setTokensHashToTokens(_tokensHashDetail);
+    }
+
+    /**
+     * @inheritdoc IRegistry
+     */
+    function setTokensHashToTokens(DataTypes.TokensHashDetail[] memory _tokensHashesDetails)
+        external
+        override
+        onlyOperator
+    {
+        for (uint256 _i = 0; _i < _tokensHashesDetails.length; _i++) {
+            require(_areTokensApproved(_tokensHashesDetails[_i].tokens), "!tokens");
+            _setTokensHashToTokens(_tokensHashesDetails[_i]);
         }
     }
 
     /**
      * @inheritdoc IRegistry
      */
-    function setTokensHashToTokens(address[] memory _tokens) external override onlyOperator {
-        _setTokensHashToTokens(_tokens);
+    function setTokensHashToTokens(DataTypes.TokensHashDetail memory _tokensHashDetail) external override onlyOperator {
+        _setTokensHashToTokens(_tokensHashDetail);
     }
 
     /**
@@ -769,18 +788,14 @@ contract Registry is IRegistry, ModifiersController {
         emit LogLiquidityPoolToAdapter(_pool, _adapter, msg.sender);
     }
 
-    function _setTokensHashToTokens(address[] memory _tokens) internal {
-        for (uint256 _i = 0; _i < _tokens.length; _i++) {
-            require(tokens[_tokens[_i]], "!tokens");
+    function _setTokensHashToTokens(DataTypes.TokensHashDetail memory _tokensHashDetail) internal {
+        require(_isNewTokensHash(_tokensHashDetail.tokensHash), "!_isNewTokensHash");
+        tokensHashIndexes.push(_tokensHashDetail.tokensHash);
+        tokensHashToTokens[_tokensHashDetail.tokensHash].index = tokensHashIndexes.length - 1;
+        for (uint256 _i = 0; _i < _tokensHashDetail.tokens.length; _i++) {
+            tokensHashToTokens[_tokensHashDetail.tokensHash].tokens.push(_tokensHashDetail.tokens[_i]);
         }
-        bytes32 _tokensHash = keccak256(abi.encodePacked(_tokens));
-        require(_isNewTokensHash(_tokensHash), "!_isNewTokensHash");
-        tokensHashIndexes.push(_tokensHash);
-        tokensHashToTokens[_tokensHash].index = tokensHashIndexes.length - 1;
-        for (uint256 _i = 0; _i < _tokens.length; _i++) {
-            tokensHashToTokens[_tokensHash].tokens.push(_tokens[_i]);
-        }
-        emit LogTokensToTokensHash(_tokensHash, msg.sender);
+        emit LogTokensToTokensHash(_tokensHashDetail.tokensHash, msg.sender);
     }
 
     function _addRiskProfile(
@@ -947,5 +962,18 @@ contract Registry is IRegistry, ModifiersController {
             return true;
         }
         return (tokensHashIndexes[tokensHashToTokens[_hash].index] != _hash);
+    }
+
+    /**
+     * @dev Checks approved tokens
+     * @param _tokens List of the token addresses
+     */
+    function _areTokensApproved(address[] memory _tokens) internal view returns (bool) {
+        for (uint256 _i = 0; _i < _tokens.length; _i++) {
+            if (!tokens[_tokens[_i]]) {
+                return false;
+            }
+        }
+        return true;
     }
 }
