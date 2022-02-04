@@ -4,7 +4,6 @@ import { expect } from "chai";
 import { STRATEGY_DATA } from "./type";
 import { executeFunc, generateStrategyHash, generateStrategyStep, generateTokenHash, isAddress } from "./helpers";
 import { RISK_PROFILES } from "./constants/contracts-data";
-import { NETWORKS_ID } from "./constants/network";
 export async function approveLiquidityPoolAndMapAdapter(
   owner: Signer,
   registryContract: Contract,
@@ -66,7 +65,7 @@ export async function approveAndSetTokenHashToToken(
     }
     if (!(await isSetTokenHash(registryContract, [tokenAddress], chainId))) {
       const tokenHash = generateTokenHash([tokenAddress], chainId);
-      await executeFunc(registryContract, owner, "setTokensHashToTokens((bytes32,address[]))", [[tokenHash, chainId]]);
+      await executeFunc(registryContract, owner, "setTokensHashToTokens(bytes32,address[])", [tokenHash, chainId]);
     }
   } catch (error) {
     console.error(`contract-actions#approveAndSetTokenHashToToken : `, error);
