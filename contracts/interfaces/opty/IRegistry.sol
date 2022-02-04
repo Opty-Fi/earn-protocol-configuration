@@ -161,17 +161,17 @@ interface IRegistry {
     function rateLiquidityPool(address _pool, uint8 _rate) external;
 
     /**
-     * @notice Approve and set multiple pool rates and liquidity pools provided
-     * @param _poolRates List of pool rates ([_pool, _rate]) to set
+     * @notice Approve and map the multiple pools to their adapter
+     * @param _poolAdapters List of [pool, adapter] pairs to set
      */
-    function approveAndRateLiquidityPool(DataTypes.PoolRate[] memory _poolRates) external;
+    function approveLiquidityPoolAndMapToAdapter(DataTypes.PoolAdapter[] memory _poolAdapters) external;
 
     /**
-     * @notice Approve and set the pool rate for the liquidity pool provided
-     * @param _pool liquidityPool to map with its rating
-     * @param _rate rate for the liquidityPool provided
+     * @notice Approve and map the pool to the adapter
+     * @param _pool the address of liquidity pool
+     * @param _adapter the address of adapter
      */
-    function approveAndRateLiquidityPool(address _pool, uint8 _rate) external;
+    function approveLiquidityPoolAndMapToAdapter(address _pool, address _adapter) external;
 
     /**
      * @notice Approves multiple credit pools in one transaction

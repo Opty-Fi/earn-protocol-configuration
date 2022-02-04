@@ -822,7 +822,8 @@ describe(scenario.title, () => {
         assert.isDefined(lqs, `args is wrong in ${action.action} testcase`);
         break;
       }
-      case "setLiquidityPoolToAdapter((address,address)[])": {
+      case "setLiquidityPoolToAdapter((address,address)[])":
+      case "approveLiquidityPoolAndMapToAdapter((address,address)[])": {
         const { lqs }: ARGUMENTS = action.args;
         if (lqs) {
           const args: [string, string][] = [];
@@ -840,7 +841,8 @@ describe(scenario.title, () => {
         assert.isDefined(lqs, `args is wrong in ${action.action} testcase`);
         break;
       }
-      case "setLiquidityPoolToAdapter(address,address)": {
+      case "setLiquidityPoolToAdapter(address,address)":
+      case "approveLiquidityPoolAndMapToAdapter(address,address)": {
         const { lqs }: ARGUMENTS = action.args;
         if (lqs) {
           if (action.expect === "success") {
@@ -916,6 +918,24 @@ describe(scenario.title, () => {
         }
         assert.isDefined(tokens, `args is wrong in ${action.action} testcase`);
         assert.isDefined(chainId, `args is wrong in ${action.action} testcase`);
+        break;
+      }
+      case "approveTokenAndMapToTokensHash((bytes32,address[])[])": {
+        const { details }: ARGUMENTS = action.args;
+        if (details) {
+          const tokenLists = details.map((detail: { tokens: string[]; chainId: string }) => [
+            generateTokenHash(detail.tokens, detail.chainId),
+            detail.tokens,
+          ]);
+          if (action.expect === "success") {
+            await registryContract.connect(signers[action.executor])[action.action](tokenLists);
+          } else {
+            await expect(
+              registryContract.connect(signers[action.executor])[action.action](tokenLists),
+            ).to.be.revertedWith(action.message);
+          }
+        }
+        assert.isDefined(details, `args is wrong in ${action.action} testcase`);
         break;
       }
       case "addRiskProfile(uint256[],string[],string[],bool[],(uint8,uint8)[])": {

@@ -227,19 +227,23 @@ contract Registry is IRegistry, ModifiersController {
     /**
      * @inheritdoc IRegistry
      */
-    function approveAndRateLiquidityPool(DataTypes.PoolRate[] memory _poolRates) external override onlyRiskOperator {
-        for (uint256 _i = 0; _i < _poolRates.length; _i++) {
-            _approveLiquidityPool(_poolRates[_i].pool);
-            _rateLiquidityPool(_poolRates[_i].pool, _poolRates[_i].rate);
+    function approveLiquidityPoolAndMapToAdapter(DataTypes.PoolAdapter[] memory _poolAdapters)
+        external
+        override
+        onlyOperator
+    {
+        for (uint256 _i = 0; _i < _poolAdapters.length; _i++) {
+            _approveLiquidityPool(_poolAdapters[_i].pool);
+            _setLiquidityPoolToAdapter(_poolAdapters[_i].pool, _poolAdapters[_i].adapter);
         }
     }
 
     /**
      * @inheritdoc IRegistry
      */
-    function approveAndRateLiquidityPool(address _pool, uint8 _rate) external override onlyRiskOperator {
+    function approveLiquidityPoolAndMapToAdapter(address _pool, address _adapter) external override onlyOperator {
         _approveLiquidityPool(_pool);
-        _rateLiquidityPool(_pool, _rate);
+        _setLiquidityPoolToAdapter(_pool, _adapter);
     }
 
     /**

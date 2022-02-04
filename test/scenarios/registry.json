@@ -991,7 +991,7 @@
       ]
     },
     {
-      "description": "Non-RiskOperator should be able to rate a liquidity pool",
+      "description": "Non-RiskOperator shouldn't be able to rate a liquidity pool",
       "setActions": [
         {
           "action": "rateLiquidityPool(address,uint8)",
@@ -1786,6 +1786,140 @@
       "cleanActions": []
     },
     {
+      "description": "Operator should be able to approve and set liquidity pool to adapter",
+      "setActions": [
+        {
+          "action": "approveLiquidityPoolAndMapToAdapter(address,address)",
+          "args": {
+            "lqs": {
+              "liquidityPool": "0x5d3a536E4D6DbD6114cc1Ead35777bAB948E3643",
+              "adapterName": "CompoundAdapter"
+            }
+          },
+          "executor": "operator",
+          "expect": "success",
+          "message": ""
+        }
+      ],
+      "getActions": [
+        {
+          "action": "liquidityPoolToAdapter(address)",
+          "args": {
+            "address": "0x5d3a536E4D6DbD6114cc1Ead35777bAB948E3643"
+          },
+          "expectedMultiValues": {},
+          "expectedValue": "CompoundAdapter"
+        }
+      ],
+      "cleanActions": [
+        {
+          "action": "revokeLiquidityPool(address)",
+          "args": {
+            "lqs": "0x5d3a536E4D6DbD6114cc1Ead35777bAB948E3643"
+          },
+          "executor": "operator",
+          "expect": "success",
+          "message": ""
+        }
+      ]
+    },
+    {
+      "description": "Non-Operator shouldn't be able to approve and set liquidity pool to adapter",
+      "setActions": [
+        {
+          "action": "approveLiquidityPoolAndMapToAdapter(address,address)",
+          "args": {
+            "lqs": {
+              "liquidityPool": "0x5d3a536E4D6DbD6114cc1Ead35777bAB948E3643",
+              "adapterName": "CompoundAdapter"
+            }
+          },
+          "executor": "user0",
+          "expect": "fail",
+          "message": "caller is not the operator"
+        }
+      ],
+      "getActions": [],
+      "cleanActions": []
+    },
+    {
+      "description": "Operator should be able to approve and set multiple liquidity pools to adapters",
+      "setActions": [
+        {
+          "action": "approveLiquidityPoolAndMapToAdapter((address,address)[])",
+          "args": {
+            "lqs": [
+              {
+                "liquidityPool": "0x5d3a536E4D6DbD6114cc1Ead35777bAB948E3643",
+                "adapterName": "CompoundAdapter"
+              },
+              {
+                "liquidityPool": "0x24a42fD28C976A61Df5D00D0599C34c4f90748c8",
+                "adapterName": "AaveV1Adapter"
+              }
+            ]
+          },
+          "executor": "operator",
+          "expect": "success",
+          "message": ""
+        }
+      ],
+      "getActions": [
+        {
+          "action": "liquidityPoolToAdapter(address)",
+          "args": {
+            "address": "0x5d3a536E4D6DbD6114cc1Ead35777bAB948E3643"
+          },
+          "expectedMultiValues": {},
+          "expectedValue": "CompoundAdapter"
+        },
+        {
+          "action": "liquidityPoolToAdapter(address)",
+          "args": {
+            "address": "0x24a42fD28C976A61Df5D00D0599C34c4f90748c8"
+          },
+          "expectedMultiValues": {},
+          "expectedValue": "AaveV1Adapter"
+        }
+      ],
+      "cleanActions": [
+        {
+          "action": "revokeLiquidityPool(address[])",
+          "args": {
+            "lqs": ["0x5d3a536E4D6DbD6114cc1Ead35777bAB948E3643", "0x24a42fD28C976A61Df5D00D0599C34c4f90748c8"]
+          },
+          "executor": "operator",
+          "expect": "success",
+          "message": ""
+        }
+      ]
+    },
+    {
+      "description": "Non-Operator shouldn't be able to approve and set multiple liquidity pools to adapters",
+      "setActions": [
+        {
+          "action": "approveLiquidityPoolAndMapToAdapter((address,address)[])",
+          "args": {
+            "lqs": [
+              {
+                "liquidityPool": "0x5d3a536E4D6DbD6114cc1Ead35777bAB948E3643",
+                "adapterName": "CompoundAdapter"
+              },
+              {
+                "liquidityPool": "0x24a42fD28C976A61Df5D00D0599C34c4f90748c8",
+                "adapterName": "AaveV1Adapter"
+              }
+            ]
+          },
+          "executor": "user1",
+          "expect": "fail",
+          "message": "caller is not the operator"
+        }
+      ],
+      "getActions": [],
+      "cleanActions": []
+    },
+    {
       "description": "Operator should be able to set token hash to token",
       "setActions": [
         {
@@ -2045,7 +2179,7 @@
       ]
     },
     {
-      "description": "Non-Operator should be able to approve token and set token hash to token",
+      "description": "Non-Operator shouldn't be able to approve token and set token hash to token",
       "setActions": [
         {
           "action": "approveTokenAndMapToTokensHash(bytes32,address[])",
@@ -2056,6 +2190,199 @@
           "executor": "user1",
           "expect": "fail",
           "message": "caller is not the operator"
+        }
+      ],
+      "getActions": [],
+      "cleanActions": []
+    },
+    {
+      "description": "Operator shouldn't be able to approve token and set token hash to token for approved tokens",
+      "setActions": [
+        {
+          "action": "approveToken(address[])",
+          "args": {
+            "tokens": ["0x6b175474e89094c44da98b954eedeac495271d0f"]
+          },
+          "executor": "operator",
+          "expect": "success",
+          "message": ""
+        },
+        {
+          "action": "approveTokenAndMapToTokensHash(bytes32,address[])",
+          "args": {
+            "tokens": ["0x6b175474e89094c44da98b954eedeac495271d0f"],
+            "chainId": "0x1"
+          },
+          "executor": "operator",
+          "expect": "fail",
+          "message": "!tokens"
+        }
+      ],
+      "getActions": [],
+      "cleanActions": [
+        {
+          "action": "revokeToken(address)",
+          "args": {
+            "tokens": "0x6b175474e89094c44da98b954eedeac495271d0f"
+          },
+          "executor": "operator",
+          "expect": "success",
+          "message": ""
+        }
+      ]
+    },
+    {
+      "description": "Operator shouldn't be able to approve token and set existing token hash to token",
+      "setActions": [
+        {
+          "action": "approveTokenAndMapToTokensHash(bytes32,address[])",
+          "args": {
+            "tokens": ["0x6b175474e89094c44da98b954eedeac495271d0f"],
+            "chainId": "0x1"
+          },
+          "executor": "operator",
+          "expect": "fail",
+          "message": "!_isNewTokensHash"
+        }
+      ],
+      "getActions": [],
+      "cleanActions": []
+    },
+    {
+      "description": "Operator should be able to approve multiple tokens and set tokens hashes to tokens",
+      "setActions": [
+        {
+          "action": "approveTokenAndMapToTokensHash((bytes32,address[])[])",
+          "args": {
+            "details": [
+              { "tokens": ["0x57Ab1ec28D129707052df4dF418D58a2D46d5f51"], "chainId": "0x1" },
+              { "tokens": ["0x056Fd409E1d7A124BD7017459dFEa2F387b6d5Cd"], "chainId": "0x1" }
+            ]
+          },
+          "executor": "operator",
+          "expect": "success",
+          "message": ""
+        }
+      ],
+      "getActions": [
+        {
+          "action": "tokensHashIndexes(uint256)",
+          "args": {
+            "index": "4"
+          },
+          "expectedValue": "0xa7cd058980e5c1dda2cb8db53d871ae39b7147f42930d2ebb06c635c036283fc",
+          "expectedMultiValues": {}
+        },
+        {
+          "action": "tokensHashIndexes(uint256)",
+          "args": {
+            "index": "5"
+          },
+          "expectedValue": "0x844665d5334c473b2cb5a4af49d954ccd9ec152fc32a0ecc9e45938560ba807a",
+          "expectedMultiValues": {}
+        }
+      ],
+      "cleanActions": [
+        {
+          "action": "revokeToken(address)",
+          "args": {
+            "tokens": "0x57Ab1ec28D129707052df4dF418D58a2D46d5f51"
+          },
+          "executor": "operator",
+          "expect": "success",
+          "message": ""
+        },
+        {
+          "action": "revokeToken(address)",
+          "args": {
+            "tokens": "0x056Fd409E1d7A124BD7017459dFEa2F387b6d5Cd"
+          },
+          "executor": "operator",
+          "expect": "success",
+          "message": ""
+        }
+      ]
+    },
+    {
+      "description": "Non-Operator shouldn't be able to approve multiple tokens and set tokens hashes to tokens",
+      "setActions": [
+        {
+          "action": "approveTokenAndMapToTokensHash((bytes32,address[])[])",
+          "args": {
+            "details": [
+              { "tokens": ["0x57Ab1ec28D129707052df4dF418D58a2D46d5f51"], "chainId": "0x1" },
+              { "tokens": ["0x056Fd409E1d7A124BD7017459dFEa2F387b6d5Cd"], "chainId": "0x1" }
+            ]
+          },
+          "executor": "user1",
+          "expect": "fail",
+          "message": "caller is not the operator"
+        }
+      ],
+      "getActions": [],
+      "cleanActions": []
+    },
+    {
+      "description": "Operator shouldn't be able to approve multiple tokens and set tokens hashes to tokens for approved tokens",
+      "setActions": [
+        {
+          "action": "approveToken(address[])",
+          "args": {
+            "tokens": ["0x57Ab1ec28D129707052df4dF418D58a2D46d5f51", "0x056Fd409E1d7A124BD7017459dFEa2F387b6d5Cd"]
+          },
+          "executor": "operator",
+          "expect": "success",
+          "message": ""
+        },
+        {
+          "action": "approveTokenAndMapToTokensHash((bytes32,address[])[])",
+          "args": {
+            "details": [
+              { "tokens": ["0x57Ab1ec28D129707052df4dF418D58a2D46d5f51"], "chainId": "0x1" },
+              { "tokens": ["0x056Fd409E1d7A124BD7017459dFEa2F387b6d5Cd"], "chainId": "0x1" }
+            ]
+          },
+          "executor": "operator",
+          "expect": "fail",
+          "message": "!tokens"
+        }
+      ],
+      "getActions": [],
+      "cleanActions": [
+        {
+          "action": "revokeToken(address)",
+          "args": {
+            "tokens": "0x57Ab1ec28D129707052df4dF418D58a2D46d5f51"
+          },
+          "executor": "operator",
+          "expect": "success",
+          "message": ""
+        },
+        {
+          "action": "revokeToken(address)",
+          "args": {
+            "tokens": "0x056Fd409E1d7A124BD7017459dFEa2F387b6d5Cd"
+          },
+          "executor": "operator",
+          "expect": "success",
+          "message": ""
+        }
+      ]
+    },
+    {
+      "description": "Operator shouldn't be able to approve multiple tokens and set existing tokens hashes to tokens",
+      "setActions": [
+        {
+          "action": "approveTokenAndMapToTokensHash((bytes32,address[])[])",
+          "args": {
+            "details": [
+              { "tokens": ["0x57Ab1ec28D129707052df4dF418D58a2D46d5f51"], "chainId": "0x1" },
+              { "tokens": ["0x056Fd409E1d7A124BD7017459dFEa2F387b6d5Cd"], "chainId": "0x1" }
+            ]
+          },
+          "executor": "operator",
+          "expect": "fail",
+          "message": "!_isNewTokensHash"
         }
       ],
       "getActions": [],
