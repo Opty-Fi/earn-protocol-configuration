@@ -3,6 +3,7 @@ import { task, types } from "hardhat/config";
 import { CONTRACTS } from "../helpers/type";
 import { deployEssentialContracts } from "../helpers/contracts-deployments";
 import { APPROVE_TOKENS, SETUP, SET_STRATEGIES } from "./task-names";
+import { NETWORKS_ID } from "../helpers/constants/network";
 
 task(SETUP, "Deploy infrastructure, adapter and vault contracts and setup all necessary actions")
   .addParam("deployedonce", "allow checking whether contracts were deployed previously", false, types.boolean)
@@ -31,6 +32,7 @@ task(SETUP, "Deploy infrastructure, adapter and vault contracts and setup all ne
 
     await hre.run(APPROVE_TOKENS, {
       registry: essentialContracts["registry"].address,
+      networkHash: NETWORKS_ID.MAINNET,
     });
     console.log("********************");
     console.log(`\tMapping Liquidity Pools to Adapters ...`);
