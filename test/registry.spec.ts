@@ -753,7 +753,6 @@ describe(scenario.title, () => {
         assert.isDefined(lqs, `args is wrong in ${action.action} testcase`);
         break;
       }
-      case "approveAndRateLiquidityPool((address,uint8)[])":
       case "rateLiquidityPool((address,uint8)[])":
       case "rateCreditPool((address,uint8)[])": {
         const { lqRate }: ARGUMENTS = action.args;
@@ -769,7 +768,6 @@ describe(scenario.title, () => {
         assert.isDefined(lqRate, `args is wrong in ${action.action} testcase`);
         break;
       }
-      case "approveAndRateLiquidityPool(address,uint8)":
       case "rateLiquidityPool(address,uint8)":
       case "rateCreditPool(address,uint8)": {
         const { lqRate }: ARGUMENTS = action.args;
