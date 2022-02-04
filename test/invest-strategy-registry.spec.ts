@@ -34,7 +34,7 @@ describe(scenario.title, () => {
     strategy.isBorrow,
   ]);
   const usedToken = TypedTokens["DAI"];
-  const usedTokenHash = generateTokenHash([usedToken]);
+  const usedTokenHash = generateTokenHash([usedToken], "0x1");
   const usedStrategyHash = generateStrategyHash(usedStrategy, usedToken);
   before(async () => {
     try {

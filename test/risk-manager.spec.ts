@@ -20,7 +20,7 @@ import { deployRegistry, deployRiskManager } from "../helpers/contracts-deployme
 import { approveAndSetTokenHashToToken, addRiskProfile } from "../helpers/contracts-actions";
 import scenario from "./scenarios/risk-manager.json";
 import { RISK_PROFILES } from "../helpers/constants/contracts-data";
-
+import { NETWORKS_ID } from "../helpers/constants/network";
 chai.use(solidity);
 
 type ARGUMENTS = {
@@ -70,7 +70,12 @@ describe(scenario.title, () => {
     );
     for (let i = 0; i < usedTokens.length; i++) {
       try {
-        await approveAndSetTokenHashToToken(owner, registry, TypedTokens[usedTokens[i].toUpperCase()]);
+        await approveAndSetTokenHashToToken(
+          owner,
+          registry,
+          TypedTokens[usedTokens[i].toUpperCase()],
+          NETWORKS_ID.MAINNET,
+        );
       } catch (error) {
         continue;
       }
@@ -79,7 +84,7 @@ describe(scenario.title, () => {
 
   for (let i = 0; i < TypedStrategies.length; i++) {
     const strategy = TypedStrategies[i];
-    const tokenHash = generateTokenHash([TypedTokens[strategy.token.toUpperCase()]]);
+    const tokenHash = generateTokenHash([TypedTokens[strategy.token.toUpperCase()]], NETWORKS_ID.MAINNET);
     const strategyHash = generateStrategyHash(strategy.strategy, TypedTokens[strategy.token.toUpperCase()]);
     const defaultStrategy = TypedStrategies.filter(
       item => item.token === strategy.token && item.strategyName !== strategy.strategyName,

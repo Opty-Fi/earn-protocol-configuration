@@ -32,7 +32,7 @@ task(GET_BEST_STRATEGY, "Get best strategy")
 
     try {
       const strategyProvider = await hre.ethers.getContractAt(ESSENTIAL_CONTRACTS.STRATEGY_PROVIDER, strategyprovider);
-      const tokensHash = generateTokenHash([token]);
+      const tokensHash = generateTokenHash([token], "0x1");
       let strategyHash = "";
       if (isdefault) {
         strategyHash = await strategyProvider.rpToTokenToDefaultStrategy(riskprofilecode, tokensHash);

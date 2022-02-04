@@ -37,7 +37,7 @@ task(SET_BEST_STRATEGY, "Set best strategy")
 
     try {
       const strategyProvider = await hre.ethers.getContractAt(ESSENTIAL_CONTRACTS.STRATEGY_PROVIDER, strategyprovider);
-      const tokensHash = generateTokenHash([token]);
+      const tokensHash = generateTokenHash([token], "0x1");
       console.log(`Invest step strategy Hash : ${strategyhash}`);
       if (isdefault) {
         await strategyProvider.setBestDefaultStrategy(riskprofilecode, tokensHash, strategyhash);

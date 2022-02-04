@@ -28,7 +28,7 @@ task(GET_STRATEGIES, "Get all available strategies for specific token")
         ESSENTIAL_CONTRACTS.INVEST_STRATEGY_REGISTRY,
         investstrategyregistry,
       );
-      const tokensHash = generateTokenHash([token]);
+      const tokensHash = generateTokenHash([token], "0x1");
       const strategies = await investStrategyRegistryContract.getTokenToStrategies(tokensHash);
       for (let i = 0; i < strategies.length; i++) {
         const strategyDetail = await investStrategyRegistryContract.getStrategy(strategies[i]);

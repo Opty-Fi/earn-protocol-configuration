@@ -65,7 +65,10 @@ export async function approveAndSetTokenHashToToken(
     }
     if (!(await isSetTokenHash(registryContract, [tokenAddress], chainId))) {
       const tokenHash = generateTokenHash([tokenAddress], chainId);
-      await executeFunc(registryContract, owner, "setTokensHashToTokens(bytes32,address[])", [tokenHash, chainId]);
+      await executeFunc(registryContract, owner, "setTokensHashToTokens(bytes32,address[])", [
+        tokenHash,
+        [tokenAddress],
+      ]);
     }
   } catch (error) {
     console.error(`contract-actions#approveAndSetTokenHashToToken : `, error);
