@@ -3,7 +3,7 @@ import hre from "hardhat";
 import { Contract } from "ethers";
 import { solidity } from "ethereum-waffle";
 import { CONTRACTS } from "../helpers/type";
-import { generateStrategyHash, deployContract, generateTokenHash } from "../helpers/helpers";
+import { deployContract, generateTokenHash } from "../helpers/helpers";
 import { TESTING_DEPLOYMENT_ONCE } from "../helpers/constants/utils";
 import { ESSENTIAL_CONTRACTS } from "../helpers/constants/essential-contracts-name";
 import { TESTING_CONTRACTS } from "../helpers/constants/test-contracts-name";
@@ -34,9 +34,8 @@ describe(scenario.title, () => {
   const nonApprovedToken = TypedTokens["USDC"];
   const usedTokenHash = generateTokenHash([usedToken], NETWORKS_ID.MAINNET);
   const nonApprovedTokenHash = generateTokenHash([nonApprovedToken], NETWORKS_ID.MAINNET);
-  const usedStrategy = TypedStrategies.filter(strategy => strategy.strategyName == "DAI-deposit-COMPOUND-cDAI")[0]
-    .strategy;
-  const strategyHash = generateStrategyHash(usedStrategy, usedToken);
+  const usedStrategy = TypedStrategies.filter(strategy => strategy.token == "DAI")[0].strategy;
+  const riskProfile = RISK_PROFILES[1];
   before(async () => {
     try {
       const [owner, user1] = await hre.ethers.getSigners();
@@ -55,11 +54,11 @@ describe(scenario.title, () => {
       await addRiskProfile(
         registry,
         owner,
-        RISK_PROFILES[1].code,
-        RISK_PROFILES[1].name,
-        RISK_PROFILES[1].symbol,
-        RISK_PROFILES[1].canBorrow,
-        RISK_PROFILES[1].poolRating,
+        riskProfile.code,
+        riskProfile.name,
+        riskProfile.symbol,
+        riskProfile.canBorrow,
+        riskProfile.poolRating,
       );
 
       await expect(registry["approveToken(address)"](usedToken))
@@ -101,34 +100,20 @@ describe(scenario.title, () => {
       for (let i = 0; i < story.getActions.length; i++) {
         const action: any = story.getActions[i];
         switch (action.action) {
-          case "rpToTokenToDefaultStrategy(uint256,bytes32)":
-          case "rpToTokenToBestStrategy(uint256,bytes32)": {
-            const { riskProfileCode, tokenName }: ARGUMENTS = action.args;
-            if (riskProfileCode && tokenName) {
-              const expectedStrategyHash = generateStrategyHash(
-                TypedStrategies.filter(strategy => strategy.strategyName == action.expectedValue.strategyName)[0]
-                  .strategy,
-                TypedTokens[action.expectedValue.tokenName],
-              );
-              expect(
-                await contracts[action.contract][action.action](
-                  riskProfileCode,
-                  generateTokenHash([TypedTokens[tokenName]], NETWORKS_ID.MAINNET),
-                ),
-              ).to.be.equal(expectedStrategyHash);
-            }
-            assert.isDefined(riskProfileCode, `args is wrong in ${action.action} testcase`);
+          case "getRpToTokenToDefaultStrategy(uint256,bytes32)":
+          case "getRpToTokenToBestStrategy(uint256,bytes32)": {
+            expect(
+              await contracts[action.contract][action.action](
+                riskProfile.code,
+                generateTokenHash([usedToken], NETWORKS_ID.MAINNET),
+              ),
+            ).to.be.eqls(usedStrategy.map(item => [item.contract, item.outputToken, item.isBorrow]));
+
             break;
           }
           case "vaultRewardTokenHashToVaultRewardTokenStrategy(bytes32)": {
             const value = await contracts[action.contract][action.action](vaultRewardTokenHash);
             expect([+value[0]._hex, +value[1]._hex]).to.have.members(action.expectedValue.vaultRewardStrategy);
-            break;
-          }
-          case "defaultStrategyState()": {
-            expect(await contracts[action.contract][action.action]()).to.be.equal(
-              action.expectedValue.defaultStrategyState,
-            );
             break;
           }
         }
@@ -179,39 +164,27 @@ describe(scenario.title, () => {
         assert.isDefined(vaultRewardStrategy, `args is wrong in ${action.action} testcase`);
         break;
       }
-      case "setBestStrategy(uint256,bytes32,bytes32)":
-      case "setBestDefaultStrategy(uint256,bytes32,bytes32)": {
+      case "setBestStrategy(uint256,bytes32,(address,address,bool)[])":
+      case "setBestDefaultStrategy(uint256,bytes32,(address,address,bool)[])": {
         const { riskProfileCode, isNonApprovedToken }: ARGUMENTS = action.args;
         if (riskProfileCode) {
           if (action.expect === "success") {
-            await contracts[action.contract]
-              .connect(signers[action.executor])
-              [action.action](riskProfileCode, usedTokenHash, strategyHash);
+            await contracts[action.contract].connect(signers[action.executor])[action.action](
+              riskProfileCode,
+              usedTokenHash,
+              usedStrategy.map(item => [item.contract, item.outputToken, item.isBorrow]),
+            );
           } else {
             await expect(
-              contracts[action.contract]
-                .connect(signers[action.executor])
-                [action.action](
-                  riskProfileCode,
-                  isNonApprovedToken ? nonApprovedTokenHash : usedTokenHash,
-                  strategyHash,
-                ),
+              contracts[action.contract].connect(signers[action.executor])[action.action](
+                riskProfileCode,
+                isNonApprovedToken ? nonApprovedTokenHash : usedTokenHash,
+                usedStrategy.map(item => [item.contract, item.outputToken, item.isBorrow]),
+              ),
             ).to.be.revertedWith(action.message);
           }
         }
         assert.isDefined(riskProfileCode, `args is wrong in ${action.action} testcase`);
-        break;
-      }
-      case "setDefaultStrategyState(uint8)": {
-        const { defaultStrategyState }: ARGUMENTS = action.args;
-        if (action.expect === "success") {
-          await contracts[action.contract].connect(signers[action.executor])[action.action](defaultStrategyState);
-        } else {
-          await expect(
-            contracts[action.contract].connect(signers[action.executor])[action.action](defaultStrategyState),
-          ).to.be.revertedWith(action.message);
-        }
-        assert.isDefined(defaultStrategyState, `args is wrong in ${action.action} testcase`);
         break;
       }
     }

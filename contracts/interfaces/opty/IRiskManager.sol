@@ -23,7 +23,7 @@ interface IRiskManager {
     function getBestStrategy(uint256 _riskProfileCode, address[] memory _underlyingTokens)
         external
         view
-        returns (bytes32);
+        returns (DataTypes.StrategyStep[] memory);
 
     /**
      * @notice Get the VaultRewardToken strategy for respective VaultRewardToken hash

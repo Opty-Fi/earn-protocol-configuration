@@ -39,22 +39,15 @@ describe(scenario.title, () => {
   before(async () => {
     [owner] = await hre.ethers.getSigners();
     registry = await deployRegistry(hre, owner, TESTING_DEPLOYMENT_ONCE);
-    const investStrategyRegistry = await deploySmockContract(smock, ESSENTIAL_CONTRACTS.INVEST_STRATEGY_REGISTRY, [
-      registry.address,
-    ]);
 
     const strategyProvider = await deploySmockContract(smock, ESSENTIAL_CONTRACTS.STRATEGY_PROVIDER, [
       registry.address,
     ]);
 
-    const aprOracle = await deploySmockContract(smock, ESSENTIAL_CONTRACTS.APR_ORACLE, [registry.address]);
-
     riskManager = await deployRiskManager(hre, owner, TESTING_DEPLOYMENT_ONCE, registry.address);
 
-    contracts = { investStrategyRegistry, strategyProvider };
+    contracts = { strategyProvider };
     await executeFunc(registry, owner, "setStrategyProvider(address)", [strategyProvider.address]);
-    await executeFunc(registry, owner, "setAPROracle(address)", [aprOracle.address]);
-    await executeFunc(registry, owner, "setInvestStrategyRegistry(address)", [investStrategyRegistry.address]);
     await addRiskProfile(
       registry,
       owner,
@@ -85,38 +78,24 @@ describe(scenario.title, () => {
   for (let i = 0; i < TypedStrategies.length; i++) {
     const strategy = TypedStrategies[i];
     const tokenHash = generateTokenHash([TypedTokens[strategy.token.toUpperCase()]], NETWORKS_ID.MAINNET);
-    const strategyHash = generateStrategyHash(strategy.strategy, TypedTokens[strategy.token.toUpperCase()]);
+
     const defaultStrategy = TypedStrategies.filter(
       item => item.token === strategy.token && item.strategyName !== strategy.strategyName,
     )[0];
     if (!defaultStrategy) {
       continue;
     }
+    const returnedStrategy = strategy.strategy.map(item => [item.contract, item.outputToken, item.isBorrow]);
+    const returnedDefaultStrategy = defaultStrategy.strategy.map(item => [
+      item.contract,
+      item.outputToken,
+      item.isBorrow,
+    ]);
 
-    const defaultStrategyHash = generateStrategyHash(
-      defaultStrategy.strategy,
-      TypedTokens[defaultStrategy.token.toUpperCase()],
-    );
     let isCheckDefault = false;
-    before(async () => {
-      const setDefaultStrategy = (await contracts["investStrategyRegistry"].getStrategy(defaultStrategyHash))
-        ._strategySteps[0];
-      if (!setDefaultStrategy) {
-        const defaultStrategySteps = generateStrategyStep(defaultStrategy.strategy);
-        await contracts["investStrategyRegistry"]["setStrategy(bytes32,(address,address,bool)[])"](
-          tokenHash,
-          defaultStrategySteps,
-        );
-      }
-      const setStrategy = (await contracts["investStrategyRegistry"].getStrategy(strategyHash))._strategySteps[0];
-      if (!setStrategy) {
-        const strategySteps = generateStrategyStep(strategy.strategy);
-        await contracts["investStrategyRegistry"]["setStrategy(bytes32,(address,address,bool)[])"](
-          tokenHash,
-          strategySteps,
-        );
-      }
-    });
+    if (strategy.strategyName !== "DAI-deposit-COMPOUND-cDAI") {
+      continue;
+    }
     describe(strategy.strategyName, () => {
       for (let i = 0; i < scenario.stories.length; i++) {
         const story = scenario.stories[i];
@@ -164,11 +143,11 @@ describe(scenario.title, () => {
                 assert.isDefined(score, `args is wrong in ${action.action} testcase`);
                 break;
               }
-              case "setBestStrategy(uint256,bytes32,bytes32)": {
-                contracts[action.contract].rpToTokenToBestStrategy.returns(strategyHash);
+              case "setBestStrategy(uint256,bytes32,(address,address,bool)[])": {
+                contracts[action.contract].getRpToTokenToBestStrategy.returns(returnedStrategy);
                 break;
               }
-              case "setBestDefaultStrategy(uint256,bytes32,bytes32)": {
+              case "setBestDefaultStrategy(uint256,bytes32,(address,address,bool)[])": {
                 const { score }: ARGUMENTS = action.args;
                 const scoredPools: [string, number][] = [];
                 if (score) {
@@ -182,15 +161,9 @@ describe(scenario.title, () => {
                   }
                   await registry["rateLiquidityPool((address,uint8)[])"](scoredPools);
                 }
-                contracts[action.contract].rpToTokenToDefaultStrategy.returns(defaultStrategyHash);
+                contracts[action.contract].getRpToTokenToDefaultStrategy.returns(returnedDefaultStrategy);
                 isCheckDefault = true;
                 assert.isDefined(score, `args is wrong in ${action.action} testcase`);
-                break;
-              }
-              case "setDefaultStrategyState(uint8)": {
-                const { defaultStrategyState }: ARGUMENTS = action.args;
-                await contracts[action.contract].getDefaultStrategyState.returns(defaultStrategyState);
-                assert.isDefined(defaultStrategyState, `args is wrong in ${action.action} testcase`);
                 break;
               }
             }
@@ -199,12 +172,12 @@ describe(scenario.title, () => {
             const action = story.getActions[i];
             switch (action.action) {
               case "getBestStrategy(uint256,address[])": {
-                expect(await riskManager[action.action](riskProfileCode, [TypedTokens[strategy.token]])).to.be.equal(
+                expect(await riskManager[action.action](riskProfileCode, [TypedTokens[strategy.token]])).to.eql(
                   action.expectedValue !== ""
                     ? action.expectedValue
                     : isCheckDefault
-                    ? defaultStrategyHash
-                    : strategyHash,
+                    ? returnedDefaultStrategy
+                    : returnedStrategy,
                 );
                 break;
               }

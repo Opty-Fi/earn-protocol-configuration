@@ -118,48 +118,29 @@ export async function approveAndSetTokenHashToTokens(
   }
 }
 
-export async function setStrategy(
-  strategy: STRATEGY_DATA[],
-  signer: Signer,
-  tokens: string[],
-  investStrategyRegistry: Contract,
-): Promise<string> {
-  const strategySteps: [string, string, boolean][] = generateStrategyStep(strategy);
-  const tokensHash = generateTokenHash(tokens, NETWORKS_ID.MAINNET);
-  const strategyHash = generateStrategyHash(strategy, tokens[0]);
-  await expect(
-    investStrategyRegistry.connect(signer)["setStrategy(bytes32,(address,address,bool)[])"](tokensHash, strategySteps),
-  )
-    .to.emit(investStrategyRegistry, "LogSetVaultInvestStrategy")
-    .withArgs(tokensHash, strategyHash, await signer.getAddress());
-  return strategyHash;
-}
-
 export async function setBestStrategy(
   strategy: STRATEGY_DATA[],
-  signer: Signer,
   tokenAddress: string,
-  investStrategyRegistry: Contract,
   strategyProvider: Contract,
   riskProfileCode: number,
   isDefault: boolean,
-): Promise<string> {
-  const strategyHash = generateStrategyHash(strategy, tokenAddress);
-
-  const tokenHash = generateTokenHash([tokenAddress], NETWORKS_ID.MAINNET);
-
-  const strategyDetail = await investStrategyRegistry.getStrategy(strategyHash);
-
-  if (strategyDetail[1].length === 0) {
-    await setStrategy(strategy, signer, [tokenAddress], investStrategyRegistry);
-  }
+  chainId: string,
+): Promise<void> {
+  const tokenHash = generateTokenHash([tokenAddress], chainId);
 
   if (isDefault) {
-    await strategyProvider.setBestDefaultStrategy(riskProfileCode, tokenHash, strategyHash);
+    await strategyProvider.setBestDefaultStrategy(
+      riskProfileCode,
+      tokenHash,
+      strategy.map(item => [item.contract, item.outputToken, item.isBorrow]),
+    );
   } else {
-    await strategyProvider.setBestStrategy(riskProfileCode, tokenHash, strategyHash);
+    await strategyProvider.setBestStrategy(
+      riskProfileCode,
+      tokenHash,
+      strategy.map(item => [item.contract, item.outputToken, item.isBorrow]),
+    );
   }
-  return strategyHash;
 }
 
 export async function unpauseVault(

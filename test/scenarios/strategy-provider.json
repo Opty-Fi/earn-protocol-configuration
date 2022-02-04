@@ -7,7 +7,7 @@
       "setActions": [
         {
           "contract": "strategyProvider",
-          "action": "setBestStrategy(uint256,bytes32,bytes32)",
+          "action": "setBestStrategy(uint256,bytes32,(address,address,bool)[])",
           "args": {
             "riskProfileCode": "1"
           },
@@ -19,7 +19,7 @@
       "getActions": [
         {
           "contract": "strategyProvider",
-          "action": "rpToTokenToBestStrategy(uint256,bytes32)",
+          "action": "getRpToTokenToBestStrategy(uint256,bytes32)",
           "args": {
             "riskProfileCode": "1"
           },
@@ -33,7 +33,7 @@
       "setActions": [
         {
           "contract": "strategyProvider",
-          "action": "setBestStrategy(uint256,bytes32,bytes32)",
+          "action": "setBestStrategy(uint256,bytes32,(address,address,bool)[])",
           "args": {
             "riskProfileCode": "1"
           },
@@ -60,7 +60,7 @@
         },
         {
           "contract": "strategyProvider",
-          "action": "setBestStrategy(uint256,bytes32,bytes32)",
+          "action": "setBestStrategy(uint256,bytes32,(address,address,bool)[])",
           "args": {
             "riskProfileCode": "1"
           },
@@ -88,7 +88,7 @@
       "setActions": [
         {
           "contract": "strategyProvider",
-          "action": "setBestStrategy(uint256,bytes32,bytes32)",
+          "action": "setBestStrategy(uint256,bytes32,(address,address,bool)[])",
           "args": {
             "riskProfileCode": "2"
           },
@@ -105,7 +105,7 @@
       "setActions": [
         {
           "contract": "strategyProvider",
-          "action": "setBestStrategy(uint256,bytes32,bytes32)",
+          "action": "setBestStrategy(uint256,bytes32,(address,address,bool)[])",
           "args": {
             "riskProfileCode": "1",
             "isNonApprovedToken": true
@@ -123,7 +123,7 @@
       "setActions": [
         {
           "contract": "strategyProvider",
-          "action": "setBestDefaultStrategy(uint256,bytes32,bytes32)",
+          "action": "setBestDefaultStrategy(uint256,bytes32,(address,address,bool)[])",
           "args": {
             "riskProfileCode": "1"
           },
@@ -135,7 +135,7 @@
       "getActions": [
         {
           "contract": "strategyProvider",
-          "action": "rpToTokenToDefaultStrategy(uint256,bytes32)",
+          "action": "getRpToTokenToDefaultStrategy(uint256,bytes32)",
           "args": {
             "riskProfileCode": "1"
           },
@@ -149,7 +149,7 @@
       "setActions": [
         {
           "contract": "strategyProvider",
-          "action": "setBestDefaultStrategy(uint256,bytes32,bytes32)",
+          "action": "setBestDefaultStrategy(uint256,bytes32,(address,address,bool)[])",
           "args": {
             "riskProfileCode": "1"
           },
@@ -176,7 +176,7 @@
         },
         {
           "contract": "strategyProvider",
-          "action": "setBestDefaultStrategy(uint256,bytes32,bytes32)",
+          "action": "setBestDefaultStrategy(uint256,bytes32,(address,address,bool)[])",
           "args": {
             "riskProfileCode": "1"
           },
@@ -204,7 +204,7 @@
       "setActions": [
         {
           "contract": "strategyProvider",
-          "action": "setBestDefaultStrategy(uint256,bytes32,bytes32)",
+          "action": "setBestDefaultStrategy(uint256,bytes32,(address,address,bool)[])",
           "args": {
             "riskProfileCode": "2"
           },
@@ -221,7 +221,7 @@
       "setActions": [
         {
           "contract": "strategyProvider",
-          "action": "setBestDefaultStrategy(uint256,bytes32,bytes32)",
+          "action": "setBestDefaultStrategy(uint256,bytes32,(address,address,bool)[])",
           "args": {
             "riskProfileCode": "1",
             "isNonApprovedToken": true
@@ -349,98 +349,6 @@
       ],
       "getActions": [],
       "cleanActions": []
-    },
-    {
-      "description": "[setDefaultStrategyState] StrategyOperator should be able to set Default Strategy state",
-      "setActions": [
-        {
-          "contract": "strategyProvider",
-          "action": "setDefaultStrategyState(uint8)",
-          "args": {
-            "defaultStrategyState": 1
-          },
-          "executor": "strategyOperator",
-          "expect": "success",
-          "message": ""
-        }
-      ],
-      "getActions": [
-        {
-          "contract": "strategyProvider",
-          "action": "defaultStrategyState()",
-          "args": {},
-          "expectedValue": {
-            "defaultStrategyState": 1
-          }
-        }
-      ],
-      "cleanActions": [
-        {
-          "contract": "strategyProvider",
-          "action": "setDefaultStrategyState(uint8)",
-          "args": {
-            "defaultStrategyState": 0
-          },
-          "executor": "strategyOperator",
-          "expect": "success",
-          "message": ""
-        }
-      ]
-    },
-    {
-      "description": "[setDefaultStrategyState] Non-StrategyOperator shouldn't be able to set Default Strategy state",
-      "setActions": [
-        {
-          "contract": "strategyProvider",
-          "action": "setDefaultStrategyState(uint8)",
-          "args": {
-            "defaultStrategyState": 1
-          },
-          "executor": "user1",
-          "expect": "fail",
-          "message": "caller is not the strategyOperator"
-        }
-      ],
-      "getActions": [],
-      "cleanActions": []
-    },
-    {
-      "description": "[SetBestStrategy] - Old StrategyOperator shouldn't be able to set best Vault Reward strategy",
-      "setActions": [
-        {
-          "contract": "registry",
-          "action": "setStrategyOperator(address)",
-          "args": {
-            "newStrategyOperator": "user1"
-          },
-          "executor": "owner",
-          "expect": "success",
-          "message": ""
-        },
-        {
-          "contract": "strategyProvider",
-          "action": "setDefaultStrategyState(uint8)",
-          "args": {
-            "defaultStrategyState": 1
-          },
-          "executor": "strategyOperator",
-          "expect": "fail",
-          "message": "caller is not the strategyOperator"
-        }
-      ],
-      "getActions": [],
-      "cleanActions": [
-        {
-          "contract": "registry",
-          "action": "setStrategyOperator(address)",
-          "args": {
-            "newStrategyOperator": "strategyOperator"
-          },
-          "executor": "owner",
-          "expect": "success",
-          "message": ""
-        }
-      ]
     }
   ]
 }
