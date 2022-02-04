@@ -12,7 +12,7 @@ import scenario from "./scenarios/strategy-provider.json";
 import { approveAndSetTokenHashToTokens, addRiskProfile } from "../helpers/contracts-actions";
 import { TypedStrategies, TypedTokens } from "../helpers/data";
 import { RISK_PROFILES } from "../helpers/constants/contracts-data";
-
+import { NETWORKS_ID } from "../helpers/constants/network";
 chai.use(solidity);
 
 type ARGUMENTS = {
@@ -32,8 +32,8 @@ describe(scenario.title, () => {
   let vaultRewardTokenHash: string;
   const usedToken = TypedTokens["DAI"];
   const nonApprovedToken = TypedTokens["USDC"];
-  const usedTokenHash = generateTokenHash([usedToken]);
-  const nonApprovedTokenHash = generateTokenHash([nonApprovedToken]);
+  const usedTokenHash = generateTokenHash([usedToken], NETWORKS_ID.MAINNET);
+  const nonApprovedTokenHash = generateTokenHash([nonApprovedToken], NETWORKS_ID.MAINNET);
   const usedStrategy = TypedStrategies.filter(strategy => strategy.strategyName == "DAI-deposit-COMPOUND-cDAI")[0]
     .strategy;
   const strategyHash = generateStrategyHash(usedStrategy, usedToken);
@@ -63,12 +63,12 @@ describe(scenario.title, () => {
         RISK_PROFILES[1].poolRating,
       );
 
-      await expect(registry["approveToken(address)"](DAI_TOKEN))
+      await expect(registry["approveToken(address)"](usedToken))
         .to.emit(registry, "LogToken")
-        .withArgs(hre.ethers.utils.getAddress(DAI_TOKEN), true, ownerAddress);
-      await expect(registry.connect(owner)["setTokensHashToTokens(address[])"]([DAI_TOKEN]))
+        .withArgs(hre.ethers.utils.getAddress(usedToken), true, ownerAddress);
+      await expect(registry.connect(owner)["setTokensHashToTokens((bytes32,address[]))"]([usedTokenHash, [usedToken]]))
         .to.emit(registry, "LogTokensToTokensHash")
-        .withArgs(generateTokenHash([DAI_TOKEN]), ownerAddress);
+        .withArgs(usedTokenHash, ownerAddress);
       const strategyProvider = await deployContract(
         hre,
         ESSENTIAL_CONTRACTS.STRATEGY_PROVIDER,
@@ -78,12 +78,13 @@ describe(scenario.title, () => {
       );
 
       const COMP_TOKEN = TypedTokens["COMP"];
-      vaultRewardTokenHash = generateTokenHash([DUMMY_VAULT_EMPTY_CONTRACT.address, COMP_TOKEN]);
+      vaultRewardTokenHash = generateTokenHash([DUMMY_VAULT_EMPTY_CONTRACT.address, COMP_TOKEN], NETWORKS_ID.MAINNET);
       await approveAndSetTokenHashToTokens(
         signers["owner"],
         registry,
         [DUMMY_VAULT_EMPTY_CONTRACT.address, COMP_TOKEN],
         false,
+        NETWORKS_ID.MAINNET,
       );
       contracts = { registry, strategyProvider };
     } catch (error: any) {
@@ -113,7 +114,7 @@ describe(scenario.title, () => {
               expect(
                 await contracts[action.contract][action.action](
                   riskProfileCode,
-                  generateTokenHash([TypedTokens[tokenName]]),
+                  generateTokenHash([TypedTokens[tokenName]], NETWORKS_ID.MAINNET),
                 ),
               ).to.be.equal(expectedStrategyHash);
             }

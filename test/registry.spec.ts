@@ -753,6 +753,7 @@ describe(scenario.title, () => {
         assert.isDefined(lqs, `args is wrong in ${action.action} testcase`);
         break;
       }
+      case "approveAndRateLiquidityPool((address,uint8)[])":
       case "rateLiquidityPool((address,uint8)[])":
       case "rateCreditPool((address,uint8)[])": {
         const { lqRate }: ARGUMENTS = action.args;
@@ -768,6 +769,7 @@ describe(scenario.title, () => {
         assert.isDefined(lqRate, `args is wrong in ${action.action} testcase`);
         break;
       }
+      case "approveAndRateLiquidityPool(address,uint8)":
       case "rateLiquidityPool(address,uint8)":
       case "rateCreditPool(address,uint8)": {
         const { lqRate }: ARGUMENTS = action.args;
@@ -864,25 +866,56 @@ describe(scenario.title, () => {
         assert.isDefined(lqs, `args is wrong in ${action.action} testcase`);
         break;
       }
-      case "setTokensHashToTokens(address[][])":
-      case "setTokensHashToTokens(address[])": {
-        const { tokensHash }: ARGUMENTS = action.args;
-        if (tokensHash) {
+      case "setTokensHashToTokens((bytes32,address[])[])": {
+        const { tokensDetails }: ARGUMENTS = action.args;
+        if (tokensDetails) {
+          const tokenLists = tokensDetails.map((detail: { tokens: string[]; chainId: string }) => [
+            generateTokenHash(detail.tokens, detail.chainId),
+            detail.tokens,
+          ]);
           if (action.expect === "success") {
-            if (action.action == "setTokensHashToTokens(address[])") {
-              await expect(registryContract.connect(signers[action.executor])[action.action](tokensHash))
-                .to.emit(registryContract, "LogTokensToTokensHash")
-                .withArgs(generateTokenHash(tokensHash), callers[action.executor]);
-            } else {
-              await registryContract.connect(signers[action.executor])[action.action](tokensHash);
-            }
+            await registryContract.connect(signers[action.executor])[action.action](tokenLists);
           } else {
             await expect(
-              registryContract.connect(signers[action.executor])[action.action](tokensHash),
+              registryContract.connect(signers[action.executor])[action.action](tokenLists),
             ).to.be.revertedWith(action.message);
           }
         }
-        assert.isDefined(tokensHash, `args is wrong in ${action.action} testcase`);
+        assert.isDefined(tokensDetails, `args is wrong in ${action.action} testcase`);
+        break;
+      }
+      case "setTokensHashToTokens(bytes32,address[])": {
+        const { tokens, chainId }: ARGUMENTS = action.args;
+        if (tokens && chainId) {
+          const tokensHash = generateTokenHash(tokens, chainId);
+          if (action.expect === "success") {
+            await expect(registryContract.connect(signers[action.executor])[action.action](tokensHash, tokens))
+              .to.emit(registryContract, "LogTokensToTokensHash")
+              .withArgs(tokensHash, callers[action.executor]);
+          } else {
+            await expect(
+              registryContract.connect(signers[action.executor])[action.action](tokensHash, tokens),
+            ).to.be.revertedWith(action.message);
+          }
+        }
+        assert.isDefined(tokens, `args is wrong in ${action.action} testcase`);
+        assert.isDefined(chainId, `args is wrong in ${action.action} testcase`);
+        break;
+      }
+      case "approveTokenAndMapToTokensHash(bytes32,address[])": {
+        const { tokens, chainId }: ARGUMENTS = action.args;
+        if (tokens && chainId) {
+          const tokensHash = generateTokenHash(tokens, chainId);
+          if (action.expect === "success") {
+            await registryContract.connect(signers[action.executor])[action.action](tokensHash, tokens);
+          } else {
+            await expect(
+              registryContract.connect(signers[action.executor])[action.action](tokensHash, tokens),
+            ).to.be.revertedWith(action.message);
+          }
+        }
+        assert.isDefined(tokens, `args is wrong in ${action.action} testcase`);
+        assert.isDefined(chainId, `args is wrong in ${action.action} testcase`);
         break;
       }
       case "addRiskProfile(uint256[],string[],string[],bool[],(uint8,uint8)[])": {
@@ -1227,18 +1260,21 @@ const REGISTRY_TESTING_DEFAULT_DATA: TESTING_DEFAULT_DATA[] = [
     ],
   },
   {
-    setFunction: "setTokensHashToTokens(address[])",
-    input: [["0x6b175474e89094c44da98b954eedeac495271d0f"]],
+    setFunction: "setTokensHashToTokens(bytes32,address[])",
+    input: [
+      "0x0b16da4cd290fb0e4a2c068617d40e90b07e324269ead8af64ba45a1f7e51ce5",
+      ["0x6b175474e89094c44da98b954eedeac495271d0f"],
+    ],
     getFunction: [
       {
         name: "getTokensHashToTokenList(bytes32)",
-        input: ["0x50440c05332207ba7b1bb0dcaf90d1864e3aa44dd98a51f88d0796a7623f0c80"],
+        input: ["0x0b16da4cd290fb0e4a2c068617d40e90b07e324269ead8af64ba45a1f7e51ce5"],
         output: ["0x6B175474E89094C44Da98b954EedeAC495271d0F"],
       },
       {
         name: "getTokensHashByIndex(uint256)",
         input: ["0"],
-        output: ["0x50440c05332207ba7b1bb0dcaf90d1864e3aa44dd98a51f88d0796a7623f0c80"],
+        output: ["0x0b16da4cd290fb0e4a2c068617d40e90b07e324269ead8af64ba45a1f7e51ce5"],
       },
     ],
   },

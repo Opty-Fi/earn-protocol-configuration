@@ -79,3 +79,12 @@ export type TOKENS_DATA = {
     pair: boolean;
   };
 };
+
+export type NETWORKS_TYPE = "ethereum" | "polygon";
+
+export type CHAINID_NETWORKS = {
+  [chainID: string]: {
+    name: string;
+    network: NETWORKS_TYPE;
+  };
+};

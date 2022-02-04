@@ -161,6 +161,19 @@ interface IRegistry {
     function rateLiquidityPool(address _pool, uint8 _rate) external;
 
     /**
+     * @notice Approve and set multiple pool rates and liquidity pools provided
+     * @param _poolRates List of pool rates ([_pool, _rate]) to set
+     */
+    function approveAndRateLiquidityPool(DataTypes.PoolRate[] memory _poolRates) external;
+
+    /**
+     * @notice Approve and set the pool rate for the liquidity pool provided
+     * @param _pool liquidityPool to map with its rating
+     * @param _rate rate for the liquidityPool provided
+     */
+    function approveAndRateLiquidityPool(address _pool, uint8 _rate) external;
+
+    /**
      * @notice Approves multiple credit pools in one transaction
      * @param _pools List of pools for approval to be considered as creditPool
      */
@@ -218,15 +231,23 @@ interface IRegistry {
 
     /**
      * @notice Sets token pair to its keccak256 hash
-     * @param _tokensHashDetail Tokens hash detail
+     * @param _tokensHash Hash of tokens
+     * @param _tokens List of tokens
      */
-    function setTokensHashToTokens(DataTypes.TokensHashDetail memory _tokensHashDetail) external;
+    function setTokensHashToTokens(bytes32 _tokensHash, address[] memory _tokens) external;
 
     /**
-     * @notice Approve token and map tokens hash
-     * @param _tokensHashDetail Tokens hash detail
+     * @notice Approve tokens and map tokens hash
+     * @param _tokensHash Hash of tokens
+     * @param _tokens List of tokens
      */
-    function approveTokenAndMapToTokensHash(DataTypes.TokensHashDetail memory _tokensHashDetail) external;
+    function approveTokenAndMapToTokensHash(bytes32 _tokensHash, address[] memory _tokens) external;
+
+    /**
+     * @notice Approve tokens and map multiple tokens'hashes
+     * @param _tokensHashesDetails List of mulitple tokens' hashes details
+     */
+    function approveTokenAndMapToTokensHash(DataTypes.TokensHashDetail[] memory _tokensHashesDetails) external;
 
     /**
      * @notice Set the withdrawal fee's range

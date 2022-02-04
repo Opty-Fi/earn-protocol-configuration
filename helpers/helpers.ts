@@ -51,7 +51,7 @@ export async function executeFunc(contract: Contract, executer: Signer, funcAbi:
 
 export function generateStrategyHash(strategy: STRATEGY_DATA[], tokenAddress: string): string {
   const strategyStepsHash: string[] = [];
-  const tokensHash = generateTokenHash([tokenAddress]);
+  const tokensHash = generateTokenHash([tokenAddress], "0x1");
   for (let index = 0; index < strategy.length; index++) {
     strategyStepsHash[index] = getSoliditySHA3Hash(
       ["address", "address", "bool"],
@@ -79,8 +79,8 @@ export function isAddress(address: string): boolean {
 }
 
 //  function to generate the token/list of tokens's hash
-export function generateTokenHash(addresses: string[]): string {
-  return getSoliditySHA3Hash(["address[]"], [addresses]);
+export function generateTokenHash(addresses: string[], chainId: string): string {
+  return getSoliditySHA3Hash(["address[]", "string"], [addresses, chainId]);
 }
 
 export async function deploySmockContract(smock: any, contractName: any, args: any[]): Promise<MockContract<Contract>> {

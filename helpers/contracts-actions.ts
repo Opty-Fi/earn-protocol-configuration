@@ -4,7 +4,7 @@ import { expect } from "chai";
 import { STRATEGY_DATA } from "./type";
 import { executeFunc, generateStrategyHash, generateStrategyStep, generateTokenHash, isAddress } from "./helpers";
 import { RISK_PROFILES } from "./constants/contracts-data";
-
+import { NETWORKS_ID } from "./constants/network";
 export async function approveLiquidityPoolAndMapAdapter(
   owner: Signer,
   registryContract: Contract,
@@ -55,6 +55,7 @@ export async function approveAndSetTokenHashToToken(
   owner: Signer,
   registryContract: Contract,
   tokenAddress: string,
+  chainId: string,
 ): Promise<void> {
   try {
     const isApprovedToken = await registryContract.isApprovedToken(tokenAddress);
@@ -63,8 +64,9 @@ export async function approveAndSetTokenHashToToken(
         .to.emit(registryContract, "LogToken")
         .withArgs(getAddress(tokenAddress), true, await owner.getAddress());
     }
-    if (!(await isSetTokenHash(registryContract, [tokenAddress]))) {
-      await executeFunc(registryContract, owner, "setTokensHashToTokens(address[])", [[tokenAddress]]);
+    if (!(await isSetTokenHash(registryContract, [tokenAddress], chainId))) {
+      const tokenHash = generateTokenHash([tokenAddress], chainId);
+      await executeFunc(registryContract, owner, "setTokensHashToTokens((bytes32,address[]))", [[tokenHash, chainId]]);
     }
   } catch (error) {
     console.error(`contract-actions#approveAndSetTokenHashToToken : `, error);
@@ -77,6 +79,7 @@ export async function approveAndSetTokenHashToTokens(
   registryContract: Contract,
   tokenAddresses: string[],
   setTokenHashForEach: boolean,
+  chainId: string,
 ): Promise<void> {
   try {
     const approveTokenLists: string[] = [];
@@ -87,7 +90,7 @@ export async function approveAndSetTokenHashToTokens(
         approveTokenLists.push(tokenAddress);
       }
       if (setTokenHashForEach) {
-        if (!(await isSetTokenHash(registryContract, [tokenAddress]))) {
+        if (!(await isSetTokenHash(registryContract, [tokenAddress], chainId))) {
           setTokenHashLists.push(tokenAddress);
         }
       }
@@ -96,12 +99,13 @@ export async function approveAndSetTokenHashToTokens(
       await executeFunc(registryContract, owner, "approveToken(address[])", [approveTokenLists]);
     }
     if (setTokenHashLists.length > 0) {
-      await executeFunc(registryContract, owner, "setTokensHashToTokens(address[][])", [
-        setTokenHashLists.map(addr => [addr]),
-      ]);
+      const tokens = setTokenHashLists.map(addr => [generateTokenHash([addr], chainId), [addr]]);
+      await executeFunc(registryContract, owner, "setTokensHashToTokens((bytes32,address[])[])", [tokens]);
     } else {
-      if (!(await isSetTokenHash(registryContract, tokenAddresses))) {
-        await executeFunc(registryContract, owner, "setTokensHashToTokens(address[][])", [[tokenAddresses]]);
+      if (!(await isSetTokenHash(registryContract, tokenAddresses, chainId))) {
+        await executeFunc(registryContract, owner, "setTokensHashToTokens((bytes32,address[])[])", [
+          [[generateTokenHash(tokenAddresses, chainId), tokenAddresses]],
+        ]);
       }
     }
   } catch (error) {
@@ -117,7 +121,7 @@ export async function setStrategy(
   investStrategyRegistry: Contract,
 ): Promise<string> {
   const strategySteps: [string, string, boolean][] = generateStrategyStep(strategy);
-  const tokensHash = generateTokenHash(tokens);
+  const tokensHash = generateTokenHash(tokens, "0x1");
   const strategyHash = generateStrategyHash(strategy, tokens[0]);
   await expect(
     investStrategyRegistry.connect(signer)["setStrategy(bytes32,(address,address,bool)[])"](tokensHash, strategySteps),
@@ -138,7 +142,7 @@ export async function setBestStrategy(
 ): Promise<string> {
   const strategyHash = generateStrategyHash(strategy, tokenAddress);
 
-  const tokenHash = generateTokenHash([tokenAddress]);
+  const tokenHash = generateTokenHash([tokenAddress], "0x1");
 
   const strategyDetail = await investStrategyRegistry.getStrategy(strategyHash);
 
@@ -165,8 +169,12 @@ export async function unpauseVault(
     .withArgs(vaultAddr, unpaused, await owner.getAddress());
 }
 
-export async function isSetTokenHash(registryContract: Contract, tokenAddresses: string[]): Promise<boolean> {
-  const tokensHash = generateTokenHash(tokenAddresses);
+export async function isSetTokenHash(
+  registryContract: Contract,
+  tokenAddresses: string[],
+  chainId: string,
+): Promise<boolean> {
+  const tokensHash = generateTokenHash(tokenAddresses, chainId);
   const tokenAddressesInContract = await registryContract.getTokensHashToTokenList(tokensHash);
   if (tokenAddressesInContract.length === 0) {
     return false;

@@ -227,6 +227,24 @@ contract Registry is IRegistry, ModifiersController {
     /**
      * @inheritdoc IRegistry
      */
+    function approveAndRateLiquidityPool(DataTypes.PoolRate[] memory _poolRates) external override onlyRiskOperator {
+        for (uint256 _i = 0; _i < _poolRates.length; _i++) {
+            _approveLiquidityPool(_poolRates[_i].pool);
+            _rateLiquidityPool(_poolRates[_i].pool, _poolRates[_i].rate);
+        }
+    }
+
+    /**
+     * @inheritdoc IRegistry
+     */
+    function approveAndRateLiquidityPool(address _pool, uint8 _rate) external override onlyRiskOperator {
+        _approveLiquidityPool(_pool);
+        _rateLiquidityPool(_pool, _rate);
+    }
+
+    /**
+     * @inheritdoc IRegistry
+     */
     function approveCreditPool(address[] memory _pools) external override onlyOperator {
         for (uint256 _i = 0; _i < _pools.length; _i++) {
             _approveCreditPool(_pools[_i]);
@@ -291,15 +309,31 @@ contract Registry is IRegistry, ModifiersController {
     /**
      * @inheritdoc IRegistry
      */
-    function approveTokenAndMapToTokensHash(DataTypes.TokensHashDetail memory _tokensHashDetail)
+    function approveTokenAndMapToTokensHash(DataTypes.TokensHashDetail[] memory _tokensHashesDetails)
         external
         override
         onlyOperator
     {
-        for (uint256 _i = 0; _i < _tokensHashDetail.tokens.length; _i++) {
-            _approveToken(_tokensHashDetail.tokens[_i]);
+        for (uint256 _i = 0; _i < _tokensHashesDetails.length; _i++) {
+            for (uint256 _j = 0; _j < _tokensHashesDetails[_i].tokens.length; _j++) {
+                _approveToken(_tokensHashesDetails[_i].tokens[_j]);
+            }
+            _setTokensHashToTokens(_tokensHashesDetails[_i].tokensHash, _tokensHashesDetails[_i].tokens);
         }
-        _setTokensHashToTokens(_tokensHashDetail);
+    }
+
+    /**
+     * @inheritdoc IRegistry
+     */
+    function approveTokenAndMapToTokensHash(bytes32 _tokensHash, address[] memory _tokens)
+        external
+        override
+        onlyOperator
+    {
+        for (uint256 _i = 0; _i < _tokens.length; _i++) {
+            _approveToken(_tokens[_i]);
+        }
+        _setTokensHashToTokens(_tokensHash, _tokens);
     }
 
     /**
@@ -312,15 +346,16 @@ contract Registry is IRegistry, ModifiersController {
     {
         for (uint256 _i = 0; _i < _tokensHashesDetails.length; _i++) {
             require(_areTokensApproved(_tokensHashesDetails[_i].tokens), "!tokens");
-            _setTokensHashToTokens(_tokensHashesDetails[_i]);
+            _setTokensHashToTokens(_tokensHashesDetails[_i].tokensHash, _tokensHashesDetails[_i].tokens);
         }
     }
 
     /**
      * @inheritdoc IRegistry
      */
-    function setTokensHashToTokens(DataTypes.TokensHashDetail memory _tokensHashDetail) external override onlyOperator {
-        _setTokensHashToTokens(_tokensHashDetail);
+    function setTokensHashToTokens(bytes32 _tokensHash, address[] memory _tokens) external override onlyOperator {
+        require(_areTokensApproved(_tokens), "!tokens");
+        _setTokensHashToTokens(_tokensHash, _tokens);
     }
 
     /**
@@ -788,14 +823,12 @@ contract Registry is IRegistry, ModifiersController {
         emit LogLiquidityPoolToAdapter(_pool, _adapter, msg.sender);
     }
 
-    function _setTokensHashToTokens(DataTypes.TokensHashDetail memory _tokensHashDetail) internal {
-        require(_isNewTokensHash(_tokensHashDetail.tokensHash), "!_isNewTokensHash");
-        tokensHashIndexes.push(_tokensHashDetail.tokensHash);
-        tokensHashToTokens[_tokensHashDetail.tokensHash].index = tokensHashIndexes.length - 1;
-        for (uint256 _i = 0; _i < _tokensHashDetail.tokens.length; _i++) {
-            tokensHashToTokens[_tokensHashDetail.tokensHash].tokens.push(_tokensHashDetail.tokens[_i]);
-        }
-        emit LogTokensToTokensHash(_tokensHashDetail.tokensHash, msg.sender);
+    function _setTokensHashToTokens(bytes32 _tokensHash, address[] memory _tokens) internal {
+        require(_isNewTokensHash(_tokensHash), "!_isNewTokensHash");
+        tokensHashIndexes.push(_tokensHash);
+        tokensHashToTokens[_tokensHash].index = tokensHashIndexes.length - 1;
+        tokensHashToTokens[_tokensHash].tokens = _tokens;
+        emit LogTokensToTokensHash(_tokensHash, msg.sender);
     }
 
     function _addRiskProfile(
