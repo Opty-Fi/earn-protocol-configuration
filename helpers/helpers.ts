@@ -3,6 +3,7 @@ import { Artifact, HardhatRuntimeEnvironment } from "hardhat/types";
 import { STRATEGY_DATA } from "./type";
 import { getSoliditySHA3Hash } from "./utils";
 import { MockContract } from "@defi-wonderland/smock";
+import { NETWORKS_ID } from "./constants/network";
 
 export async function deployContract(
   hre: HardhatRuntimeEnvironment,
@@ -51,7 +52,7 @@ export async function executeFunc(contract: Contract, executer: Signer, funcAbi:
 
 export function generateStrategyHash(strategy: STRATEGY_DATA[], tokenAddress: string): string {
   const strategyStepsHash: string[] = [];
-  const tokensHash = generateTokenHash([tokenAddress], "0x1");
+  const tokensHash = generateTokenHash([tokenAddress], NETWORKS_ID.MAINNET);
   for (let index = 0; index < strategy.length; index++) {
     strategyStepsHash[index] = getSoliditySHA3Hash(
       ["address", "address", "bool"],

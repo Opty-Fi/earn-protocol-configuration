@@ -4,6 +4,8 @@ import { expect } from "chai";
 import { STRATEGY_DATA } from "./type";
 import { executeFunc, generateStrategyHash, generateStrategyStep, generateTokenHash, isAddress } from "./helpers";
 import { RISK_PROFILES } from "./constants/contracts-data";
+import { NETWORKS_ID } from "./constants/network";
+
 export async function approveLiquidityPoolAndMapAdapter(
   owner: Signer,
   registryContract: Contract,
@@ -123,7 +125,7 @@ export async function setStrategy(
   investStrategyRegistry: Contract,
 ): Promise<string> {
   const strategySteps: [string, string, boolean][] = generateStrategyStep(strategy);
-  const tokensHash = generateTokenHash(tokens, "0x1");
+  const tokensHash = generateTokenHash(tokens, NETWORKS_ID.MAINNET);
   const strategyHash = generateStrategyHash(strategy, tokens[0]);
   await expect(
     investStrategyRegistry.connect(signer)["setStrategy(bytes32,(address,address,bool)[])"](tokensHash, strategySteps),
@@ -144,7 +146,7 @@ export async function setBestStrategy(
 ): Promise<string> {
   const strategyHash = generateStrategyHash(strategy, tokenAddress);
 
-  const tokenHash = generateTokenHash([tokenAddress], "0x1");
+  const tokenHash = generateTokenHash([tokenAddress], NETWORKS_ID.MAINNET);
 
   const strategyDetail = await investStrategyRegistry.getStrategy(strategyHash);
 

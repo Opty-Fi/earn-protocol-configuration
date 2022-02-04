@@ -3,6 +3,7 @@ import { isAddress, generateTokenHash } from "../../helpers/helpers";
 import { RISK_PROFILES } from "../../helpers/constants/contracts-data";
 import { ESSENTIAL_CONTRACTS } from "../../helpers/constants/essential-contracts-name";
 import { SET_BEST_STRATEGY } from "../task-names";
+import { NETWORKS_ID } from "../../helpers/constants/network";
 
 task(SET_BEST_STRATEGY, "Set best strategy")
   .addParam("token", "the address of token", "", types.string)
@@ -37,7 +38,7 @@ task(SET_BEST_STRATEGY, "Set best strategy")
 
     try {
       const strategyProvider = await hre.ethers.getContractAt(ESSENTIAL_CONTRACTS.STRATEGY_PROVIDER, strategyprovider);
-      const tokensHash = generateTokenHash([token], "0x1");
+      const tokensHash = generateTokenHash([token], NETWORKS_ID.MAINNET);
       console.log(`Invest step strategy Hash : ${strategyhash}`);
       if (isdefault) {
         await strategyProvider.setBestDefaultStrategy(riskprofilecode, tokensHash, strategyhash);
