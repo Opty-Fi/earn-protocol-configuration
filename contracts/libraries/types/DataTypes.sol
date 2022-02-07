@@ -200,7 +200,7 @@ library DataTypes {
      * @param withdrawalFeePct withdrawal fee in percentage basis points
      * @param userDepositCapUT Maximum amount in underlying token allowed to be deposited by user
      * @param minimumDepositValueUT Minimum deposit value in underlying token required
-     * @param totalValueLockedLimitUT Maximum TVL in underlying allowed for the vault
+     * @param totalValueLockedLimitUT Maximum TVL in underlying token allowed for the vault
      */
     struct VaultConfigurationV2 {
         bool discontinued;
