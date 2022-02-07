@@ -68,7 +68,7 @@ contract RiskManager is IRiskManager, RiskManagerStorage, Modifiers {
 
     function _getBestStrategy(
         uint256 _riskProfileCode,
-        bytes32 _tokensHash,
+        bytes32 _underlyingTokensHash,
         DataTypes.StrategyConfiguration memory _strategyConfiguration
     ) internal view returns (DataTypes.StrategyStep[] memory) {
         DataTypes.RiskProfile memory _riskProfileStruct = registryContract.getRiskProfile(_riskProfileCode);
@@ -77,12 +77,12 @@ contract RiskManager is IRiskManager, RiskManagerStorage, Modifiers {
         DataTypes.StrategyStep[] memory _strategySteps =
             IStrategyProvider(_strategyConfiguration.strategyProvider).getRpToTokenToBestStrategy(
                 _riskProfileCode,
-                _tokensHash
+                _underlyingTokensHash
             );
         if (_strategySteps.length == 0 || _isInValidStrategy(_strategySteps, _riskProfileStruct)) {
             _strategySteps = IStrategyProvider(_strategyConfiguration.strategyProvider).getRpToTokenToDefaultStrategy(
                 _riskProfileCode,
-                _tokensHash
+                _underlyingTokensHash
             );
         }
 

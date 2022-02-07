@@ -47,15 +47,15 @@ contract StrategyProvider is IStrategyProvider, Modifiers {
      */
     function setBestStrategy(
         uint256 _riskProfileCode,
-        bytes32 _tokensHash,
+        bytes32 _underlyingTokensHash,
         DataTypes.StrategyStep[] memory _strategySteps
     ) external override onlyStrategyOperator {
         DataTypes.RiskProfile memory _riskProfileStruct = registryContract.getRiskProfile(_riskProfileCode);
         require(_riskProfileStruct.exists, "!Rp_Exists");
-        uint256 _index = registryContract.getTokensHashIndexByHash(_tokensHash);
-        require(registryContract.getTokensHashByIndex(_index) == _tokensHash, "!TokenHashExists");
+        uint256 _index = registryContract.getTokensHashIndexByHash(_underlyingTokensHash);
+        require(registryContract.getTokensHashByIndex(_index) == _underlyingTokensHash, "!TokenHashExists");
         for (uint256 _i = 0; _i < _strategySteps.length; _i++) {
-            rpToTokenToBestStrategy[_riskProfileCode][_tokensHash].push(_strategySteps[_i]);
+            rpToTokenToBestStrategy[_riskProfileCode][_underlyingTokensHash].push(_strategySteps[_i]);
         }
     }
 
@@ -64,15 +64,15 @@ contract StrategyProvider is IStrategyProvider, Modifiers {
      */
     function setBestDefaultStrategy(
         uint256 _riskProfileCode,
-        bytes32 _tokensHash,
+        bytes32 _underlyingTokensHash,
         DataTypes.StrategyStep[] memory _strategySteps
     ) external override onlyStrategyOperator {
         DataTypes.RiskProfile memory _riskProfileStruct = registryContract.getRiskProfile(_riskProfileCode);
         require(_riskProfileStruct.exists, "!Rp_Exists");
-        uint256 _index = registryContract.getTokensHashIndexByHash(_tokensHash);
-        require(registryContract.getTokensHashByIndex(_index) == _tokensHash, "!TokenHashExists");
+        uint256 _index = registryContract.getTokensHashIndexByHash(_underlyingTokensHash);
+        require(registryContract.getTokensHashByIndex(_index) == _underlyingTokensHash, "!TokenHashExists");
         for (uint256 _i = 0; _i < _strategySteps.length; _i++) {
-            rpToTokenToDefaultStrategy[_riskProfileCode][_tokensHash].push(_strategySteps[_i]);
+            rpToTokenToDefaultStrategy[_riskProfileCode][_underlyingTokensHash].push(_strategySteps[_i]);
         }
     }
 
@@ -100,36 +100,36 @@ contract StrategyProvider is IStrategyProvider, Modifiers {
     /**
      * @inheritdoc IStrategyProvider
      */
-    function getVaultRewardTokenHashToVaultRewardTokenStrategy(bytes32 _tokensHash)
+    function getVaultRewardTokenHashToVaultRewardTokenStrategy(bytes32 _vaultRewardTokenHash)
         public
         view
         override
         returns (DataTypes.VaultRewardStrategy memory)
     {
-        return vaultRewardTokenHashToVaultRewardTokenStrategy[_tokensHash];
+        return vaultRewardTokenHashToVaultRewardTokenStrategy[_vaultRewardTokenHash];
     }
 
     /**
      * @inheritdoc IStrategyProvider
      */
-    function getRpToTokenToBestStrategy(uint256 _riskProfileCode, bytes32 _tokensHash)
+    function getRpToTokenToBestStrategy(uint256 _riskProfileCode, bytes32 _underlyingTokensHash)
         external
         view
         override
         returns (DataTypes.StrategyStep[] memory)
     {
-        return rpToTokenToBestStrategy[_riskProfileCode][_tokensHash];
+        return rpToTokenToBestStrategy[_riskProfileCode][_underlyingTokensHash];
     }
 
     /**
      * @inheritdoc IStrategyProvider
      */
-    function getRpToTokenToDefaultStrategy(uint256 _riskProfileCode, bytes32 _tokensHash)
+    function getRpToTokenToDefaultStrategy(uint256 _riskProfileCode, bytes32 _underlyingTokensHash)
         external
         view
         override
         returns (DataTypes.StrategyStep[] memory)
     {
-        return rpToTokenToDefaultStrategy[_riskProfileCode][_tokensHash];
+        return rpToTokenToDefaultStrategy[_riskProfileCode][_underlyingTokensHash];
     }
 }
