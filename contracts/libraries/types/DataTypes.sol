@@ -186,6 +186,37 @@ library DataTypes {
     }
 
     /**
+     * @notice Container for combining Vault contract's configuration
+     * @param discontinued If the vault contract is discontinued or not
+     * @param unpaused If the vault contract is paused or unpaused
+     *        Following operations cannot happen if vault is paused:
+     *        - deposit of underlying tokens
+     *        - withdraw and transfer of vault tokens
+     * @param allowWhitelistedState vault's whitelisted state flag
+     * @param vaultFeeAddress address that collects vault deposit and withdraw fee
+     * @param depositFeeFlatUT flat deposit fee in underlying token
+     * @param depositFeePct deposit fee in percentage basis points
+     * @param withdrawalFeeFlatUT flat withdrawal fee in underlying token
+     * @param withdrawalFeePct withdrawal fee in percentage basis points
+     * @param userDepositCapUT Maximum amount in underlying token allowed to be deposited by user
+     * @param minimumDepositValueUT Minimum deposit value in underlying token required
+     * @param totalValueLockedLimitUT Maximum TVL in underlying allowed for the vault
+     */
+    struct VaultConfigurationV2 {
+        bool discontinued;
+        bool unpaused;
+        bool allowWhitelistedState;
+        address vaultFeeAddress;
+        uint256 depositFeeFlatUT;
+        uint256 depositFeePct;
+        uint256 withdrawalFeeFlatUT;
+        uint256 withdrawalFeePct;
+        uint256 userDepositCapUT;
+        uint256 minimumDepositValueUT;
+        uint256 totalValueLockedLimitUT;
+    }
+
+    /**
      * @notice Container for persisting all strategy related contract's configuration
      * @param investStrategyRegistry investStrategyRegistry contract address
      * @param strategyProvider strategyProvider contract address
