@@ -9,7 +9,7 @@ import { ESSENTIAL_CONTRACTS } from "../helpers/constants/essential-contracts-na
 import { TESTING_CONTRACTS } from "../helpers/constants/test-contracts-name";
 import { deployRegistry } from "../helpers/contracts-deployments";
 import scenario from "./scenarios/strategy-provider.json";
-import { approveAndSetTokenHashToTokens, addRiskProfile } from "../helpers/contracts-actions";
+import { approveAndMapTokenHashToTokens, addRiskProfile } from "../helpers/contracts-actions";
 import { TypedStrategies, TypedTokens } from "../helpers/data";
 import { RISK_PROFILES } from "../helpers/constants/contracts-data";
 import { NETWORKS_ID } from "../helpers/constants/network";
@@ -77,12 +77,13 @@ describe(scenario.title, () => {
 
       const COMP_TOKEN = TypedTokens["COMP"];
       vaultRewardTokenHash = generateTokenHash([DUMMY_VAULT_EMPTY_CONTRACT.address, COMP_TOKEN], NETWORKS_ID.MAINNET);
-      await approveAndSetTokenHashToTokens(
+      await approveAndMapTokenHashToTokens(
         signers["owner"],
         registry,
         [DUMMY_VAULT_EMPTY_CONTRACT.address, COMP_TOKEN],
         false,
         NETWORKS_ID.MAINNET,
+        false,
       );
       contracts = { registry, strategyProvider };
     } catch (error: any) {

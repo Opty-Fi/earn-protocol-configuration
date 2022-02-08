@@ -2,16 +2,15 @@ import { task, types } from "hardhat/config";
 
 import { CONTRACTS } from "../helpers/type";
 import { deployEssentialContracts } from "../helpers/contracts-deployments";
-import { APPROVE_TOKENS, SETUP, SET_STRATEGIES } from "./task-names";
+import TASKS from "./task-names";
 import { NETWORKS_ID } from "../helpers/constants/network";
 
-task(SETUP, "Deploy infrastructure, adapter and vault contracts and setup all necessary actions")
+task(TASKS.SETUP.NAME, TASKS.SETUP.DESCRIPTION)
   .addParam("deployedonce", "allow checking whether contracts were deployed previously", false, types.boolean)
   .setAction(async ({ deployedonce }, hre) => {
     console.log(`\tDeploying Infrastructure contracts ...`);
     const [owner] = await hre.ethers.getSigners();
     let essentialContracts: CONTRACTS;
-
     try {
       essentialContracts = await deployEssentialContracts(hre, owner, deployedonce);
       const essentialContractNames = Object.keys(essentialContracts);
@@ -30,17 +29,9 @@ task(SETUP, "Deploy infrastructure, adapter and vault contracts and setup all ne
     console.log("********************");
     console.log(`\tApproving Tokens...`);
 
-    await hre.run(APPROVE_TOKENS, {
+    await hre.run(TASKS.ACTION_TASKS.APPROVE_TOKENS.NAME, {
       registry: essentialContracts["registry"].address,
-      networkHash: NETWORKS_ID.MAINNET,
-    });
-    console.log("********************");
-    console.log(`\tMapping Liquidity Pools to Adapters ...`);
-
-    console.log("********************");
-    console.log(`\t Setting strategies ...`);
-    await hre.run(SET_STRATEGIES, {
-      investstrategyregistry: essentialContracts["investStrategyRegistry"].address,
+      chainid: NETWORKS_ID.MAINNET,
     });
 
     console.log("********************");

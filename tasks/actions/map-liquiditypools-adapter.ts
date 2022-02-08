@@ -5,13 +5,17 @@ import { ESSENTIAL_CONTRACTS } from "../../helpers/constants/essential-contracts
 import { approveLiquidityPoolAndMapAdapters } from "../../helpers/contracts-actions";
 import { TypedDefiPools } from "../../helpers/data/index";
 import { removeDuplicateFromStringArray } from "../../helpers/utils";
-import { MAP_LIQUIDITYPOOLS_ADAPTER } from "../task-names";
+import TASKS from "../task-names";
 
-task(MAP_LIQUIDITYPOOLS_ADAPTER, "Approve and map liquidity pool to adapter")
+task(
+  TASKS.ACTION_TASKS.MAP_LIQUIDITYPOOLS_TO_ADAPTER.NAME,
+  TASKS.ACTION_TASKS.MAP_LIQUIDITYPOOLS_TO_ADAPTER.DESCRIPTION,
+)
   .addParam("adapter", "the address of defi adapter", "", types.string)
   .addParam("adaptername", "the name of defi adapter", "", types.string)
   .addParam("registry", "the address of registry", "", types.string)
-  .setAction(async ({ adapter, registry, adaptername }, hre) => {
+  .addParam("checkapproval", "check whether token is approved", false, types.boolean)
+  .setAction(async ({ adapter, registry, adaptername, checkapproval }, hre) => {
     const [owner] = await hre.ethers.getSigners();
 
     if (registry === "") {
@@ -44,11 +48,17 @@ task(MAP_LIQUIDITYPOOLS_ADAPTER, "Approve and map liquidity pool to adapter")
         Object.keys(TypedDefiPools[adaptername]).map(name => TypedDefiPools[adaptername][name].pool),
       );
       const liquidityPoolsToAdapter = liquidityPools.map(lp => [lp, adapter as string]);
-      await approveLiquidityPoolAndMapAdapters(owner, registryContract, liquidityPools, liquidityPoolsToAdapter);
+      await approveLiquidityPoolAndMapAdapters(
+        owner,
+        registryContract,
+        liquidityPools,
+        liquidityPoolsToAdapter,
+        checkapproval,
+      );
       console.log(`Finished mapping liquidityPools to adapter : ${adaptername}`);
       console.log("------------------");
     } catch (error) {
-      console.error(`${MAP_LIQUIDITYPOOLS_ADAPTER}: `, error);
+      console.error(`${TASKS.ACTION_TASKS.MAP_LIQUIDITYPOOLS_TO_ADAPTER.NAME}: `, error);
       throw error;
     }
   });

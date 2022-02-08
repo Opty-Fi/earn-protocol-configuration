@@ -2,16 +2,17 @@ import { task, types } from "hardhat/config";
 import { isAddress } from "../../helpers/helpers";
 import { ESSENTIAL_CONTRACTS } from "../../helpers/constants/essential-contracts-name";
 import { TypedTokens } from "../../helpers/data";
-import { approveAndSetTokenHashToToken } from "../../helpers/contracts-actions";
+import { approveAndMapTokenHashToToken } from "../../helpers/contracts-actions";
 import { getAddress } from "ethers/lib/utils";
-import { APPROVE_TOKEN } from "../task-names";
+import TASKS from "../task-names";
 import { NETWORKS_ID } from "../../helpers/constants/network";
 
-task(APPROVE_TOKEN, "Approve Token")
+task(TASKS.ACTION_TASKS.APPROVE_TOKEN.NAME, TASKS.ACTION_TASKS.APPROVE_TOKEN.DESCRIPTION)
   .addParam("token", "the address of token", "", types.string)
   .addParam("registry", "the address of registry", "", types.string)
-  .addParam("networkHash", "the hash of network", "", types.string)
-  .setAction(async ({ token, registry, networkHash }, hre) => {
+  .addParam("chainid", "the hash of chainId", "", types.string)
+  .addParam("checkapproval", "check whether token is approved", false, types.boolean)
+  .setAction(async ({ token, registry, chainid, checkapproval }, hre) => {
     const [owner] = await hre.ethers.getSigners();
 
     if (registry === "") {
@@ -30,17 +31,17 @@ task(APPROVE_TOKEN, "Approve Token")
       throw new Error("token address is invalid");
     }
 
-    if (!Object.values(NETWORKS_ID).includes(networkHash)) {
+    if (!Object.values(NETWORKS_ID).includes(chainid)) {
       throw new Error("network is invalid");
     }
 
     if (getAddress(token) !== getAddress(TypedTokens.ETH)) {
       const registryContract = await hre.ethers.getContractAt(ESSENTIAL_CONTRACTS.REGISTRY, registry);
       try {
-        await approveAndSetTokenHashToToken(owner, registryContract, token, networkHash);
+        await approveAndMapTokenHashToToken(owner, registryContract, token, chainid, checkapproval);
         console.log(`Finished approving token: ${token}`);
       } catch (error) {
-        console.error(`${APPROVE_TOKEN}:`, error);
+        console.error(`${TASKS.ACTION_TASKS.APPROVE_TOKEN.NAME}:`, error);
         throw error;
       }
     }

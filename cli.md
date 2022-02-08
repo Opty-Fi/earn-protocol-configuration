@@ -30,26 +30,6 @@ Options:
   --network localhost
 ```
 
-### deploy-invest-strategy-registry
-
-```
-Usage: deploy InvestStrategyRegistry contract
-
-Options:
---registry     required <address> the address of registry
---deployedonce optional <bool>    allow checking whether contracts were deployed previously (default: true)
---network      optional <string>  name of the network provider (default: hardhat)
-```
-
-- Example:
-
-```
-  yarn hardhat deploy-invest-strategy-registry \
-  --registry 0x0000000000000000000000000000000000000000 \
-  --deployedonce false \
-  --network hardhat
-```
-
 ### deploy-risk-manager
 
 ```
@@ -70,27 +50,6 @@ Options:
   --network localhost
 ```
 
-### deploy-strategy-manager
-
-```
-Usage: deploy StrategyManager contract
-
-Options:
-
-Options:
---registry     required <address> the address of registry
---deployedonce optional <bool>    allow checking whether contracts were deployed previously (default: true)
---network      optional <string>  name of the network provider (default: hardhat)
-```
-
-- Example:
-
-```
-  yarn hardhat deploy-strategy-manager \
-  --network localhost \
-  --registry 0x0000000000000000000000000000000000000000 \
-```
-
 ### deploy-strategy-provider
 
 ```
@@ -106,25 +65,6 @@ Options:
 
 ```
   yarn hardhat deploy-strategy-provider \
-  --network localhost \
-  --registry 0x0000000000000000000000000000000000000000
-```
-
-### deploy-apr-oracle
-
-```
-Usage: deploy AprOracle contract
-
-Options:
---registry     required <address> the address of registry
---deployedonce optional <bool>    allow checking whether contracts were deployed previously (default: true)
---network      optional <string>  name of the network provider (default: hardhat)
-```
-
-- Example:
-
-```
-  yarn hardhat deploy-apr-oracle \
   --network localhost \
   --registry 0x0000000000000000000000000000000000000000
 ```
@@ -158,26 +98,6 @@ Options:
 ## Action Tasks
 
 To execute functions in a OptyFi's contract.
-
-### set-strategies
-
-```
-Usage: set all current available strategies with file or default.
-
-Options:
---investstrategyregistry required <address> the address of investStrategyRegistry
---fromfile         required <string>  path to strategies json file
---network          optional <string>  name of the network provider (default: hardhat)
-```
-
-- Example:
-
-```
-  yarn hardhat set-strategies \
-  --network localhost \
-  --investstrategyregistry 0x0000000000000000000000000000000000000000 \
-  --fromfile /path/to/file.json
-```
 
 ### add-risk-profile
 
@@ -213,7 +133,7 @@ Usage: approve spender to use specific amount of erc20 token
 Options:
 --spender   required <address> the address of spender
 --token     required <address> the address of token
---amount    required <number>     the amount of token
+--amount    required <number>  the amount of token
 --network   optional <string>  name of the network provider (default: hardhat)
 ```
 
@@ -233,8 +153,10 @@ Options:
 Usage: approve all available tokens
 
 Options:
---registry required <address> the address of registry
---network  optional <string>  name of the network provider (default: hardhat)
+--registry       required <address> the address of registry
+--chainid        required <string> the hash of chainId
+--network        optional <string>  name of the network provider
+--checkapproval  optional <boolean> check whether tokens are approved
 ```
 
 - Example:
@@ -242,7 +164,9 @@ Options:
 ```
   yarn hardhat approve-tokens \
   --network localhost \
-  --registry 0x0000000000000000000000000000000000000000
+  --registry 0x0000000000000000000000000000000000000000 \
+  --chainid 0x1 \
+  --checkapproval true \
 ```
 
 ### approve-token
@@ -251,9 +175,11 @@ Options:
 Usage: approve a specific token
 
 Options:
---registry required <address> the address of registry
---token    required <address> the address of token
---network  optional <string>  name of the network provider (default: hardhat)
+--registry        required <address> the address of registry
+--chainid         required <string> the hash of chainId
+--token           required <address> the address of token
+--network         optional <string>  name of the network provider
+--checkapproval   optional <boolean> check whether tokens are approved
 ```
 
 - Example:
@@ -262,49 +188,9 @@ Options:
   yarn hardhat approve-token \
   --network localhost \
   --registry 0x0000000000000000000000000000000000000000 \
-  --token 0x0000000000000000000000000000000000000000
-```
-
-### get-strategy
-
-```
-Usage: get a specific strategy
-
-Options:
---strategyhash     required <string>  the keccak256 hash of strategy
---investstrategyregistry required <address> the address of investStrategyRegistry
---token            required <address> the address of token
---network          optional <string>  name of the network provider (default: hardhat)
-```
-
-- Example:
-
-```
-  yarn hardhat get-strategy \
-  --network localhost \
-  --strategyhash 0x0000000000000000000000000000000000000000 \
-  --investstrategyregistry 0x0000000000000000000000000000000000000000 \
-  --token 0x0000000000000000000000000000000000000000
-```
-
-### get-all-strategies
-
-```
-Usage: get all strategies for a specific token
-
-Options:
---investstrategyregistry required <address> the address of investStrategyRegistry
---token            required <address> the address of token
---network          optional <string>  name of the network provider (default: hardhat)
-```
-
-- Example:
-
-```
-  yarn hardhat get-all-strategies \
-  --network localhost \
-  --investstrategyregistry 0x0000000000000000000000000000000000000000 \
-  --token 0x0000000000000000000000000000000000000000
+  --chainid 0x1 \
+  --token 0x0000000000000000000000000000000000000000 \
+  --checkapproval true \
 ```
 
 ### get-best-strategy
@@ -337,12 +223,12 @@ Options:
 Usage: set best strategy or default best strategy
 
 Options:
---token            required <address> the address of token
---riskprofilecode           required <number>  the code of risk profile
---strategyhash     required <string>  the keccak256 hash of strategy
---strategyprovider required <address> the address of strategyProvider
---isdefault        required <bool>    whether set best default strategy or not
---network          optional <string>  name of the network provider (default: hardhat)
+--token             required <address> the address of token
+--riskprofilecode   required <number>  the code of risk profile
+--strategy          required <string>  the strategy steps following the format : address,address,bool-address,address,bool-....
+--strategyprovider  required <address> the address of strategyProvider
+--isdefault         required <bool>    whether set best default strategy or not
+--network           optional <string>  name of the network provider (default: hardhat)
 ```
 
 - Example:
@@ -352,29 +238,9 @@ Options:
   --network localhost \
   --riskprofilecode 1 \
   --strategyprovider 0x0000000000000000000000000000000000000000 \
-  --strategyhash 0x0000000000000000000000000000000000000000 \
+  --strategy 0x0000000000000000000000000000000000000000,0x0000000000000000000000000000000000000000,false-0x0000000000000000000000000000000000000000,0x0000000000000000000000000000000000000000,false \
   --token 0x0000000000000000000000000000000000000000 \
   --isdefault true
-```
-
-### set-invest-strategy-registry
-
-```
-Usage: set vault invest strategy registry in registry contract
-
-Options:
---registry         required <address> the address of registry
---investstrategyregistry required <address> the address of investStrategyRegistry
---network          optional <string>  name of the network provider (default: hardhat)
-```
-
-- Example:
-
-```
-  yarn hardhat set-invest-strategy-registry \
-  --network localhost \
-  --registry 0x0000000000000000000000000000000000000000 \
-  --investstrategyregistry 0x0000000000000000000000000000000000000000
 ```
 
 ### unpause-vault
@@ -406,6 +272,7 @@ Options:
 --registry      required <address> the address of registry
 --liquiditypool required <address> the address of liquidity
 --adapter       required <address> the address of defi adapter
+--checkapproval optional <boolean> check whether liquidity pool is approved
 --network       optional <string>  name of the network provider (default: hardhat)
 ```
 
@@ -416,6 +283,7 @@ yarn hardhat map-liquiditypool-adapter \
 --network localhost \
 --registry 0x09557807C515d758ECc5E1D1aCE7D09aA5842F51  \
 --liquiditypool 0x71B9eC42bB3CB40F017D8AD8011BE8e384a95fa5 \
+--checkapproval true \
 --adapter 0xbf78A1a02e34CF7aCDB8BD9D0f225cB6AA6B85C5
 ```
 
@@ -428,6 +296,7 @@ Options:
 --registry      required <address> the address of registry
 --adaptername   required <address> the name of adapter
 --adapter       required <address> the address of defi adapter
+--checkapproval optional <boolean> check whether liquidity pool are approved
 --network       optional <string>  name of the network provider (default: hardhat)
 ```
 
@@ -438,6 +307,7 @@ yarn hardhat map-liquiditypools-adapter \
 --network localhost \
 --registry 0x09557807C515d758ECc5E1D1aCE7D09aA5842F51  \
 --adaptername CompoundAdapter \
+--checkapproval true \
 --adapter 0xbf78A1a02e34CF7aCDB8BD9D0f225cB6AA6B85C5
 ```
 

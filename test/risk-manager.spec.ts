@@ -5,19 +5,12 @@ import { Signer, Contract } from "ethers";
 import { smock } from "@defi-wonderland/smock";
 import { MOCK_CONTRACTS } from "../helpers/type";
 import { TypedStrategies, TypedTokens } from "../helpers/data";
-import {
-  generateStrategyHash,
-  generateStrategyStep,
-  generateTokenHash,
-  executeFunc,
-  deploySmockContract,
-  deployContract,
-} from "../helpers/helpers";
+import { generateTokenHash, executeFunc, deploySmockContract, deployContract } from "../helpers/helpers";
 import { TESTING_DEPLOYMENT_ONCE } from "../helpers/constants/utils";
 import { ESSENTIAL_CONTRACTS } from "../helpers/constants/essential-contracts-name";
 import { TESTING_CONTRACTS } from "../helpers/constants/test-contracts-name";
 import { deployRegistry, deployRiskManager } from "../helpers/contracts-deployments";
-import { approveAndSetTokenHashToToken, addRiskProfile } from "../helpers/contracts-actions";
+import { approveAndMapTokenHashToToken, addRiskProfile } from "../helpers/contracts-actions";
 import scenario from "./scenarios/risk-manager.json";
 import { RISK_PROFILES } from "../helpers/constants/contracts-data";
 import { NETWORKS_ID } from "../helpers/constants/network";
@@ -63,11 +56,12 @@ describe(scenario.title, () => {
     );
     for (let i = 0; i < usedTokens.length; i++) {
       try {
-        await approveAndSetTokenHashToToken(
+        await approveAndMapTokenHashToToken(
           owner,
           registry,
           TypedTokens[usedTokens[i].toUpperCase()],
           NETWORKS_ID.MAINNET,
+          false,
         );
       } catch (error) {
         continue;

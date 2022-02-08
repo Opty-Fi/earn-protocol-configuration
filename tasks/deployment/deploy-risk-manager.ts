@@ -2,9 +2,9 @@ import { task, types } from "hardhat/config";
 import { deployRiskManager } from "../../helpers/contracts-deployments";
 import { isAddress, executeFunc } from "../../helpers/helpers";
 import { ESSENTIAL_CONTRACTS } from "../../helpers/constants/essential-contracts-name";
-import { DEPLOY_RISK_MANAGER } from "../task-names";
+import TASKS from "../task-names";
 
-task(DEPLOY_RISK_MANAGER, "Deploy Risk Manager")
+task(TASKS.DEPLOYMENT_TASKS.DEPLOY_RISK_MANAGER.NAME, TASKS.DEPLOYMENT_TASKS.DEPLOY_RISK_MANAGER.DESCRIPTION)
   .addParam("registry", "the address of registry", "", types.string)
   .addParam("deployedonce", "allow checking whether contracts were deployed previously", true, types.boolean)
   .setAction(async ({ deployedonce, registry }, hre) => {
@@ -27,7 +27,7 @@ task(DEPLOY_RISK_MANAGER, "Deploy Risk Manager")
       await executeFunc(registryContract, owner, "setRiskManager(address)", [riskManagerContract.address]);
       console.log("Registered RiskManager.");
     } catch (error) {
-      console.error(`${DEPLOY_RISK_MANAGER}: `, error);
+      console.error(`${TASKS.DEPLOYMENT_TASKS.DEPLOY_RISK_MANAGER.NAME}: `, error);
       throw error;
     }
   });

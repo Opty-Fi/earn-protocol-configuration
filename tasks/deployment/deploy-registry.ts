@@ -1,8 +1,8 @@
 import { task, types } from "hardhat/config";
 import { deployRegistry } from "../../helpers/contracts-deployments";
-import { DEPLOY_REGISTRY } from "../task-names";
+import TASKS from "../task-names";
 
-task(DEPLOY_REGISTRY, "Deploy Registry")
+task(TASKS.DEPLOYMENT_TASKS.DEPLOY_REGISTRY.NAME, TASKS.DEPLOYMENT_TASKS.DEPLOY_REGISTRY.DESCRIPTION)
   .addParam("deployedonce", "allow checking whether contracts were deployed previously", true, types.boolean)
   .setAction(async ({ deployedonce }, hre) => {
     try {
@@ -12,7 +12,7 @@ task(DEPLOY_REGISTRY, "Deploy Registry")
       console.log("Finished deploying registry");
       console.log(`Contract registry : ${registry.address}`);
     } catch (error) {
-      console.error(`${DEPLOY_REGISTRY}: `, error);
+      console.error(`${TASKS.DEPLOYMENT_TASKS.DEPLOY_REGISTRY.NAME}: `, error);
       throw error;
     }
   });

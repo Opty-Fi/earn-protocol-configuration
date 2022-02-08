@@ -1,29 +1,41 @@
-export const TASK_ACCOUNTS: string = "accounts";
-export const SETUP: string = "setup";
-
-/** DEPLOYMENT TASKS */
-export const DEPLOY_ERC20: string = "deploy-erc20";
-export const DEPLOY_INFRA: string = "deploy-infra";
-export const DEPLOY_REGISTRY: string = "deploy-registry";
-export const DEPLOY_RISK_MANAGER: string = "deploy-risk-manager";
-export const DEPLOY_STRATEGY_MANAGER: string = "deploy-strategy-manager";
-export const DEPLOY_STRATEGY_PROVIDER: string = "deploy-strategy-provider";
-export const DEPLOY_INVEST_STRATEGY_REGISTRY: string = "deploy-invest-strategy-registry";
-export const DEPLOY_APR_ORACLE = "deploy-apr-oracle";
-
-/** ACTION TASKS */
-export const APPROVE_TOKEN: string = "approve-token";
-export const APPROVE_TOKENS: string = "approve-tokens";
-export const GET_STRATEGIES: string = "get-strategies";
-export const GET_BEST_STRATEGY: string = "get-best-strategy";
-export const MAP_LIQUIDITYPOOL_ADAPTER: string = "map-liquiditypool-adapter";
-export const MAP_LIQUIDITYPOOLS_ADAPTER: string = "map-liquiditypools-adapter";
-export const SET_BEST_STRATEGY: string = "set-best-strategy";
-export const SET_STRATEGIES: string = "set-strategies";
-export const SET_INVEST_STRATEGY_REGISTRY: string = "set-invest-strategy-registry";
-export const UNPAUSE_VAULT: string = "unpause-vault";
-export const ADD_RISK_PROFILE: string = "add-risk-profile";
-export const APPROVE_ERC20: string = "approve-erc20";
-export const BALANCE_OF: string = "balance-of";
-export const GET_ACTION: string = "get-action";
-export const GET_STRATEGY: string = "get-strategy";
+export default {
+  SETUP: {
+    NAME: "setup",
+    DESCRIPTION: "Deploy Registry, HarvestCodeProvider and Adapter contracts and setup all necessary actions",
+  },
+  DEPLOYMENT_TASKS: {
+    DEPLOY_ERC20: { NAME: "deploy-erc20", DESCRIPTION: "Deploy ERC20" },
+    DEPLOY_INFRA: { NAME: "deploy-infra", DESCRIPTION: "Deploy infrastructure contracts" },
+    DEPLOY_REGISTRY: { NAME: "deploy-registry", DESCRIPTION: "Deploy Registry" },
+    DEPLOY_RISK_MANAGER: { NAME: "deploy-risk-manager", DESCRIPTION: "Deploy Risk Manager" },
+    DEPLOY_STRATEGY_PROVIDER: { NAME: "deploy-strategy-provider", DESCRIPTION: "Deploy Strategy Provider" },
+  },
+  ACTION_TASKS: {
+    APPROVE_ERC20: { NAME: "approve-erc20", DESCRIPTION: "Approve erc20 token" },
+    BALANCE_OF: { NAME: "balance-of", DESCRIPTION: "Check token balance of address" },
+    GET_ACTION: { NAME: "get-action", DESCRIPTION: "execute a get action in smart contract" },
+    LIST_ACCOUNTS: { NAME: "list-accounts", DESCRIPTION: "Prints the list of accounts" },
+    APPROVE_TOKEN: { NAME: "approve-token", DESCRIPTION: "Approve a token in Registry" },
+    APPROVE_TOKENS: { NAME: "approve-tokens", DESCRIPTION: "Approve a list of tokens in Registry" },
+    GET_BEST_STRATEGY: { NAME: "get-best-strategy", DESCRIPTION: "Get best strategy for a specific token" },
+    APPROVE_MAP_LIQUIDITYPOOL_TO_ADAPTER: {
+      NAME: "approve-map-lqpool-to-adapter",
+      DESCRIPTION: "approve and map a liquidity pool with a specific adapter",
+    },
+    APPROVE_MAP_LIQUIDITYPOOLS_TO_ADAPTERS: {
+      NAME: "approve-map-lqpools-to-adapters",
+      DESCRIPTION: "approve and map multiple liquidity pools with multiple adapters",
+    },
+    MAP_LIQUIDITYPOOL_TO_ADAPTER: {
+      NAME: "map-liquiditypool-to-adapter",
+      DESCRIPTION: "Map a liquidity pool with a specific adapter",
+    },
+    MAP_LIQUIDITYPOOLS_TO_ADAPTER: {
+      NAME: "map-liquiditypools-to-adapter",
+      DESCRIPTION: "Map a list of liquidity pools with a specific adapter",
+    },
+    SET_BEST_STRATEGY: { NAME: "set-best-strategy", DESCRIPTION: "Set the best strategy for a specific token" },
+    UNPAUSE_VAULT: { NAME: "unpause-vault", DESCRIPTION: "Set pause state for a specific vault" },
+    ADD_RISK_PROFILE: { NAME: "add-risk-profile", DESCRIPTION: "Add a new risk profile" },
+  },
+};
