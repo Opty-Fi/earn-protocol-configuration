@@ -242,4 +242,22 @@ library DataTypes {
         address odefiVaultBooster;
         address operator;
     }
+
+    /**
+     * @notice Container for strategy configuration parameters
+     * @param registryContract address of Registry contract
+     * @param vault address of vault contract
+     * @param underlyingToken address of the underlying token
+     * @param initialStepInputAmount value in lp token or underlying token at initial strategy step
+     * @param internalTransactionIndex index of the internal transaction for a strategy to execute
+     * @param internalTransactionCount count of internal transaction for a strategy to execute
+     */
+    struct StrategyConfigurationParams {
+        address registryContract;
+        address payable vault;
+        address underlyingToken;
+        uint256 initialStepInputAmount;
+        uint256 internalTransactionIndex;
+        uint256 internalTransactionCount;
+    }
 }
