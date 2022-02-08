@@ -16,7 +16,7 @@
       "getActions": [
         {
           "contract": "riskManager",
-          "action": "getBestStrategy(uint256,address[])",
+          "action": "getBestStrategy(uint256,bytes32)",
           "args": {},
           "expectedValue": []
         }
@@ -60,7 +60,7 @@
       "getActions": [
         {
           "contract": "riskManager",
-          "action": "getBestStrategy(uint256,address[])",
+          "action": "getBestStrategy(uint256,bytes32)",
           "args": {},
           "expectedValue": ""
         }
@@ -93,7 +93,7 @@
       "getActions": [
         {
           "contract": "riskManager",
-          "action": "getBestStrategy(uint256,address[])",
+          "action": "getBestStrategy(uint256,bytes32)",
           "args": {},
           "expectedValue": ""
         }
@@ -149,7 +149,7 @@
       "getActions": [
         {
           "contract": "riskManager",
-          "action": "getBestStrategy(uint256,address[])",
+          "action": "getBestStrategy(uint256,bytes32)",
           "args": {},
           "expectedValue": ""
         }
@@ -158,6 +158,14 @@
         {
           "contract": "registry",
           "action": "revokeLiquidityPool(address[])"
+        },
+        {
+          "contract": "strategyProvider",
+          "action": "setBestStrategy(uint256,bytes32,(address,address,bool)[])"
+        },
+        {
+          "contract": "strategyProvider",
+          "action": "setBestDefaultStrategy(uint256,bytes32,(address,address,bool)[])"
         }
       ]
     }

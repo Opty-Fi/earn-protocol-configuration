@@ -39,30 +39,28 @@ contract RiskManager is IRiskManager, RiskManagerStorage, Modifiers {
     /**
      * @inheritdoc IRiskManager
      */
-    function getBestStrategy(uint256 _riskProfileCode, address[] memory _underlyingTokens)
+    function getBestStrategy(uint256 _riskProfileCode, bytes32 _underlyingTokensHash)
         public
         view
         override
         returns (DataTypes.StrategyStep[] memory)
     {
-        bytes32 tokensHash = keccak256(abi.encodePacked(_underlyingTokens));
         DataTypes.StrategyConfiguration memory _strategyConfiguration = registryContract.getStrategyConfiguration();
-        return _getBestStrategy(_riskProfileCode, tokensHash, _strategyConfiguration);
+        return _getBestStrategy(_riskProfileCode, _underlyingTokensHash, _strategyConfiguration);
     }
 
     /**
      * @inheritdoc IRiskManager
      */
-    function getVaultRewardTokenStrategy(address[] memory _underlyingTokens)
+    function getVaultRewardTokenStrategy(bytes32 _underlyingTokensHash)
         public
         view
         override
         returns (DataTypes.VaultRewardStrategy memory)
     {
-        bytes32 _vaultRewardTokenHash = keccak256(abi.encodePacked(_underlyingTokens));
         return
             IStrategyProvider(registryContract.getStrategyProvider()).getVaultRewardTokenHashToVaultRewardTokenStrategy(
-                _vaultRewardTokenHash
+                _underlyingTokensHash
             );
     }
 

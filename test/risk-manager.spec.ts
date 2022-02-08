@@ -93,9 +93,6 @@ describe(scenario.title, () => {
     ]);
 
     let isCheckDefault = false;
-    if (strategy.strategyName !== "DAI-deposit-COMPOUND-cDAI") {
-      continue;
-    }
     describe(strategy.strategyName, () => {
       for (let i = 0; i < scenario.stories.length; i++) {
         const story = scenario.stories[i];
@@ -171,8 +168,8 @@ describe(scenario.title, () => {
           for (let i = 0; i < story.getActions.length; i++) {
             const action = story.getActions[i];
             switch (action.action) {
-              case "getBestStrategy(uint256,address[])": {
-                expect(await riskManager[action.action](riskProfileCode, [TypedTokens[strategy.token]])).to.eql(
+              case "getBestStrategy(uint256,bytes32)": {
+                expect(await riskManager[action.action](riskProfileCode, tokenHash)).to.eql(
                   action.expectedValue !== ""
                     ? action.expectedValue
                     : isCheckDefault
@@ -190,6 +187,15 @@ describe(scenario.title, () => {
                 if (usedLps.length > 0) {
                   await registry[action.action](usedLps);
                 }
+                break;
+              }
+              case "setBestStrategy(uint256,bytes32,(address,address,bool)[])": {
+                contracts[action.contract].getRpToTokenToBestStrategy.returns([]);
+                break;
+              }
+              case "setBestDefaultStrategy(uint256,bytes32,(address,address,bool)[])": {
+                contracts[action.contract].getRpToTokenToDefaultStrategy.returns([]);
+                isCheckDefault = false;
                 break;
               }
             }
