@@ -227,6 +227,28 @@ contract Registry is IRegistry, ModifiersController {
     /**
      * @inheritdoc IRegistry
      */
+    function approveLiquidityPoolAndMapToAdapter(DataTypes.PoolAdapter[] memory _poolAdapters)
+        external
+        override
+        onlyOperator
+    {
+        for (uint256 _i = 0; _i < _poolAdapters.length; _i++) {
+            _approveLiquidityPool(_poolAdapters[_i].pool);
+            _setLiquidityPoolToAdapter(_poolAdapters[_i].pool, _poolAdapters[_i].adapter);
+        }
+    }
+
+    /**
+     * @inheritdoc IRegistry
+     */
+    function approveLiquidityPoolAndMapToAdapter(address _pool, address _adapter) external override onlyOperator {
+        _approveLiquidityPool(_pool);
+        _setLiquidityPoolToAdapter(_pool, _adapter);
+    }
+
+    /**
+     * @inheritdoc IRegistry
+     */
     function approveCreditPool(address[] memory _pools) external override onlyOperator {
         for (uint256 _i = 0; _i < _pools.length; _i++) {
             _approveCreditPool(_pools[_i]);
@@ -291,17 +313,53 @@ contract Registry is IRegistry, ModifiersController {
     /**
      * @inheritdoc IRegistry
      */
-    function setTokensHashToTokens(address[][] memory _setOfTokens) external override onlyOperator {
-        for (uint256 _i = 0; _i < _setOfTokens.length; _i++) {
-            _setTokensHashToTokens(_setOfTokens[_i]);
+    function approveTokenAndMapToTokensHash(DataTypes.TokensHashDetail[] memory _tokensHashesDetails)
+        external
+        override
+        onlyOperator
+    {
+        for (uint256 _i = 0; _i < _tokensHashesDetails.length; _i++) {
+            for (uint256 _j = 0; _j < _tokensHashesDetails[_i].tokens.length; _j++) {
+                _approveToken(_tokensHashesDetails[_i].tokens[_j]);
+            }
+            _setTokensHashToTokens(_tokensHashesDetails[_i].tokensHash, _tokensHashesDetails[_i].tokens);
         }
     }
 
     /**
      * @inheritdoc IRegistry
      */
-    function setTokensHashToTokens(address[] memory _tokens) external override onlyOperator {
-        _setTokensHashToTokens(_tokens);
+    function approveTokenAndMapToTokensHash(bytes32 _tokensHash, address[] memory _tokens)
+        external
+        override
+        onlyOperator
+    {
+        for (uint256 _i = 0; _i < _tokens.length; _i++) {
+            _approveToken(_tokens[_i]);
+        }
+        _setTokensHashToTokens(_tokensHash, _tokens);
+    }
+
+    /**
+     * @inheritdoc IRegistry
+     */
+    function setTokensHashToTokens(DataTypes.TokensHashDetail[] memory _tokensHashesDetails)
+        external
+        override
+        onlyOperator
+    {
+        for (uint256 _i = 0; _i < _tokensHashesDetails.length; _i++) {
+            require(_areTokensApproved(_tokensHashesDetails[_i].tokens), "!tokens");
+            _setTokensHashToTokens(_tokensHashesDetails[_i].tokensHash, _tokensHashesDetails[_i].tokens);
+        }
+    }
+
+    /**
+     * @inheritdoc IRegistry
+     */
+    function setTokensHashToTokens(bytes32 _tokensHash, address[] memory _tokens) external override onlyOperator {
+        require(_areTokensApproved(_tokens), "!tokens");
+        _setTokensHashToTokens(_tokensHash, _tokens);
     }
 
     /**
@@ -769,17 +827,11 @@ contract Registry is IRegistry, ModifiersController {
         emit LogLiquidityPoolToAdapter(_pool, _adapter, msg.sender);
     }
 
-    function _setTokensHashToTokens(address[] memory _tokens) internal {
-        for (uint256 _i = 0; _i < _tokens.length; _i++) {
-            require(tokens[_tokens[_i]], "!tokens");
-        }
-        bytes32 _tokensHash = keccak256(abi.encodePacked(_tokens));
+    function _setTokensHashToTokens(bytes32 _tokensHash, address[] memory _tokens) internal {
         require(_isNewTokensHash(_tokensHash), "!_isNewTokensHash");
         tokensHashIndexes.push(_tokensHash);
         tokensHashToTokens[_tokensHash].index = tokensHashIndexes.length - 1;
-        for (uint256 _i = 0; _i < _tokens.length; _i++) {
-            tokensHashToTokens[_tokensHash].tokens.push(_tokens[_i]);
-        }
+        tokensHashToTokens[_tokensHash].tokens = _tokens;
         emit LogTokensToTokensHash(_tokensHash, msg.sender);
     }
 
@@ -947,5 +999,18 @@ contract Registry is IRegistry, ModifiersController {
             return true;
         }
         return (tokensHashIndexes[tokensHashToTokens[_hash].index] != _hash);
+    }
+
+    /**
+     * @dev Checks approved tokens
+     * @param _tokens List of the token addresses
+     */
+    function _areTokensApproved(address[] memory _tokens) internal view returns (bool) {
+        for (uint256 _i = 0; _i < _tokens.length; _i++) {
+            if (!tokens[_tokens[_i]]) {
+                return false;
+            }
+        }
+        return true;
     }
 }

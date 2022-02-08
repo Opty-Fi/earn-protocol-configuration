@@ -133,6 +133,16 @@ library DataTypes {
         uint256 convert; //  should be in basis eg: 50% means 5000
     }
 
+    /**
+     * @notice Container for token hash details
+     * @param tokensHash the hash of tokens
+     * @param tokens the array of tokens' addresses
+     */
+    struct TokensHashDetail {
+        bytes32 tokensHash;
+        address[] tokens;
+    }
+
     /** @notice Named Constants for defining max exposure state */
     enum MaxExposure { Number, Pct }
 

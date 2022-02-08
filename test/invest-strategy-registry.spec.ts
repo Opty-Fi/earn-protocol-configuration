@@ -8,6 +8,7 @@ import scenario from "./scenarios/invest-strategy-registry.json";
 import { deployContract, deploySmockContract, generateTokenHash, generateStrategyHash } from "../helpers/helpers";
 import { smock } from "@defi-wonderland/smock";
 import { TypedStrategies, TypedTokens } from "../helpers/data";
+import { NETWORKS_ID } from "../helpers/constants/network";
 
 chai.use(solidity);
 
@@ -34,7 +35,7 @@ describe(scenario.title, () => {
     strategy.isBorrow,
   ]);
   const usedToken = TypedTokens["DAI"];
-  const usedTokenHash = generateTokenHash([usedToken]);
+  const usedTokenHash = generateTokenHash([usedToken], NETWORKS_ID.MAINNET);
   const usedStrategyHash = generateStrategyHash(usedStrategy, usedToken);
   before(async () => {
     try {

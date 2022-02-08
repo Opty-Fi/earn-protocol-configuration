@@ -161,6 +161,19 @@ interface IRegistry {
     function rateLiquidityPool(address _pool, uint8 _rate) external;
 
     /**
+     * @notice Approve and map the multiple pools to their adapter
+     * @param _poolAdapters List of [pool, adapter] pairs to set
+     */
+    function approveLiquidityPoolAndMapToAdapter(DataTypes.PoolAdapter[] memory _poolAdapters) external;
+
+    /**
+     * @notice Approve and map the pool to the adapter
+     * @param _pool the address of liquidity pool
+     * @param _adapter the address of adapter
+     */
+    function approveLiquidityPoolAndMapToAdapter(address _pool, address _adapter) external;
+
+    /**
      * @notice Approves multiple credit pools in one transaction
      * @param _pools List of pools for approval to be considered as creditPool
      */
@@ -212,15 +225,29 @@ interface IRegistry {
 
     /**
      * @notice Maps multiple token pairs to their keccak256 hash
-     * @param _setOfTokens List of mulitple token addresses to map with their (paired tokens) hashes
+     * @param _tokensHashesDetails List of mulitple tokens' hashes details
      */
-    function setTokensHashToTokens(address[][] memory _setOfTokens) external;
+    function setTokensHashToTokens(DataTypes.TokensHashDetail[] memory _tokensHashesDetails) external;
 
     /**
      * @notice Sets token pair to its keccak256 hash
-     * @param _tokens List of token addresses to map with their hashes
+     * @param _tokensHash Hash of tokens
+     * @param _tokens List of tokens
      */
-    function setTokensHashToTokens(address[] memory _tokens) external;
+    function setTokensHashToTokens(bytes32 _tokensHash, address[] memory _tokens) external;
+
+    /**
+     * @notice Approve tokens and map tokens hash
+     * @param _tokensHash Hash of tokens
+     * @param _tokens List of tokens
+     */
+    function approveTokenAndMapToTokensHash(bytes32 _tokensHash, address[] memory _tokens) external;
+
+    /**
+     * @notice Approve tokens and map multiple tokens'hashes
+     * @param _tokensHashesDetails List of mulitple tokens' hashes details
+     */
+    function approveTokenAndMapToTokensHash(DataTypes.TokensHashDetail[] memory _tokensHashesDetails) external;
 
     /**
      * @notice Set the withdrawal fee's range
