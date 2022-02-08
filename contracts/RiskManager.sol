@@ -45,8 +45,7 @@ contract RiskManager is IRiskManager, RiskManagerStorage, Modifiers {
         override
         returns (DataTypes.StrategyStep[] memory)
     {
-        DataTypes.StrategyConfiguration memory _strategyConfiguration = registryContract.getStrategyConfiguration();
-        return _getBestStrategy(_riskProfileCode, _underlyingTokensHash, _strategyConfiguration);
+        return _getBestStrategy(_riskProfileCode, _underlyingTokensHash);
     }
 
     /**
@@ -64,13 +63,15 @@ contract RiskManager is IRiskManager, RiskManagerStorage, Modifiers {
             );
     }
 
-    function _getBestStrategy(
-        uint256 _riskProfileCode,
-        bytes32 _underlyingTokensHash,
-        DataTypes.StrategyConfiguration memory _strategyConfiguration
-    ) internal view returns (DataTypes.StrategyStep[] memory) {
+    function _getBestStrategy(uint256 _riskProfileCode, bytes32 _underlyingTokensHash)
+        internal
+        view
+        returns (DataTypes.StrategyStep[] memory)
+    {
         DataTypes.RiskProfile memory _riskProfileStruct = registryContract.getRiskProfile(_riskProfileCode);
         require(_riskProfileStruct.exists, "!Rp_Exists");
+
+        DataTypes.StrategyConfiguration memory _strategyConfiguration = registryContract.getStrategyConfiguration();
 
         DataTypes.StrategyStep[] memory _strategySteps =
             IStrategyProvider(_strategyConfiguration.strategyProvider).getRpToTokenToBestStrategy(
