@@ -1,5 +1,5 @@
 import { task, types } from "hardhat/config";
-import { isAddress, generateTokenHash } from "../../helpers/helpers";
+import { isAddress, generateTokenHashV2 } from "../../helpers/helpers";
 import { RISK_PROFILES } from "../../helpers/constants/contracts-data";
 import { ESSENTIAL_CONTRACTS } from "../../helpers/constants/essential-contracts-name";
 import TASKS from "../task-names";
@@ -16,7 +16,7 @@ import { NETWORKS_ID } from "../../helpers/constants/network";
     ]
  */
 
-task(TASKS.ACTION_TASKS.SET_BEST_STRATEGY.NAME, TASKS.ACTION_TASKS.SET_BEST_STRATEGY.DESCRIPTION)
+task(TASKS.ACTION_TASKS.SET_BEST_STRATEGY_V2.NAME, TASKS.ACTION_TASKS.SET_BEST_STRATEGY_V2.DESCRIPTION)
   .addParam("token", "the address of token", "", types.string)
   .addParam("strategy", "the string of strategy", "", types.string)
   .addParam("riskprofilecode", "the code of risk profile", 0, types.int)
@@ -47,7 +47,7 @@ task(TASKS.ACTION_TASKS.SET_BEST_STRATEGY.NAME, TASKS.ACTION_TASKS.SET_BEST_STRA
     console.log(convertedStrategy);
     try {
       const strategyProvider = await hre.ethers.getContractAt(ESSENTIAL_CONTRACTS.STRATEGY_PROVIDER, strategyprovider);
-      const tokensHash = generateTokenHash([token], NETWORKS_ID.MAINNET);
+      const tokensHash = generateTokenHashV2([token], NETWORKS_ID.MAINNET);
       console.log(`Strategy : ${strategy}`);
       if (isdefault) {
         await strategyProvider.setBestDefaultStrategy(riskprofilecode, tokensHash, convertedStrategy);
@@ -58,6 +58,6 @@ task(TASKS.ACTION_TASKS.SET_BEST_STRATEGY.NAME, TASKS.ACTION_TASKS.SET_BEST_STRA
       }
       console.log("Finished setting best strategy");
     } catch (error: any) {
-      console.error(`${TASKS.ACTION_TASKS.SET_BEST_STRATEGY.NAME}: `, error);
+      console.error(`${TASKS.ACTION_TASKS.SET_BEST_STRATEGY_V2.NAME}: `, error);
     }
   });

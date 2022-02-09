@@ -146,6 +146,9 @@ library DataTypes {
     /** @notice Named Constants for defining max exposure state */
     enum MaxExposure { Number, Pct }
 
+    /** @notice Named Constants for defining default strategy state */
+    enum DefaultStrategyState { Zero, CompoundOrAave }
+
     /**
      * @notice Container for persisting ODEFI contract's state
      * @param index The market's last index

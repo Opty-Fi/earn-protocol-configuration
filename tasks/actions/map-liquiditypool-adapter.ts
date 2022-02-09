@@ -1,7 +1,10 @@
 import { task, types } from "hardhat/config";
 import { isAddress } from "../../helpers/helpers";
 import { ESSENTIAL_CONTRACTS } from "../../helpers/constants/essential-contracts-name";
-import { approveLiquidityPoolAndMapAdapter } from "../../helpers/contracts-actions";
+import {
+  approveLiquidityPoolAndMapAdapterV2,
+  approveLiquidityPoolAndMapAdapter,
+} from "../../helpers/contracts-actions";
 import TASKS from "../task-names";
 
 task(TASKS.ACTION_TASKS.MAP_LIQUIDITYPOOL_TO_ADAPTER.NAME, TASKS.ACTION_TASKS.MAP_LIQUIDITYPOOL_TO_ADAPTER.DESCRIPTION)
@@ -9,7 +12,8 @@ task(TASKS.ACTION_TASKS.MAP_LIQUIDITYPOOL_TO_ADAPTER.NAME, TASKS.ACTION_TASKS.MA
   .addParam("registry", "the address of registry", "", types.string)
   .addParam("liquiditypool", "the address of liquidity", "", types.string)
   .addParam("checkapproval", "check whether token is approved", false, types.boolean)
-  .setAction(async ({ adapter, registry, liquiditypool, checkapproval }, hre) => {
+  .addParam("contractversion", "the version of registry", 1, types.int)
+  .setAction(async ({ adapter, registry, liquiditypool, checkapproval, contractversion }, hre) => {
     const [owner] = await hre.ethers.getSigners();
 
     if (registry === "") {
@@ -36,12 +40,21 @@ task(TASKS.ACTION_TASKS.MAP_LIQUIDITYPOOL_TO_ADAPTER.NAME, TASKS.ACTION_TASKS.MA
       throw new Error("adapter address is invalid");
     }
 
+    if (contractversion !== 1 || contractversion !== 2) {
+      throw new Error("contractversion is invalid");
+    }
+
     try {
-      const registryContract = await hre.ethers.getContractAt(ESSENTIAL_CONTRACTS.REGISTRY, registry);
+      const registryContract = await hre.ethers.getContractAt(
+        contractversion === 1 ? ESSENTIAL_CONTRACTS.REGISTRY : ESSENTIAL_CONTRACTS.REGISTRY_V2,
+        registry,
+      );
       console.log(`Start mapping liquidity pool to adapter.....`);
       console.log(`Adapter: ${adapter}`);
       console.log(`Liquidity pool: ${liquiditypool}`);
-      await approveLiquidityPoolAndMapAdapter(owner, registryContract, adapter, liquiditypool, checkapproval);
+      contractversion === 1
+        ? await approveLiquidityPoolAndMapAdapter(owner, registryContract, adapter, liquiditypool)
+        : await approveLiquidityPoolAndMapAdapterV2(owner, registryContract, adapter, liquiditypool, checkapproval);
       console.log(`Finished mapping liquidity pool to adapter`);
     } catch (error) {
       console.error(`${TASKS.ACTION_TASKS.MAP_LIQUIDITYPOOL_TO_ADAPTER.NAME}: `, error);
