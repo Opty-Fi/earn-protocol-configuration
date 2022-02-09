@@ -18,14 +18,6 @@ export default {
     APPROVE_TOKEN: { NAME: "approve-token", DESCRIPTION: "Approve a token in Registry" },
     APPROVE_TOKENS: { NAME: "approve-tokens", DESCRIPTION: "Approve a list of tokens in Registry" },
     GET_BEST_STRATEGY: { NAME: "get-best-strategy", DESCRIPTION: "Get best strategy for a specific token" },
-    APPROVE_MAP_LIQUIDITYPOOL_TO_ADAPTER: {
-      NAME: "approve-map-lqpool-to-adapter",
-      DESCRIPTION: "approve and map a liquidity pool with a specific adapter",
-    },
-    APPROVE_MAP_LIQUIDITYPOOLS_TO_ADAPTERS: {
-      NAME: "approve-map-lqpools-to-adapters",
-      DESCRIPTION: "approve and map multiple liquidity pools with multiple adapters",
-    },
     MAP_LIQUIDITYPOOL_TO_ADAPTER: {
       NAME: "map-liquiditypool-to-adapter",
       DESCRIPTION: "Map a liquidity pool with a specific adapter",
