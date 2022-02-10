@@ -51,7 +51,6 @@ describe(scenario.title, () => {
         owner,
         [],
       );
-      const DAI_TOKEN = TypedTokens["DAI"];
 
       await addRiskProfile(
         registry,
@@ -63,12 +62,12 @@ describe(scenario.title, () => {
         RISK_PROFILES[1].poolRating,
       );
 
-      await expect(registry["approveToken(address)"](DAI_TOKEN))
+      await expect(registry["approveToken(address)"](usedToken))
         .to.emit(registry, "LogToken")
-        .withArgs(hre.ethers.utils.getAddress(DAI_TOKEN), true, ownerAddress);
-      await expect(registry.connect(owner)["setTokensHashToTokens(address[])"]([DAI_TOKEN]))
+        .withArgs(hre.ethers.utils.getAddress(usedToken), true, ownerAddress);
+      await expect(registry.connect(owner)["setTokensHashToTokens(address[])"]([usedToken]))
         .to.emit(registry, "LogTokensToTokensHash")
-        .withArgs(generateTokenHash([DAI_TOKEN]), ownerAddress);
+        .withArgs(generateTokenHash([usedToken]), ownerAddress);
       const strategyProvider = await deployContract(
         hre,
         ESSENTIAL_CONTRACTS.STRATEGY_PROVIDER,

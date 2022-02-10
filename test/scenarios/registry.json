@@ -991,7 +991,7 @@
       ]
     },
     {
-      "description": "Non-RiskOperator should be able to rate a liquidity pool",
+      "description": "Non-RiskOperator shouldn't be able to rate a liquidity pool",
       "setActions": [
         {
           "action": "rateLiquidityPool(address,uint8)",
