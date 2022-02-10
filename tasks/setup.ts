@@ -12,7 +12,7 @@ task(TASKS.SETUP.NAME, TASKS.SETUP.DESCRIPTION)
     console.log(`\tDeploying Infrastructure contracts ...`);
     const [owner] = await hre.ethers.getSigners();
     let essentialContracts: CONTRACTS;
-    if (contractversion !== 1 || contractversion !== 2) {
+    if (contractversion !== 1 && contractversion !== 2) {
       throw new Error("contractversion is invalid");
     }
     try {

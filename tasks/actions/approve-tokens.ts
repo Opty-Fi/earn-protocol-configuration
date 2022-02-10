@@ -26,7 +26,7 @@ task(TASKS.ACTION_TASKS.APPROVE_TOKENS.NAME, TASKS.ACTION_TASKS.APPROVE_TOKENS.D
       throw new Error("chainid is invalid");
     }
 
-    if (contractversion !== 1 || contractversion !== 2) {
+    if (contractversion !== 1 && contractversion !== 2) {
       throw new Error("contractversion is invalid");
     }
 

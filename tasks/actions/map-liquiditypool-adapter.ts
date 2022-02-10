@@ -40,7 +40,7 @@ task(TASKS.ACTION_TASKS.MAP_LIQUIDITYPOOL_TO_ADAPTER.NAME, TASKS.ACTION_TASKS.MA
       throw new Error("adapter address is invalid");
     }
 
-    if (contractversion !== 1 || contractversion !== 2) {
+    if (contractversion !== 1 && contractversion !== 2) {
       throw new Error("contractversion is invalid");
     }
 

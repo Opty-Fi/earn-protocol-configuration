@@ -46,7 +46,7 @@ task(
       throw new Error("wrong adapter name");
     }
 
-    if (contractversion !== 1 || contractversion !== 2) {
+    if (contractversion !== 1 && contractversion !== 2) {
       throw new Error("contractversion is invalid");
     }
 

@@ -36,7 +36,7 @@ task(TASKS.ACTION_TASKS.APPROVE_TOKEN.NAME, TASKS.ACTION_TASKS.APPROVE_TOKEN.DES
       throw new Error("network is invalid");
     }
 
-    if (contractversion !== 1 || contractversion !== 2) {
+    if (contractversion !== 1 && contractversion !== 2) {
       throw new Error("contractversion is invalid");
     }
 

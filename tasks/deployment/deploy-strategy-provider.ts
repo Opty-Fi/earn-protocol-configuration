@@ -16,7 +16,7 @@ task(TASKS.DEPLOYMENT_TASKS.DEPLOY_STRATEGY_PROVIDER.NAME, TASKS.DEPLOYMENT_TASK
       throw new Error("registry address is invalid");
     }
 
-    if (contractversion !== 1 || contractversion !== 2) {
+    if (contractversion !== 1 && contractversion !== 2) {
       throw new Error("contractversion is invalid");
     }
 

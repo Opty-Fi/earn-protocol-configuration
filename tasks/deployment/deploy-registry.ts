@@ -6,7 +6,7 @@ task(TASKS.DEPLOYMENT_TASKS.DEPLOY_REGISTRY.NAME, TASKS.DEPLOYMENT_TASKS.DEPLOY_
   .addParam("deployedonce", "allow checking whether contracts were deployed previously", true, types.boolean)
   .addParam("contractversion", "the version of registry", 1, types.int)
   .setAction(async ({ deployedonce, contractversion }, hre) => {
-    if (contractversion !== 1 || contractversion !== 2) {
+    if (contractversion !== 1 && contractversion !== 2) {
       throw new Error("contractversion is invalid");
     }
     try {

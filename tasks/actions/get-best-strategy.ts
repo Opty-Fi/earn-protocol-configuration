@@ -33,7 +33,7 @@ task(TASKS.ACTION_TASKS.GET_BEST_STRATEGY.NAME, TASKS.ACTION_TASKS.GET_BEST_STRA
       throw new Error("risk profile is not available");
     }
 
-    if (contractversion !== 1 || contractversion !== 2) {
+    if (contractversion !== 1 && contractversion !== 2) {
       throw new Error("contractversion is invalid");
     }
 
