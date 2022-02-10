@@ -35,6 +35,16 @@
           "contract": "strategyProvider",
           "action": "setBestStrategy(uint256,bytes32,(address,address,bool)[])",
           "args": {
+            "riskProfileCode": "1"
+          },
+          "executor": "strategyOperator",
+          "expect": "success",
+          "message": ""
+        },
+        {
+          "contract": "strategyProvider",
+          "action": "setBestStrategy(uint256,bytes32,(address,address,bool)[])",
+          "args": {
             "riskProfileCode": "1",
             "isSecond": true
           },
@@ -203,6 +213,16 @@
     {
       "description": "[setBestDefaultStrategy] - Should receive an new strategy after setting strategy more than one",
       "setActions": [
+        {
+          "contract": "strategyProvider",
+          "action": "setBestDefaultStrategy(uint256,bytes32,(address,address,bool)[])",
+          "args": {
+            "riskProfileCode": "1"
+          },
+          "executor": "strategyOperator",
+          "expect": "success",
+          "message": ""
+        },
         {
           "contract": "strategyProvider",
           "action": "setBestDefaultStrategy(uint256,bytes32,(address,address,bool)[])",
