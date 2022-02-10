@@ -5,17 +5,6 @@ import { ESSENTIAL_CONTRACTS } from "../../helpers/constants/essential-contracts
 import TASKS from "../task-names";
 import { NETWORKS_ID } from "../../helpers/constants/network";
 
-/**
- * strategy type structure
- *  [
- *    [contract,outputToken,isBorrow]
- *  ]
-  Ex:
-    [
-      ["0x5d3a536E4D6DbD6114cc1Ead35777bAB948E3643","0x5d3a536E4D6DbD6114cc1Ead35777bAB948E3643",true]
-    ]
- */
-
 task(TASKS.ACTION_TASKS.SET_BEST_STRATEGY_V2.NAME, TASKS.ACTION_TASKS.SET_BEST_STRATEGY_V2.DESCRIPTION)
   .addParam("token", "the address of token", "", types.string)
   .addParam("strategy", "the string of strategy", "", types.string)
