@@ -18,9 +18,9 @@ To deploy OptyFi's contracts.
 Usage: deploy Registry contract
 
 Options:
---contractversion      optional <number> the version of registry contract (default: 1)
---deployedonce optional <bool>   allow checking whether contracts were deployed previously (default: true)
---network      optional <string> name of the network provider (default: hardhat)
+--contractversion    optional <number> the version of registry contract (default: 1)
+--deployedonce       optional <bool>   allow checking whether contracts were deployed previously (default: true)
+--network            optional <string> name of the network provider (default: hardhat)
 ```
 
 - Example:
@@ -142,9 +142,9 @@ To execute functions in a OptyFi's contract.
 ```
 Usage: set all current available strategies with file or default.
 Options:
---investstrategyregistry required <address> the address of investStrategyRegistry
---fromfile         required <string>  path to strategies json file
---network          optional <string>  name of the network provider (default: hardhat)
+--investstrategyregistry  required <address> the address of investStrategyRegistry
+--fromfile                required <string>  path to strategies json file
+--network                 optional <string>  name of the network provider (default: hardhat)
 ```
 
 - Example:
@@ -162,12 +162,12 @@ Options:
 Usage: add risk profile in Registry contract
 
 Options:
---registry      required <address> the address of registry
---riskprofilecode          required <number>  the code of risk profile
---canborrow     required <boolean> whether risk profile can borrow or not
---lowestrating  required <number>     the lowest rating
---highestrating required <number>     the highest rating
---network       optional <string>  name of the network provider (default: hardhat)
+--registry            required <address> the address of registry
+--riskprofilecode     required <number>  the code of risk profile
+--canborrow           required <boolean> whether risk profile can borrow or not
+--lowestrating        required <number>     the lowest rating
+--highestrating       required <number>     the highest rating
+--network             optional <string>  name of the network provider (default: hardhat)
 ```
 
 - Example:
@@ -210,11 +210,11 @@ Options:
 Usage: approve all available tokens
 
 Options:
---registry       required <address> the address of registry
---chainid        required <string>  the hash of chainId
---network        optional <string>  name of the network provider
---checkapproval  optional <boolean> check whether tokens are approved
---contractversion        optional <number>  the registry version (default = 1)
+--registry          required <address> the address of registry
+--chainid           required <string>  the hash of chainId
+--network           optional <string>  name of the network provider
+--checkapproval     optional <boolean> check whether tokens are approved
+--contractversion   optional <number>  the registry version (default = 1)
 ```
 
 - Example:
@@ -234,12 +234,12 @@ Options:
 Usage: approve a specific token
 
 Options:
---registry        required <address> the address of registry
---chainid         required <string> the hash of chainId
---token           required <address> the address of token
---network         optional <string>  name of the network provider
---checkapproval   optional <boolean> check whether tokens are approved
---contractversion         optional <number>  the registry version (default = 1)
+--registry            required <address> the address of registry
+--chainid             required <string> the hash of chainId
+--token               required <address> the address of token
+--network             optional <string>  name of the network provider
+--checkapproval       optional <boolean> check whether tokens are approved
+--contractversion     optional <number>  the registry version (default = 1)
 ```
 
 - Example:
@@ -259,10 +259,10 @@ Options:
 ```
 Usage: get a specific strategy
 Options:
---strategyhash     required <string>  the keccak256 hash of strategy
---investstrategyregistry required <address> the address of investStrategyRegistry
---token            required <address> the address of token
---network          optional <string>  name of the network provider (default: hardhat)
+--strategyhash            required <string>  the keccak256 hash of strategy
+--investstrategyregistry  required <address> the address of investStrategyRegistry
+--token                   required <address> the address of token
+--network                 optional <string>  name of the network provider (default: hardhat)
 ```
 
 - Example:
@@ -280,9 +280,9 @@ Options:
 ```
 Usage: get all strategies for a specific token
 Options:
---investstrategyregistry required <address> the address of investStrategyRegistry
---token            required <address> the address of token
---network          optional <string>  name of the network provider (default: hardhat)
+--investstrategyregistry  required <address> the address of investStrategyRegistry
+--token                   required <address> the address of token
+--network                 optional <string>  name of the network provider (default: hardhat)
 ```
 
 - Example:
@@ -304,7 +304,7 @@ Options:
 --riskprofilecode  required <number>  the code of risk profile
 --strategyprovider required <address> the address of strategyProvider
 --isdefault        required <bool>    get default strategy or not
---contractversion          optional <number>  the registry version (default = 1)
+--contractversion  optional <number>  the registry version (default = 1)
 --network          optional <string>  name of the network provider (default: hardhat)
 ```
 
@@ -326,7 +326,7 @@ Options:
 Usage: set best strategy or default best strategy
 Options:
 --token            required <address> the address of token
---riskprofilecode           required <number>  the code of risk profile
+--riskprofilecode  required <number>  the code of risk profile
 --strategyhash     required <string>  the keccak256 hash of strategy
 --strategyprovider required <address> the address of strategyProvider
 --isdefault        required <bool>    whether set best default strategy or not
@@ -376,9 +376,9 @@ Options:
 ```
 Usage: set vault invest strategy registry in registry contract
 Options:
---registry         required <address> the address of registry
---investstrategyregistry required <address> the address of investStrategyRegistry
---network          optional <string>  name of the network provider (default: hardhat)
+--registry                required <address> the address of registry
+--investstrategyregistry  required <address> the address of investStrategyRegistry
+--network                 optional <string>  name of the network provider (default: hardhat)
 ```
 
 - Example:
@@ -416,12 +416,12 @@ Options:
 Usage: approve and map liquidity pool to adapter
 
 Options:
---registry      required <address> the address of registry
---liquiditypool required <address> the address of liquidity
---adapter       required <address> the address of defi adapter
---checkapproval optional <boolean> check whether liquidity pool is approved
---contractversion        optional <number>  the registry version (default = 1)
---network       optional <string>  name of the network provider (default: hardhat)
+--registry            required <address> the address of registry
+--liquiditypool       required <address> the address of liquidity
+--adapter             required <address> the address of defi adapter
+--checkapproval       optional <boolean> check whether liquidity pool is approved
+--contractversion     optional <number>  the registry version (default = 1)
+--network             optional <string>  name of the network provider (default: hardhat)
 ```
 
 - Example:
@@ -442,12 +442,12 @@ yarn hardhat map-liquiditypool-adapter \
 Usage: approve and map liquidity pools to a specific adapter
 
 Options:
---registry      required <address> the address of registry
---adaptername   required <address> the name of adapter
---adapter       required <address> the address of defi adapter
---checkapproval optional <boolean> check whether liquidity pool are approved
---contractversion        optional <number>  the registry version (default = 1)
---network       optional <string>  name of the network provider (default: hardhat)
+--registry          required <address> the address of registry
+--adaptername       required <address> the name of adapter
+--adapter           required <address> the address of defi adapter
+--checkapproval     optional <boolean> check whether liquidity pool are approved
+--contractversion   optional <number>  the registry version (default = 1)
+--network           optional <string>  name of the network provider (default: hardhat)
 ```
 
 - Example:
