@@ -14,7 +14,7 @@ import { RegistryProxy } from "./RegistryProxy.sol";
 
 //  interfaces
 import { IVault } from "./interfaces/opty/IVault.sol";
-import { IRegistry } from "./interfaces/opty/IRegistry.sol";
+import { IRegistryV2 } from "./interfaces/opty/IRegistryV2.sol";
 import { Constants } from "./utils/Constants.sol";
 
 /**
@@ -22,7 +22,7 @@ import { Constants } from "./utils/Constants.sol";
  * @author Opty.fi
  * @dev Contract to persit status of tokens,lpTokens,lp/cp and Vaults
  */
-contract Registry is IRegistry, ModifiersController {
+contract RegistryV2 is IRegistryV2, ModifiersController {
     using Address for address;
     using SafeMath for uint256;
 
@@ -36,7 +36,7 @@ contract Registry is IRegistry, ModifiersController {
     }
 
     /**
-     * @inheritdoc IRegistry
+     * @inheritdoc IRegistryV2
      */
     function setTreasury(address _treasury) external override onlyGovernance {
         require(_treasury != address(0), "!address(0)");
@@ -45,7 +45,7 @@ contract Registry is IRegistry, ModifiersController {
     }
 
     /**
-     * @inheritdoc IRegistry
+     * @inheritdoc IRegistryV2
      */
     function setWhitelistedUser(
         address _vault,
@@ -57,7 +57,7 @@ contract Registry is IRegistry, ModifiersController {
     }
 
     /**
-     * @inheritdoc IRegistry
+     * @inheritdoc IRegistryV2
      */
     function setWhitelistedUsers(
         address _vault,
@@ -71,23 +71,7 @@ contract Registry is IRegistry, ModifiersController {
     }
 
     /**
-     * @inheritdoc IRegistry
-     */
-    function setInvestStrategyRegistry(address _investStrategyRegistry) external override onlyOperator {
-        require(_investStrategyRegistry.isContract(), "!isContract");
-        investStrategyRegistry = _investStrategyRegistry;
-    }
-
-    /**
-     * @inheritdoc IRegistry
-     */
-    function setAPROracle(address _aprOracle) external override onlyOperator {
-        require(_aprOracle.isContract(), "!isContract");
-        aprOracle = _aprOracle;
-    }
-
-    /**
-     * @inheritdoc IRegistry
+     * @inheritdoc IRegistryV2
      */
     function setStrategyProvider(address _strategyProvider) external override onlyOperator {
         require(_strategyProvider.isContract(), "!isContract");
@@ -95,7 +79,7 @@ contract Registry is IRegistry, ModifiersController {
     }
 
     /**
-     * @inheritdoc IRegistry
+     * @inheritdoc IRegistryV2
      */
     function setRiskManager(address _riskManager) external override onlyOperator {
         require(_riskManager.isContract(), "!isContract");
@@ -103,7 +87,7 @@ contract Registry is IRegistry, ModifiersController {
     }
 
     /**
-     * @inheritdoc IRegistry
+     * @inheritdoc IRegistryV2
      */
     function setHarvestCodeProvider(address _harvestCodeProvider) external override onlyOperator {
         require(_harvestCodeProvider.isContract(), "!isContract");
@@ -111,7 +95,7 @@ contract Registry is IRegistry, ModifiersController {
     }
 
     /**
-     * @inheritdoc IRegistry
+     * @inheritdoc IRegistryV2
      */
     function setStrategyManager(address _strategyManager) external override onlyOperator {
         require(_strategyManager.isContract(), "!isContract");
@@ -119,7 +103,7 @@ contract Registry is IRegistry, ModifiersController {
     }
 
     /**
-     * @inheritdoc IRegistry
+     * @inheritdoc IRegistryV2
      */
     function setOPTY(address _opty) external override onlyOperator {
         require(_opty.isContract(), "!isContract");
@@ -127,7 +111,7 @@ contract Registry is IRegistry, ModifiersController {
     }
 
     /**
-     * @inheritdoc IRegistry
+     * @inheritdoc IRegistryV2
      */
     function setOPTYStakingRateBalancer(address _optyStakingRateBalancer) external override onlyOperator {
         require(_optyStakingRateBalancer.isContract(), "!isContract");
@@ -135,7 +119,7 @@ contract Registry is IRegistry, ModifiersController {
     }
 
     /**
-     * @inheritdoc IRegistry
+     * @inheritdoc IRegistryV2
      */
     function setODEFIVaultBooster(address _odefiVaultBooster) external override onlyOperator {
         require(_odefiVaultBooster.isContract(), "!isContract");
@@ -145,7 +129,7 @@ contract Registry is IRegistry, ModifiersController {
     ///@TODO Add staking pool contract addresses
 
     /**
-     * @inheritdoc IRegistry
+     * @inheritdoc IRegistryV2
      */
     function approveToken(address[] memory _tokens) external override onlyOperator {
         for (uint256 _i = 0; _i < _tokens.length; _i++) {
@@ -154,14 +138,14 @@ contract Registry is IRegistry, ModifiersController {
     }
 
     /**
-     * @inheritdoc IRegistry
+     * @inheritdoc IRegistryV2
      */
     function approveToken(address _token) external override onlyOperator {
         _approveToken(_token);
     }
 
     /**
-     * @inheritdoc IRegistry
+     * @inheritdoc IRegistryV2
      */
     function revokeToken(address[] memory _tokens) external override onlyOperator {
         for (uint256 _i = 0; _i < _tokens.length; _i++) {
@@ -170,14 +154,14 @@ contract Registry is IRegistry, ModifiersController {
     }
 
     /**
-     * @inheritdoc IRegistry
+     * @inheritdoc IRegistryV2
      */
     function revokeToken(address _token) external override onlyOperator {
         _revokeToken(_token);
     }
 
     /**
-     * @inheritdoc IRegistry
+     * @inheritdoc IRegistryV2
      */
     function approveLiquidityPool(address[] memory _pools) external override onlyOperator {
         for (uint256 _i = 0; _i < _pools.length; _i++) {
@@ -186,14 +170,14 @@ contract Registry is IRegistry, ModifiersController {
     }
 
     /**
-     * @inheritdoc IRegistry
+     * @inheritdoc IRegistryV2
      */
     function approveLiquidityPool(address _pool) external override onlyOperator {
         _approveLiquidityPool(_pool);
     }
 
     /**
-     * @inheritdoc IRegistry
+     * @inheritdoc IRegistryV2
      */
     function revokeLiquidityPool(address[] memory _pools) external override onlyOperator {
         for (uint256 _i = 0; _i < _pools.length; _i++) {
@@ -202,14 +186,14 @@ contract Registry is IRegistry, ModifiersController {
     }
 
     /**
-     * @inheritdoc IRegistry
+     * @inheritdoc IRegistryV2
      */
     function revokeLiquidityPool(address _pool) external override onlyOperator {
         _revokeLiquidityPool(_pool);
     }
 
     /**
-     * @inheritdoc IRegistry
+     * @inheritdoc IRegistryV2
      */
     function rateLiquidityPool(DataTypes.PoolRate[] memory _poolRates) external override onlyRiskOperator {
         for (uint256 _i = 0; _i < _poolRates.length; _i++) {
@@ -218,14 +202,36 @@ contract Registry is IRegistry, ModifiersController {
     }
 
     /**
-     * @inheritdoc IRegistry
+     * @inheritdoc IRegistryV2
      */
     function rateLiquidityPool(address _pool, uint8 _rate) external override onlyRiskOperator {
         _rateLiquidityPool(_pool, _rate);
     }
 
     /**
-     * @inheritdoc IRegistry
+     * @inheritdoc IRegistryV2
+     */
+    function approveLiquidityPoolAndMapToAdapter(DataTypes.PoolAdapter[] memory _poolAdapters)
+        external
+        override
+        onlyOperator
+    {
+        for (uint256 _i = 0; _i < _poolAdapters.length; _i++) {
+            _approveLiquidityPool(_poolAdapters[_i].pool);
+            _setLiquidityPoolToAdapter(_poolAdapters[_i].pool, _poolAdapters[_i].adapter);
+        }
+    }
+
+    /**
+     * @inheritdoc IRegistryV2
+     */
+    function approveLiquidityPoolAndMapToAdapter(address _pool, address _adapter) external override onlyOperator {
+        _approveLiquidityPool(_pool);
+        _setLiquidityPoolToAdapter(_pool, _adapter);
+    }
+
+    /**
+     * @inheritdoc IRegistryV2
      */
     function approveCreditPool(address[] memory _pools) external override onlyOperator {
         for (uint256 _i = 0; _i < _pools.length; _i++) {
@@ -234,14 +240,14 @@ contract Registry is IRegistry, ModifiersController {
     }
 
     /**
-     * @inheritdoc IRegistry
+     * @inheritdoc IRegistryV2
      */
     function approveCreditPool(address _pool) external override onlyOperator {
         _approveCreditPool(_pool);
     }
 
     /**
-     * @inheritdoc IRegistry
+     * @inheritdoc IRegistryV2
      */
     function revokeCreditPool(address[] memory _pools) external override onlyOperator {
         for (uint256 _i = 0; _i < _pools.length; _i++) {
@@ -250,14 +256,14 @@ contract Registry is IRegistry, ModifiersController {
     }
 
     /**
-     * @inheritdoc IRegistry
+     * @inheritdoc IRegistryV2
      */
     function revokeCreditPool(address _pool) external override onlyOperator {
         _revokeCreditPool(_pool);
     }
 
     /**
-     * @inheritdoc IRegistry
+     * @inheritdoc IRegistryV2
      */
     function rateCreditPool(DataTypes.PoolRate[] memory _poolRates) external override onlyRiskOperator {
         for (uint256 _i = 0; _i < _poolRates.length; _i++) {
@@ -266,14 +272,14 @@ contract Registry is IRegistry, ModifiersController {
     }
 
     /**
-     * @inheritdoc IRegistry
+     * @inheritdoc IRegistryV2
      */
     function rateCreditPool(address _pool, uint8 _rate) external override onlyRiskOperator {
         _rateCreditPool(_pool, _rate);
     }
 
     /**
-     * @inheritdoc IRegistry
+     * @inheritdoc IRegistryV2
      */
     function setLiquidityPoolToAdapter(DataTypes.PoolAdapter[] memory _poolAdapters) external override onlyOperator {
         for (uint256 _i = 0; _i < _poolAdapters.length; _i++) {
@@ -282,30 +288,66 @@ contract Registry is IRegistry, ModifiersController {
     }
 
     /**
-     * @inheritdoc IRegistry
+     * @inheritdoc IRegistryV2
      */
     function setLiquidityPoolToAdapter(address _pool, address _adapter) external override onlyOperator {
         _setLiquidityPoolToAdapter(_pool, _adapter);
     }
 
     /**
-     * @inheritdoc IRegistry
+     * @inheritdoc IRegistryV2
      */
-    function setTokensHashToTokens(address[][] memory _setOfTokens) external override onlyOperator {
-        for (uint256 _i = 0; _i < _setOfTokens.length; _i++) {
-            _setTokensHashToTokens(_setOfTokens[_i]);
+    function approveTokenAndMapToTokensHash(DataTypes.TokensHashDetail[] memory _tokensHashesDetails)
+        external
+        override
+        onlyOperator
+    {
+        for (uint256 _i = 0; _i < _tokensHashesDetails.length; _i++) {
+            for (uint256 _j = 0; _j < _tokensHashesDetails[_i].tokens.length; _j++) {
+                _approveToken(_tokensHashesDetails[_i].tokens[_j]);
+            }
+            _setTokensHashToTokens(_tokensHashesDetails[_i].tokensHash, _tokensHashesDetails[_i].tokens);
         }
     }
 
     /**
-     * @inheritdoc IRegistry
+     * @inheritdoc IRegistryV2
      */
-    function setTokensHashToTokens(address[] memory _tokens) external override onlyOperator {
-        _setTokensHashToTokens(_tokens);
+    function approveTokenAndMapToTokensHash(bytes32 _tokensHash, address[] memory _tokens)
+        external
+        override
+        onlyOperator
+    {
+        for (uint256 _i = 0; _i < _tokens.length; _i++) {
+            _approveToken(_tokens[_i]);
+        }
+        _setTokensHashToTokens(_tokensHash, _tokens);
     }
 
     /**
-     * @inheritdoc IRegistry
+     * @inheritdoc IRegistryV2
+     */
+    function setTokensHashToTokens(DataTypes.TokensHashDetail[] memory _tokensHashesDetails)
+        external
+        override
+        onlyOperator
+    {
+        for (uint256 _i = 0; _i < _tokensHashesDetails.length; _i++) {
+            require(_areTokensApproved(_tokensHashesDetails[_i].tokens), "!tokens");
+            _setTokensHashToTokens(_tokensHashesDetails[_i].tokensHash, _tokensHashesDetails[_i].tokens);
+        }
+    }
+
+    /**
+     * @inheritdoc IRegistryV2
+     */
+    function setTokensHashToTokens(bytes32 _tokensHash, address[] memory _tokens) external override onlyOperator {
+        require(_areTokensApproved(_tokens), "!tokens");
+        _setTokensHashToTokens(_tokensHash, _tokens);
+    }
+
+    /**
+     * @inheritdoc IRegistryV2
      */
     function setWithdrawalFeeRange(DataTypes.WithdrawalFeeRange memory _withdrawalFeeRange)
         external
@@ -322,7 +364,7 @@ contract Registry is IRegistry, ModifiersController {
     }
 
     /**
-     * @inheritdoc IRegistry
+     * @inheritdoc IRegistryV2
      */
     function setVaultConfiguration(
         address _vault,
@@ -345,7 +387,7 @@ contract Registry is IRegistry, ModifiersController {
     }
 
     /**
-     * @inheritdoc IRegistry
+     * @inheritdoc IRegistryV2
      */
     function discontinue(address _vault) external override onlyOperator {
         require(_vault.isContract(), "!isContract");
@@ -353,7 +395,7 @@ contract Registry is IRegistry, ModifiersController {
     }
 
     /**
-     * @inheritdoc IRegistry
+     * @inheritdoc IRegistryV2
      */
     function unpauseVaultContract(address _vault, bool _unpaused) external override onlyOperator {
         require(_vault.isContract(), "!isContract");
@@ -361,7 +403,7 @@ contract Registry is IRegistry, ModifiersController {
     }
 
     /**
-     * @inheritdoc IRegistry
+     * @inheritdoc IRegistryV2
      */
     function setIsLimitedState(address _vault, bool _isLimitedState) external override onlyFinanceOperator {
         require(_vault.isContract(), "!isContract");
@@ -369,7 +411,7 @@ contract Registry is IRegistry, ModifiersController {
     }
 
     /**
-     * @inheritdoc IRegistry
+     * @inheritdoc IRegistryV2
      */
     function setAllowWhitelistedState(address _vault, bool _allowWhitelistedState)
         external
@@ -381,7 +423,7 @@ contract Registry is IRegistry, ModifiersController {
     }
 
     /**
-     * @inheritdoc IRegistry
+     * @inheritdoc IRegistryV2
      */
     function setTreasuryShares(address _vault, DataTypes.TreasuryShare[] memory _treasuryShares)
         external
@@ -393,7 +435,7 @@ contract Registry is IRegistry, ModifiersController {
     }
 
     /**
-     * @inheritdoc IRegistry
+     * @inheritdoc IRegistryV2
      */
     function setWithdrawalFee(address _vault, uint256 _withdrawalFee) external override onlyFinanceOperator {
         require(_vault.isContract(), "!isContract");
@@ -401,7 +443,7 @@ contract Registry is IRegistry, ModifiersController {
     }
 
     /**
-     * @inheritdoc IRegistry
+     * @inheritdoc IRegistryV2
      */
     function setUserDepositCap(address _vault, uint256 _userDepositCap) external override onlyFinanceOperator {
         require(_vault.isContract(), "!isContract");
@@ -409,7 +451,7 @@ contract Registry is IRegistry, ModifiersController {
     }
 
     /**
-     * @inheritdoc IRegistry
+     * @inheritdoc IRegistryV2
      */
     function setMinimumDepositAmount(address _vault, uint256 _minimumDepositAmount)
         external
@@ -421,7 +463,7 @@ contract Registry is IRegistry, ModifiersController {
     }
 
     /**
-     * @inheritdoc IRegistry
+     * @inheritdoc IRegistryV2
      */
     function setTotalValueLockedLimitInUnderlying(address _vault, uint256 _totalValueLockedLimitInUnderlying)
         external
@@ -433,7 +475,7 @@ contract Registry is IRegistry, ModifiersController {
     }
 
     /**
-     * @inheritdoc IRegistry
+     * @inheritdoc IRegistryV2
      */
     function setQueueCap(address _vault, uint256 _queueCap) external override onlyOperator {
         require(_vault.isContract(), "!isContract");
@@ -441,14 +483,14 @@ contract Registry is IRegistry, ModifiersController {
     }
 
     /**
-     * @inheritdoc IRegistry
+     * @inheritdoc IRegistryV2
      */
     function updateRiskProfileBorrow(uint256 _riskProfileCode, bool _canBorrow) external override onlyRiskOperator {
         _updateRiskProfileBorrow(_riskProfileCode, _canBorrow);
     }
 
     /**
-     * @inheritdoc IRegistry
+     * @inheritdoc IRegistryV2
      */
     function addRiskProfile(
         uint256 _riskProfileCode,
@@ -461,7 +503,7 @@ contract Registry is IRegistry, ModifiersController {
     }
 
     /**
-     * @inheritdoc IRegistry
+     * @inheritdoc IRegistryV2
      */
     function addRiskProfile(
         uint256[] memory _riskProfileCodes,
@@ -482,7 +524,7 @@ contract Registry is IRegistry, ModifiersController {
     }
 
     /**
-     * @inheritdoc IRegistry
+     * @inheritdoc IRegistryV2
      */
     function updateRPPoolRatings(uint256 _riskProfileCode, DataTypes.PoolRatingsRange memory _poolRatingRange)
         external
@@ -493,175 +535,175 @@ contract Registry is IRegistry, ModifiersController {
     }
 
     /**
-     * @inheritdoc IRegistry
+     * @inheritdoc IRegistryV2
      */
     function removeRiskProfile(uint256 _index) external override onlyRiskOperator {
         _removeRiskProfile(_index);
     }
 
     /**
-     * @inheritdoc IRegistry
+     * @inheritdoc IRegistryV2
      */
     function getTokenHashes() public view override returns (bytes32[] memory) {
         return tokensHashIndexes;
     }
 
     /**
-     * @inheritdoc IRegistry
+     * @inheritdoc IRegistryV2
      */
     function getTokensHashToTokenList(bytes32 _tokensHash) public view override returns (address[] memory) {
         return tokensHashToTokens[_tokensHash].tokens;
     }
 
     /**
-     * @inheritdoc IRegistry
+     * @inheritdoc IRegistryV2
      */
     function getRiskProfileList() public view override returns (uint256[] memory) {
         return riskProfilesArray;
     }
 
     /**
-     * @inheritdoc IRegistry
+     * @inheritdoc IRegistryV2
      */
     function getVaultConfiguration(address _vault) public view override returns (DataTypes.VaultConfiguration memory) {
         return vaultToVaultConfiguration[_vault];
     }
 
     /**
-     * @inheritdoc IRegistry
+     * @inheritdoc IRegistryV2
      */
     function getInvestStrategyRegistry() public view override returns (address) {
         return investStrategyRegistry;
     }
 
     /**
-     * @inheritdoc IRegistry
+     * @inheritdoc IRegistryV2
      */
     function getTokensHashIndexByHash(bytes32 _tokensHash) public view override returns (uint256) {
         return tokensHashToTokens[_tokensHash].index;
     }
 
     /**
-     * @inheritdoc IRegistry
+     * @inheritdoc IRegistryV2
      */
     function getTokensHashByIndex(uint256 _index) public view override returns (bytes32) {
         return tokensHashIndexes[_index];
     }
 
     /**
-     * @inheritdoc IRegistry
+     * @inheritdoc IRegistryV2
      */
     function isApprovedToken(address _token) public view override returns (bool) {
         return tokens[_token];
     }
 
     /**
-     * @inheritdoc IRegistry
+     * @inheritdoc IRegistryV2
      */
     function getStrategyProvider() public view override returns (address) {
         return strategyProvider;
     }
 
     /**
-     * @inheritdoc IRegistry
+     * @inheritdoc IRegistryV2
      */
     function getStrategyManager() public view override returns (address) {
         return strategyManager;
     }
 
     /**
-     * @inheritdoc IRegistry
+     * @inheritdoc IRegistryV2
      */
     function getAprOracle() public view override returns (address) {
         return aprOracle;
     }
 
     /**
-     * @inheritdoc IRegistry
+     * @inheritdoc IRegistryV2
      */
     function getRiskProfile(uint256 _riskProfileCode) public view override returns (DataTypes.RiskProfile memory) {
         return riskProfiles[_riskProfileCode];
     }
 
     /**
-     * @inheritdoc IRegistry
+     * @inheritdoc IRegistryV2
      */
     function getRiskManager() public view override returns (address) {
         return riskManager;
     }
 
     /**
-     * @inheritdoc IRegistry
+     * @inheritdoc IRegistryV2
      */
     function getOPTYDistributor() public view override returns (address) {
         return optyDistributor;
     }
 
     /**
-     * @inheritdoc IRegistry
+     * @inheritdoc IRegistryV2
      */
     function getODEFIVaultBooster() external view override returns (address) {
         return odefiVaultBooster;
     }
 
     /**
-     * @inheritdoc IRegistry
+     * @inheritdoc IRegistryV2
      */
     function getGovernance() public view override returns (address) {
         return governance;
     }
 
     /**
-     * @inheritdoc IRegistry
+     * @inheritdoc IRegistryV2
      */
     function getFinanceOperator() public view override returns (address) {
         return financeOperator;
     }
 
     /**
-     * @inheritdoc IRegistry
+     * @inheritdoc IRegistryV2
      */
     function getRiskOperator() public view override returns (address) {
         return riskOperator;
     }
 
     /**
-     * @inheritdoc IRegistry
+     * @inheritdoc IRegistryV2
      */
     function getStrategyOperator() public view override returns (address) {
         return strategyOperator;
     }
 
     /**
-     * @inheritdoc IRegistry
+     * @inheritdoc IRegistryV2
      */
     function getOperator() public view override returns (address) {
         return operator;
     }
 
     /**
-     * @inheritdoc IRegistry
+     * @inheritdoc IRegistryV2
      */
     function getHarvestCodeProvider() public view override returns (address) {
         return harvestCodeProvider;
     }
 
     /**
-     * @inheritdoc IRegistry
+     * @inheritdoc IRegistryV2
      */
     function getOPTYStakingRateBalancer() public view override returns (address) {
         return optyStakingRateBalancer;
     }
 
     /**
-     * @inheritdoc IRegistry
+     * @inheritdoc IRegistryV2
      */
     function getLiquidityPool(address _pool) public view override returns (DataTypes.LiquidityPool memory) {
         return liquidityPools[_pool];
     }
 
     /**
-     * @inheritdoc IRegistry
+     * @inheritdoc IRegistryV2
      */
     function getStrategyConfiguration()
         public
@@ -675,7 +717,7 @@ contract Registry is IRegistry, ModifiersController {
     }
 
     /**
-     * @inheritdoc IRegistry
+     * @inheritdoc IRegistryV2
      */
     function getVaultStrategyConfiguration()
         public
@@ -691,21 +733,21 @@ contract Registry is IRegistry, ModifiersController {
     }
 
     /**
-     * @inheritdoc IRegistry
+     * @inheritdoc IRegistryV2
      */
     function getLiquidityPoolToAdapter(address _pool) public view override returns (address) {
         return liquidityPoolToAdapter[_pool];
     }
 
     /**
-     * @inheritdoc IRegistry
+     * @inheritdoc IRegistryV2
      */
     function getTreasuryShares(address _vault) public view override returns (DataTypes.TreasuryShare[] memory) {
         return vaultToVaultConfiguration[_vault].treasuryShares;
     }
 
     /**
-     * @inheritdoc IRegistry
+     * @inheritdoc IRegistryV2
      */
     function isUserWhitelisted(address _vault, address _user) public view override returns (bool) {
         return whitelistedUsers[_vault][_user];
@@ -769,17 +811,11 @@ contract Registry is IRegistry, ModifiersController {
         emit LogLiquidityPoolToAdapter(_pool, _adapter, msg.sender);
     }
 
-    function _setTokensHashToTokens(address[] memory _tokens) internal {
-        for (uint256 _i = 0; _i < _tokens.length; _i++) {
-            require(tokens[_tokens[_i]], "!tokens");
-        }
-        bytes32 _tokensHash = keccak256(abi.encodePacked(_tokens));
+    function _setTokensHashToTokens(bytes32 _tokensHash, address[] memory _tokens) internal {
         require(_isNewTokensHash(_tokensHash), "!_isNewTokensHash");
         tokensHashIndexes.push(_tokensHash);
         tokensHashToTokens[_tokensHash].index = tokensHashIndexes.length - 1;
-        for (uint256 _i = 0; _i < _tokens.length; _i++) {
-            tokensHashToTokens[_tokensHash].tokens.push(_tokens[_i]);
-        }
+        tokensHashToTokens[_tokensHash].tokens = _tokens;
         emit LogTokensToTokensHash(_tokensHash, msg.sender);
     }
 
@@ -947,5 +983,18 @@ contract Registry is IRegistry, ModifiersController {
             return true;
         }
         return (tokensHashIndexes[tokensHashToTokens[_hash].index] != _hash);
+    }
+
+    /**
+     * @dev Checks approved tokens
+     * @param _tokens List of the token addresses
+     */
+    function _areTokensApproved(address[] memory _tokens) internal view returns (bool) {
+        for (uint256 _i = 0; _i < _tokens.length; _i++) {
+            if (!tokens[_tokens[_i]]) {
+                return false;
+            }
+        }
+        return true;
     }
 }

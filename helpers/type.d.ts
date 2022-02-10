@@ -82,6 +82,8 @@ export type TOKENS_DATA = {
 
 export type NETWORKS_TYPE = "ethereum" | "polygon";
 
+export type VERSION_TYPE = 1 | 2;
+
 export type CHAINID_NETWORKS = {
   [chainID: string]: {
     name: string;

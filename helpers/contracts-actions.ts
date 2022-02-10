@@ -2,9 +2,15 @@ import { Contract, Signer } from "ethers";
 import { getAddress } from "ethers/lib/utils";
 import { expect } from "chai";
 import { STRATEGY_DATA } from "./type";
-import { executeFunc, generateStrategyHash, generateStrategyStep, generateTokenHash, isAddress } from "./helpers";
+import {
+  executeFunc,
+  generateStrategyStep,
+  generateStrategyHash,
+  generateTokenHashV2,
+  generateTokenHash,
+  isAddress,
+} from "./helpers";
 import { RISK_PROFILES } from "./constants/contracts-data";
-import { NETWORKS_ID } from "./constants/network";
 
 export async function approveLiquidityPoolAndMapAdapter(
   owner: Signer,
@@ -52,11 +58,70 @@ export async function approveLiquidityPoolAndMapAdapters(
   }
 }
 
-export async function approveAndSetTokenHashToToken(
+export async function approveLiquidityPoolAndMapAdapterV2(
+  owner: Signer,
+  registryContractV2: Contract,
+  adapter: string,
+  lqPool: string,
+  checkApproval: boolean,
+): Promise<void> {
+  try {
+    if (checkApproval) {
+      const { isLiquidityPool } = await registryContractV2.getLiquidityPool(lqPool);
+      if (!isLiquidityPool) {
+        await expect(registryContractV2.connect(owner)["approveLiquidityPool(address)"](lqPool))
+          .to.emit(registryContractV2, "LogLiquidityPool")
+          .withArgs(getAddress(lqPool), true, await owner.getAddress());
+      }
+      await expect(registryContractV2.connect(owner)["setLiquidityPoolToAdapter(address,address)"](lqPool, adapter))
+        .to.emit(registryContractV2, "LogLiquidityPoolToAdapter")
+        .withArgs(getAddress(lqPool), adapter, await owner.getAddress());
+    } else {
+      await registryContractV2.connect(owner)["approveLiquidityPoolAndMapToAdapter(address,address)"](lqPool, adapter);
+    }
+  } catch (error) {
+    console.error(`contract-actions#approveLiquidityPoolAndMapAdapterV2: `, error);
+    throw error;
+  }
+}
+
+export async function approveLiquidityPoolAndMapAdaptersV2(
+  owner: Signer,
+  registryContractV2: Contract,
+  lqPools: string[],
+  lqPoolsMapToAdapter: string[][],
+  checkApproval: boolean,
+): Promise<void> {
+  try {
+    if (checkApproval) {
+      const approveLpList: string[] = [];
+      for (let i = 0; i < lqPools.length; i++) {
+        const { isLiquidityPool } = await registryContractV2.getLiquidityPool(lqPools[i]);
+        if (!isLiquidityPool) {
+          approveLpList.push(lqPools[i]);
+        }
+      }
+      if (approveLpList.length > 0) {
+        await executeFunc(registryContractV2, owner, "approveLiquidityPool(address[])", [approveLpList]);
+      }
+      await executeFunc(registryContractV2, owner, "setLiquidityPoolToAdapter((address,address)[])", [
+        lqPoolsMapToAdapter,
+      ]);
+    } else {
+      await executeFunc(registryContractV2, owner, "approveLiquidityPoolAndMapToAdapter((address,address)[])", [
+        lqPoolsMapToAdapter,
+      ]);
+    }
+  } catch (error) {
+    console.error(`contracts-actions#approveLiquidityPoolAndMapAdaptersV2: `, error);
+    throw error;
+  }
+}
+
+export async function approveAndMapTokenHashToToken(
   owner: Signer,
   registryContract: Contract,
   tokenAddress: string,
-  chainId: string,
 ): Promise<void> {
   try {
     const isApprovedToken = await registryContract.isApprovedToken(tokenAddress);
@@ -65,12 +130,8 @@ export async function approveAndSetTokenHashToToken(
         .to.emit(registryContract, "LogToken")
         .withArgs(getAddress(tokenAddress), true, await owner.getAddress());
     }
-    if (!(await isSetTokenHash(registryContract, [tokenAddress], chainId))) {
-      const tokenHash = generateTokenHash([tokenAddress], chainId);
-      await executeFunc(registryContract, owner, "setTokensHashToTokens(bytes32,address[])", [
-        tokenHash,
-        [tokenAddress],
-      ]);
+    if (!(await isSetTokenHash(registryContract, [tokenAddress]))) {
+      await executeFunc(registryContract, owner, "setTokensHashToTokens(address[])", [[tokenAddress]]);
     }
   } catch (error) {
     console.error(`contract-actions#approveAndSetTokenHashToToken : `, error);
@@ -78,12 +139,11 @@ export async function approveAndSetTokenHashToToken(
   }
 }
 
-export async function approveAndSetTokenHashToTokens(
+export async function approveAndMapTokenHashToTokens(
   owner: Signer,
   registryContract: Contract,
   tokenAddresses: string[],
   setTokenHashForEach: boolean,
-  chainId: string,
 ): Promise<void> {
   try {
     const approveTokenLists: string[] = [];
@@ -94,7 +154,7 @@ export async function approveAndSetTokenHashToTokens(
         approveTokenLists.push(tokenAddress);
       }
       if (setTokenHashForEach) {
-        if (!(await isSetTokenHash(registryContract, [tokenAddress], chainId))) {
+        if (!(await isSetTokenHash(registryContract, [tokenAddress]))) {
           setTokenHashLists.push(tokenAddress);
         }
       }
@@ -103,17 +163,107 @@ export async function approveAndSetTokenHashToTokens(
       await executeFunc(registryContract, owner, "approveToken(address[])", [approveTokenLists]);
     }
     if (setTokenHashLists.length > 0) {
-      const tokens = setTokenHashLists.map(addr => [generateTokenHash([addr], chainId), [addr]]);
-      await executeFunc(registryContract, owner, "setTokensHashToTokens((bytes32,address[])[])", [tokens]);
+      await executeFunc(registryContract, owner, "setTokensHashToTokens(address[][])", [
+        setTokenHashLists.map(addr => [addr]),
+      ]);
     } else {
-      if (!(await isSetTokenHash(registryContract, tokenAddresses, chainId))) {
-        await executeFunc(registryContract, owner, "setTokensHashToTokens((bytes32,address[])[])", [
-          [[generateTokenHash(tokenAddresses, chainId), tokenAddresses]],
-        ]);
+      if (!(await isSetTokenHash(registryContract, tokenAddresses))) {
+        await executeFunc(registryContract, owner, "setTokensHashToTokens(address[][])", [[tokenAddresses]]);
       }
     }
   } catch (error) {
     console.error(`contract-actions#approveAndSetTokenHashToTokens: `, error);
+    throw error;
+  }
+}
+
+export async function approveAndMapTokenHashToTokenV2(
+  owner: Signer,
+  registryContractV2: Contract,
+  tokenAddress: string,
+  chainId: string,
+  checkApproval: boolean,
+): Promise<void> {
+  try {
+    if (checkApproval) {
+      const isApprovedToken = await registryContractV2.isApprovedToken(tokenAddress);
+      if (!isApprovedToken) {
+        await expect(executeFunc(registryContractV2, owner, "approveToken(address)", [tokenAddress]))
+          .to.emit(registryContractV2, "LogToken")
+          .withArgs(getAddress(tokenAddress), true, await owner.getAddress());
+      }
+      if (!(await isSetTokenHashV2(registryContractV2, [tokenAddress], chainId))) {
+        const tokenHash = generateTokenHashV2([tokenAddress], chainId);
+        await executeFunc(registryContractV2, owner, "setTokensHashToTokens(bytes32,address[])", [
+          tokenHash,
+          [tokenAddress],
+        ]);
+      }
+    } else {
+      const tokenHash = generateTokenHashV2([tokenAddress], chainId);
+      await executeFunc(registryContractV2, owner, "approveTokenAndMapToTokensHash(bytes32,address[])", [
+        tokenHash,
+        [tokenAddress],
+      ]);
+    }
+  } catch (error) {
+    console.error(`contract-actions#approveAndMapTokenHashToToken : `, error);
+    throw error;
+  }
+}
+
+export async function approveAndMapTokenHashToTokensV2(
+  owner: Signer,
+  registryContractV2: Contract,
+  tokenAddresses: string[],
+  setTokenHashForEach: boolean,
+  chainId: string,
+  checkApproval: boolean,
+): Promise<void> {
+  try {
+    const setTokenHashLists: string[] = [];
+    for (const tokenAddress of tokenAddresses) {
+      if (setTokenHashForEach) {
+        if (!(await isSetTokenHashV2(registryContractV2, [tokenAddress], chainId))) {
+          setTokenHashLists.push(tokenAddress);
+        }
+      }
+    }
+    if (checkApproval) {
+      const approveTokenLists: string[] = [];
+      for (const tokenAddress of tokenAddresses) {
+        const isApprovedToken = await registryContractV2.isApprovedToken(tokenAddress);
+        if (!isApprovedToken) {
+          approveTokenLists.push(tokenAddress);
+        }
+      }
+      if (approveTokenLists.length > 0) {
+        await executeFunc(registryContractV2, owner, "approveToken(address[])", [approveTokenLists]);
+      }
+      if (setTokenHashLists.length > 0) {
+        const tokens = setTokenHashLists.map(addr => [generateTokenHashV2([addr], chainId), [addr]]);
+        await executeFunc(registryContractV2, owner, "setTokensHashToTokens((bytes32,address[])[])", [tokens]);
+      } else {
+        if (!(await isSetTokenHashV2(registryContractV2, tokenAddresses, chainId))) {
+          await executeFunc(registryContractV2, owner, "setTokensHashToTokens((bytes32,address[])[])", [
+            [[generateTokenHashV2(tokenAddresses, chainId), tokenAddresses]],
+          ]);
+        }
+      }
+    } else {
+      if (setTokenHashLists.length > 0) {
+        const tokens = setTokenHashLists.map(addr => [generateTokenHashV2([addr], chainId), [addr]]);
+        await executeFunc(registryContractV2, owner, "approveTokenAndMapToTokensHash((bytes32,address[])[])", [tokens]);
+      } else {
+        if (!(await isSetTokenHashV2(registryContractV2, tokenAddresses, chainId))) {
+          await executeFunc(registryContractV2, owner, "approveTokenAndMapToTokensHash((bytes32,address[])[])", [
+            [[generateTokenHashV2(tokenAddresses, chainId), tokenAddresses]],
+          ]);
+        }
+      }
+    }
+  } catch (error) {
+    console.error(`contract-actions#approveAndMapTokenHashToTokens: `, error);
     throw error;
   }
 }
@@ -125,7 +275,7 @@ export async function setStrategy(
   investStrategyRegistry: Contract,
 ): Promise<string> {
   const strategySteps: [string, string, boolean][] = generateStrategyStep(strategy);
-  const tokensHash = generateTokenHash(tokens, NETWORKS_ID.MAINNET);
+  const tokensHash = generateTokenHash(tokens);
   const strategyHash = generateStrategyHash(strategy, tokens[0]);
   await expect(
     investStrategyRegistry.connect(signer)["setStrategy(bytes32,(address,address,bool)[])"](tokensHash, strategySteps),
@@ -137,29 +287,27 @@ export async function setStrategy(
 
 export async function setBestStrategy(
   strategy: STRATEGY_DATA[],
-  signer: Signer,
   tokenAddress: string,
-  investStrategyRegistry: Contract,
   strategyProvider: Contract,
   riskProfileCode: number,
   isDefault: boolean,
-): Promise<string> {
-  const strategyHash = generateStrategyHash(strategy, tokenAddress);
-
-  const tokenHash = generateTokenHash([tokenAddress], NETWORKS_ID.MAINNET);
-
-  const strategyDetail = await investStrategyRegistry.getStrategy(strategyHash);
-
-  if (strategyDetail[1].length === 0) {
-    await setStrategy(strategy, signer, [tokenAddress], investStrategyRegistry);
-  }
+  chainId: string,
+): Promise<void> {
+  const tokenHash = generateTokenHashV2([tokenAddress], chainId);
 
   if (isDefault) {
-    await strategyProvider.setBestDefaultStrategy(riskProfileCode, tokenHash, strategyHash);
+    await strategyProvider.setBestDefaultStrategy(
+      riskProfileCode,
+      tokenHash,
+      strategy.map(item => [item.contract, item.outputToken, item.isBorrow]),
+    );
   } else {
-    await strategyProvider.setBestStrategy(riskProfileCode, tokenHash, strategyHash);
+    await strategyProvider.setBestStrategy(
+      riskProfileCode,
+      tokenHash,
+      strategy.map(item => [item.contract, item.outputToken, item.isBorrow]),
+    );
   }
-  return strategyHash;
 }
 
 export async function unpauseVault(
@@ -173,12 +321,29 @@ export async function unpauseVault(
     .withArgs(vaultAddr, unpaused, await owner.getAddress());
 }
 
-export async function isSetTokenHash(
-  registryContract: Contract,
+export async function isSetTokenHashV2(
+  registryContractV2: Contract,
   tokenAddresses: string[],
   chainId: string,
 ): Promise<boolean> {
-  const tokensHash = generateTokenHash(tokenAddresses, chainId);
+  const tokensHash = generateTokenHashV2(tokenAddresses, chainId);
+  const tokenAddressesInContract = await registryContractV2.getTokensHashToTokenList(tokensHash);
+  if (tokenAddressesInContract.length === 0) {
+    return false;
+  }
+  for (let i = 0; i < tokenAddresses.length; i++) {
+    if (
+      isAddress(tokenAddressesInContract[i]) &&
+      getAddress(tokenAddressesInContract[i]) !== getAddress(tokenAddresses[i])
+    ) {
+      return false;
+    }
+  }
+  return true;
+}
+
+export async function isSetTokenHash(registryContract: Contract, tokenAddresses: string[]): Promise<boolean> {
+  const tokensHash = generateTokenHash(tokenAddresses);
   const tokenAddressesInContract = await registryContract.getTokensHashToTokenList(tokensHash);
   if (tokenAddressesInContract.length === 0) {
     return false;
@@ -193,6 +358,7 @@ export async function isSetTokenHash(
   }
   return true;
 }
+
 export async function addRiskProfiles(owner: Signer, registry: Contract): Promise<void> {
   for (let i = 0; i < RISK_PROFILES.length; i++) {
     await addRiskProfile(

@@ -4,12 +4,12 @@ import hre from "hardhat";
 import { Contract, Signer, BigNumber } from "ethers";
 import { deployRegistry } from "../helpers/contracts-deployments";
 import { CONTRACTS, TESTING_DEFAULT_DATA } from "../helpers/type";
-import { deployContract, executeFunc, generateTokenHash } from "../helpers/helpers";
+import { deployContract, executeFunc, generateTokenHashV2 } from "../helpers/helpers";
 import { TESTING_DEPLOYMENT_ONCE, ADDRESS_ZERO } from "../helpers/constants/utils";
 import { ESSENTIAL_CONTRACTS } from "../helpers/constants/essential-contracts-name";
 import { TESTING_CONTRACTS } from "../helpers/constants/test-contracts-name";
 import { RISK_PROFILES } from "../helpers/constants/contracts-data";
-import scenario from "./scenarios/registry.json";
+import scenario from "./scenarios/registry-v2.json";
 
 chai.use(solidity);
 
@@ -48,7 +48,6 @@ describe(scenario.title, () => {
     "strategyProvider",
     "riskManager",
     "optyDistributor",
-    "aprOracle",
     "harvestCodeProvider",
     "strategyManager",
     "opty",
@@ -58,35 +57,31 @@ describe(scenario.title, () => {
   ];
   const callerNames = ["owner", "financeOperator", "riskOperator", "strategyOperator", "operator", "user0", "user1"];
   before(async () => {
-    try {
-      [owner, financeOperator, riskOperator, strategyOperator, operator, user0, user1] = await hre.ethers.getSigners();
-      signers = { owner, financeOperator, riskOperator, strategyOperator, operator, user0, user1 };
+    [owner, financeOperator, riskOperator, strategyOperator, operator, user0, user1] = await hre.ethers.getSigners();
+    signers = { owner, financeOperator, riskOperator, strategyOperator, operator, user0, user1 };
 
-      registryContract = await deployRegistry(hre, owner, TESTING_DEPLOYMENT_ONCE, 1);
-      const DUMMY_EMPTY_CONTRACT = await deployContract(
-        hre,
-        TESTING_CONTRACTS.TEST_DUMMY_EMPTY_CONTRACT,
-        TESTING_DEPLOYMENT_ONCE,
-        owner,
-        [],
-      );
-      assert.isDefined(
-        DUMMY_EMPTY_CONTRACT,
-        `Dummy contract (to be used for testing Contract setter functions) not deployed`,
-      );
-      contractNames.forEach(contractName => {
-        contracts[contractName] = DUMMY_EMPTY_CONTRACT;
-      });
-      assert.isDefined(registryContract, "Registry contract not deployed");
+    registryContract = await deployRegistry(hre, owner, TESTING_DEPLOYMENT_ONCE, 2);
+    const DUMMY_EMPTY_CONTRACT = await deployContract(
+      hre,
+      TESTING_CONTRACTS.TEST_DUMMY_EMPTY_CONTRACT,
+      TESTING_DEPLOYMENT_ONCE,
+      owner,
+      [],
+    );
+    assert.isDefined(
+      DUMMY_EMPTY_CONTRACT,
+      `Dummy contract (to be used for testing Contract setter functions) not deployed`,
+    );
+    contractNames.forEach(contractName => {
+      contracts[contractName] = DUMMY_EMPTY_CONTRACT;
+    });
+    assert.isDefined(registryContract, "Registry contract not deployed");
 
-      await registryContract["setOperator(address)"](await operator.getAddress());
-      await registryContract["setRiskOperator(address)"](await riskOperator.getAddress());
+    await registryContract["setOperator(address)"](await operator.getAddress());
+    await registryContract["setRiskOperator(address)"](await riskOperator.getAddress());
 
-      for (let i = 0; i < callerNames.length; i++) {
-        callers[callerNames[i]] = await signers[callerNames[i]].getAddress();
-      }
-    } catch (error: any) {
-      console.log(error);
+    for (let i = 0; i < callerNames.length; i++) {
+      callers[callerNames[i]] = await signers[callerNames[i]].getAddress();
     }
   });
 
@@ -102,8 +97,6 @@ describe(scenario.title, () => {
         const action = story.getActions[i];
         switch (action.action) {
           case "treasury()":
-          case "getInvestStrategyRegistry()":
-          case "getAprOracle()":
           case "getStrategyProvider()":
           case "getRiskManager()":
           case "getHarvestCodeProvider()":
@@ -370,8 +363,6 @@ describe(scenario.title, () => {
         assert.isDefined(contractName, `args is wrong in ${action.action} testcase`);
         break;
       }
-      case "setInvestStrategyRegistry(address)":
-      case "setAPROracle(address)":
       case "setStrategyProvider(address)":
       case "setRiskManager(address)":
       case "setHarvestCodeProvider(address)":
@@ -820,7 +811,8 @@ describe(scenario.title, () => {
         assert.isDefined(lqs, `args is wrong in ${action.action} testcase`);
         break;
       }
-      case "setLiquidityPoolToAdapter((address,address)[])": {
+      case "setLiquidityPoolToAdapter((address,address)[])":
+      case "approveLiquidityPoolAndMapToAdapter((address,address)[])": {
         const { lqs }: ARGUMENTS = action.args;
         if (lqs) {
           const args: [string, string][] = [];
@@ -838,7 +830,8 @@ describe(scenario.title, () => {
         assert.isDefined(lqs, `args is wrong in ${action.action} testcase`);
         break;
       }
-      case "setLiquidityPoolToAdapter(address,address)": {
+      case "setLiquidityPoolToAdapter(address,address)":
+      case "approveLiquidityPoolAndMapToAdapter(address,address)": {
         const { lqs }: ARGUMENTS = action.args;
         if (lqs) {
           if (action.expect === "success") {
@@ -864,25 +857,74 @@ describe(scenario.title, () => {
         assert.isDefined(lqs, `args is wrong in ${action.action} testcase`);
         break;
       }
-      case "setTokensHashToTokens(address[][])":
-      case "setTokensHashToTokens(address[])": {
-        const { tokensHash }: ARGUMENTS = action.args;
-        if (tokensHash) {
+      case "setTokensHashToTokens((bytes32,address[])[])": {
+        const { tokensDetails }: ARGUMENTS = action.args;
+        if (tokensDetails) {
+          const tokenLists = tokensDetails.map((detail: { tokens: string[]; chainId: string }) => [
+            generateTokenHashV2(detail.tokens, detail.chainId),
+            detail.tokens,
+          ]);
           if (action.expect === "success") {
-            if (action.action == "setTokensHashToTokens(address[])") {
-              await expect(registryContract.connect(signers[action.executor])[action.action](tokensHash))
-                .to.emit(registryContract, "LogTokensToTokensHash")
-                .withArgs(generateTokenHash(tokensHash), callers[action.executor]);
-            } else {
-              await registryContract.connect(signers[action.executor])[action.action](tokensHash);
-            }
+            await registryContract.connect(signers[action.executor])[action.action](tokenLists);
           } else {
             await expect(
-              registryContract.connect(signers[action.executor])[action.action](tokensHash),
+              registryContract.connect(signers[action.executor])[action.action](tokenLists),
             ).to.be.revertedWith(action.message);
           }
         }
-        assert.isDefined(tokensHash, `args is wrong in ${action.action} testcase`);
+        assert.isDefined(tokensDetails, `args is wrong in ${action.action} testcase`);
+        break;
+      }
+      case "setTokensHashToTokens(bytes32,address[])": {
+        const { tokens, chainId }: ARGUMENTS = action.args;
+        if (tokens && chainId) {
+          const tokensHash = generateTokenHashV2(tokens, chainId);
+          if (action.expect === "success") {
+            await expect(registryContract.connect(signers[action.executor])[action.action](tokensHash, tokens))
+              .to.emit(registryContract, "LogTokensToTokensHash")
+              .withArgs(tokensHash, callers[action.executor]);
+          } else {
+            await expect(
+              registryContract.connect(signers[action.executor])[action.action](tokensHash, tokens),
+            ).to.be.revertedWith(action.message);
+          }
+        }
+        assert.isDefined(tokens, `args is wrong in ${action.action} testcase`);
+        assert.isDefined(chainId, `args is wrong in ${action.action} testcase`);
+        break;
+      }
+      case "approveTokenAndMapToTokensHash(bytes32,address[])": {
+        const { tokens, chainId }: ARGUMENTS = action.args;
+        if (tokens && chainId) {
+          const tokensHash = generateTokenHashV2(tokens, chainId);
+          if (action.expect === "success") {
+            await registryContract.connect(signers[action.executor])[action.action](tokensHash, tokens);
+          } else {
+            await expect(
+              registryContract.connect(signers[action.executor])[action.action](tokensHash, tokens),
+            ).to.be.revertedWith(action.message);
+          }
+        }
+        assert.isDefined(tokens, `args is wrong in ${action.action} testcase`);
+        assert.isDefined(chainId, `args is wrong in ${action.action} testcase`);
+        break;
+      }
+      case "approveTokenAndMapToTokensHash((bytes32,address[])[])": {
+        const { details }: ARGUMENTS = action.args;
+        if (details) {
+          const tokenLists = details.map((detail: { tokens: string[]; chainId: string }) => [
+            generateTokenHashV2(detail.tokens, detail.chainId),
+            detail.tokens,
+          ]);
+          if (action.expect === "success") {
+            await registryContract.connect(signers[action.executor])[action.action](tokenLists);
+          } else {
+            await expect(
+              registryContract.connect(signers[action.executor])[action.action](tokenLists),
+            ).to.be.revertedWith(action.message);
+          }
+        }
+        assert.isDefined(details, `args is wrong in ${action.action} testcase`);
         break;
       }
       case "addRiskProfile(uint256[],string[],string[],bool[],(uint8,uint8)[])": {
@@ -1084,28 +1126,6 @@ const REGISTRY_TESTING_DEFAULT_DATA: TESTING_DEFAULT_DATA[] = [
     ],
   },
   {
-    setFunction: "setInvestStrategyRegistry(address)",
-    input: ["0x5d3a536E4D6DbD6114cc1Ead35777bAB948E3643"],
-    getFunction: [
-      {
-        name: "investStrategyRegistry()",
-        input: [],
-        output: "0x5d3a536E4D6DbD6114cc1Ead35777bAB948E3643",
-      },
-    ],
-  },
-  {
-    setFunction: "setAPROracle(address)",
-    input: ["0x5d3a536E4D6DbD6114cc1Ead35777bAB948E3643"],
-    getFunction: [
-      {
-        name: "aprOracle()",
-        input: [],
-        output: "0x5d3a536E4D6DbD6114cc1Ead35777bAB948E3643",
-      },
-    ],
-  },
-  {
     setFunction: "setStrategyProvider(address)",
     input: ["0x5d3a536E4D6DbD6114cc1Ead35777bAB948E3643"],
     getFunction: [
@@ -1227,18 +1247,21 @@ const REGISTRY_TESTING_DEFAULT_DATA: TESTING_DEFAULT_DATA[] = [
     ],
   },
   {
-    setFunction: "setTokensHashToTokens(address[])",
-    input: [["0x6b175474e89094c44da98b954eedeac495271d0f"]],
+    setFunction: "setTokensHashToTokens(bytes32,address[])",
+    input: [
+      "0x0b16da4cd290fb0e4a2c068617d40e90b07e324269ead8af64ba45a1f7e51ce5",
+      ["0x6b175474e89094c44da98b954eedeac495271d0f"],
+    ],
     getFunction: [
       {
         name: "getTokensHashToTokenList(bytes32)",
-        input: ["0x50440c05332207ba7b1bb0dcaf90d1864e3aa44dd98a51f88d0796a7623f0c80"],
+        input: ["0x0b16da4cd290fb0e4a2c068617d40e90b07e324269ead8af64ba45a1f7e51ce5"],
         output: ["0x6B175474E89094C44Da98b954EedeAC495271d0F"],
       },
       {
         name: "getTokensHashByIndex(uint256)",
         input: ["0"],
-        output: ["0x50440c05332207ba7b1bb0dcaf90d1864e3aa44dd98a51f88d0796a7623f0c80"],
+        output: ["0x0b16da4cd290fb0e4a2c068617d40e90b07e324269ead8af64ba45a1f7e51ce5"],
       },
     ],
   },

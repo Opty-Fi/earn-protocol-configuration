@@ -1,9 +1,9 @@
 import { task, types } from "hardhat/config";
 import { deployContract } from "../../helpers/helpers";
 import { TESTING_CONTRACTS } from "../../helpers/constants/test-contracts-name";
-import { DEPLOY_ERC20 } from "../task-names";
+import TASKS from "../task-names";
 
-task(DEPLOY_ERC20, "Deploy ERC20")
+task(TASKS.DEPLOYMENT_TASKS.DEPLOY_ERC20.NAME, TASKS.DEPLOYMENT_TASKS.DEPLOY_ERC20.DESCRIPTION)
   .addParam("name", "the name of token", "", types.string)
   .addParam("symbol", "the symbol of token", "", types.string)
   .addOptionalParam("total", "the totalSupply of token", "0", types.string)
@@ -31,7 +31,7 @@ task(DEPLOY_ERC20, "Deploy ERC20")
 
       console.log(`Contract ${name} token : ${erc20Contract.address}`);
     } catch (error) {
-      console.error(`${DEPLOY_ERC20}: `, error);
+      console.error(`${TASKS.DEPLOYMENT_TASKS.DEPLOY_ERC20.NAME}: `, error);
       throw error;
     }
   });

@@ -2,16 +2,24 @@ import { task, types } from "hardhat/config";
 import { isAddress } from "../../helpers/helpers";
 
 import { ESSENTIAL_CONTRACTS } from "../../helpers/constants/essential-contracts-name";
-import { approveLiquidityPoolAndMapAdapters } from "../../helpers/contracts-actions";
+import {
+  approveLiquidityPoolAndMapAdapters,
+  approveLiquidityPoolAndMapAdaptersV2,
+} from "../../helpers/contracts-actions";
 import { TypedDefiPools } from "../../helpers/data/index";
 import { removeDuplicateFromStringArray } from "../../helpers/utils";
-import { MAP_LIQUIDITYPOOLS_ADAPTER } from "../task-names";
+import TASKS from "../task-names";
 
-task(MAP_LIQUIDITYPOOLS_ADAPTER, "Approve and map liquidity pool to adapter")
+task(
+  TASKS.ACTION_TASKS.MAP_LIQUIDITYPOOLS_TO_ADAPTER.NAME,
+  TASKS.ACTION_TASKS.MAP_LIQUIDITYPOOLS_TO_ADAPTER.DESCRIPTION,
+)
   .addParam("adapter", "the address of defi adapter", "", types.string)
   .addParam("adaptername", "the name of defi adapter", "", types.string)
   .addParam("registry", "the address of registry", "", types.string)
-  .setAction(async ({ adapter, registry, adaptername }, hre) => {
+  .addParam("checkapproval", "check whether token is approved", false, types.boolean)
+  .addParam("contractversion", "the version of registry", 1, types.int)
+  .setAction(async ({ adapter, registry, adaptername, checkapproval, contractversion }, hre) => {
     const [owner] = await hre.ethers.getSigners();
 
     if (registry === "") {
@@ -38,17 +46,32 @@ task(MAP_LIQUIDITYPOOLS_ADAPTER, "Approve and map liquidity pool to adapter")
       throw new Error("wrong adapter name");
     }
 
+    if (contractversion !== 1 && contractversion !== 2) {
+      throw new Error("contractversion is invalid");
+    }
+
     try {
-      const registryContract = await hre.ethers.getContractAt(ESSENTIAL_CONTRACTS.REGISTRY, registry);
+      const registryContract = await hre.ethers.getContractAt(
+        contractversion === 1 ? ESSENTIAL_CONTRACTS.REGISTRY : ESSENTIAL_CONTRACTS.REGISTRY_V2,
+        registry,
+      );
       const liquidityPools = removeDuplicateFromStringArray(
         Object.keys(TypedDefiPools[adaptername]).map(name => TypedDefiPools[adaptername][name].pool),
       );
       const liquidityPoolsToAdapter = liquidityPools.map(lp => [lp, adapter as string]);
-      await approveLiquidityPoolAndMapAdapters(owner, registryContract, liquidityPools, liquidityPoolsToAdapter);
+      contractversion === 1
+        ? await approveLiquidityPoolAndMapAdapters(owner, registryContract, liquidityPools, liquidityPoolsToAdapter)
+        : await approveLiquidityPoolAndMapAdaptersV2(
+            owner,
+            registryContract,
+            liquidityPools,
+            liquidityPoolsToAdapter,
+            checkapproval,
+          );
       console.log(`Finished mapping liquidityPools to adapter : ${adaptername}`);
       console.log("------------------");
     } catch (error) {
-      console.error(`${MAP_LIQUIDITYPOOLS_ADAPTER}: `, error);
+      console.error(`${TASKS.ACTION_TASKS.MAP_LIQUIDITYPOOLS_TO_ADAPTER.NAME}: `, error);
       throw error;
     }
   });

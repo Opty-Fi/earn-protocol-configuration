@@ -2,16 +2,18 @@ import { task, types } from "hardhat/config";
 import { isAddress } from "../../helpers/helpers";
 import { ESSENTIAL_CONTRACTS } from "../../helpers/constants/essential-contracts-name";
 import { TypedTokens } from "../../helpers/data";
-import { approveAndSetTokenHashToToken } from "../../helpers/contracts-actions";
+import { approveAndMapTokenHashToTokenV2, approveAndMapTokenHashToToken } from "../../helpers/contracts-actions";
 import { getAddress } from "ethers/lib/utils";
-import { APPROVE_TOKEN } from "../task-names";
+import TASKS from "../task-names";
 import { NETWORKS_ID } from "../../helpers/constants/network";
 
-task(APPROVE_TOKEN, "Approve Token")
+task(TASKS.ACTION_TASKS.APPROVE_TOKEN.NAME, TASKS.ACTION_TASKS.APPROVE_TOKEN.DESCRIPTION)
   .addParam("token", "the address of token", "", types.string)
   .addParam("registry", "the address of registry", "", types.string)
-  .addParam("networkHash", "the hash of network", "", types.string)
-  .setAction(async ({ token, registry, networkHash }, hre) => {
+  .addParam("chainid", "the hash of chainId", "", types.string)
+  .addParam("checkapproval", "check whether token is approved", false, types.boolean)
+  .addParam("contractversion", "the version of registry", 1, types.int)
+  .setAction(async ({ token, registry, chainid, checkapproval, contractversion }, hre) => {
     const [owner] = await hre.ethers.getSigners();
 
     if (registry === "") {
@@ -30,17 +32,26 @@ task(APPROVE_TOKEN, "Approve Token")
       throw new Error("token address is invalid");
     }
 
-    if (!Object.values(NETWORKS_ID).includes(networkHash)) {
+    if (!Object.values(NETWORKS_ID).includes(chainid)) {
       throw new Error("network is invalid");
     }
 
+    if (contractversion !== 1 && contractversion !== 2) {
+      throw new Error("contractversion is invalid");
+    }
+
     if (getAddress(token) !== getAddress(TypedTokens.ETH)) {
-      const registryContract = await hre.ethers.getContractAt(ESSENTIAL_CONTRACTS.REGISTRY, registry);
+      const registryContract = await hre.ethers.getContractAt(
+        contractversion === 1 ? ESSENTIAL_CONTRACTS.REGISTRY : ESSENTIAL_CONTRACTS.REGISTRY_V2,
+        registry,
+      );
       try {
-        await approveAndSetTokenHashToToken(owner, registryContract, token, networkHash);
+        contractversion === 1
+          ? await approveAndMapTokenHashToToken(owner, registryContract, token)
+          : await approveAndMapTokenHashToTokenV2(owner, registryContract, token, chainid, checkapproval);
         console.log(`Finished approving token: ${token}`);
       } catch (error) {
-        console.error(`${APPROVE_TOKEN}:`, error);
+        console.error(`${TASKS.ACTION_TASKS.APPROVE_TOKEN.NAME}:`, error);
         throw error;
       }
     }

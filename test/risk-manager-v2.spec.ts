@@ -5,22 +5,15 @@ import { Signer, Contract } from "ethers";
 import { smock } from "@defi-wonderland/smock";
 import { MOCK_CONTRACTS } from "../helpers/type";
 import { TypedStrategies, TypedTokens } from "../helpers/data";
-import {
-  generateStrategyHash,
-  generateStrategyStep,
-  generateTokenHash,
-  executeFunc,
-  deploySmockContract,
-  deployContract,
-} from "../helpers/helpers";
+import { generateTokenHashV2, executeFunc, deploySmockContract, deployContract } from "../helpers/helpers";
 import { TESTING_DEPLOYMENT_ONCE } from "../helpers/constants/utils";
 import { ESSENTIAL_CONTRACTS } from "../helpers/constants/essential-contracts-name";
 import { TESTING_CONTRACTS } from "../helpers/constants/test-contracts-name";
 import { deployRegistry, deployRiskManager } from "../helpers/contracts-deployments";
-import { approveAndMapTokenHashToToken, addRiskProfile } from "../helpers/contracts-actions";
-import scenario from "./scenarios/risk-manager.json";
+import { approveAndMapTokenHashToTokenV2, addRiskProfile } from "../helpers/contracts-actions";
+import scenario from "./scenarios/risk-manager-v2.json";
 import { RISK_PROFILES } from "../helpers/constants/contracts-data";
-
+import { NETWORKS_ID } from "../helpers/constants/network";
 chai.use(solidity);
 
 type ARGUMENTS = {
@@ -38,23 +31,16 @@ describe(scenario.title, () => {
   let owner: Signer;
   before(async () => {
     [owner] = await hre.ethers.getSigners();
-    registry = await deployRegistry(hre, owner, TESTING_DEPLOYMENT_ONCE, 1);
-    const investStrategyRegistry = await deploySmockContract(smock, ESSENTIAL_CONTRACTS.INVEST_STRATEGY_REGISTRY, [
+    registry = await deployRegistry(hre, owner, TESTING_DEPLOYMENT_ONCE, 2);
+
+    const strategyProvider = await deploySmockContract(smock, ESSENTIAL_CONTRACTS.STRATEGY_PROVIDER_V2, [
       registry.address,
     ]);
 
-    const strategyProvider = await deploySmockContract(smock, ESSENTIAL_CONTRACTS.STRATEGY_PROVIDER, [
-      registry.address,
-    ]);
+    riskManager = await deployRiskManager(hre, owner, TESTING_DEPLOYMENT_ONCE, registry.address, 2);
 
-    const aprOracle = await deploySmockContract(smock, ESSENTIAL_CONTRACTS.APR_ORACLE, [registry.address]);
-
-    riskManager = await deployRiskManager(hre, owner, TESTING_DEPLOYMENT_ONCE, registry.address, 1);
-
-    contracts = { investStrategyRegistry, strategyProvider };
+    contracts = { strategyProvider };
     await executeFunc(registry, owner, "setStrategyProvider(address)", [strategyProvider.address]);
-    await executeFunc(registry, owner, "setAPROracle(address)", [aprOracle.address]);
-    await executeFunc(registry, owner, "setInvestStrategyRegistry(address)", [investStrategyRegistry.address]);
     await addRiskProfile(
       registry,
       owner,
@@ -70,7 +56,13 @@ describe(scenario.title, () => {
     );
     for (let i = 0; i < usedTokens.length; i++) {
       try {
-        await approveAndMapTokenHashToToken(owner, registry, TypedTokens[usedTokens[i].toUpperCase()]);
+        await approveAndMapTokenHashToTokenV2(
+          owner,
+          registry,
+          TypedTokens[usedTokens[i].toUpperCase()],
+          NETWORKS_ID.MAINNET,
+          false,
+        );
       } catch (error) {
         continue;
       }
@@ -79,39 +71,22 @@ describe(scenario.title, () => {
 
   for (let i = 0; i < TypedStrategies.length; i++) {
     const strategy = TypedStrategies[i];
-    const tokenHash = generateTokenHash([TypedTokens[strategy.token.toUpperCase()]]);
-    const strategyHash = generateStrategyHash(strategy.strategy, TypedTokens[strategy.token.toUpperCase()]);
+    const tokenHash = generateTokenHashV2([TypedTokens[strategy.token.toUpperCase()]], NETWORKS_ID.MAINNET);
+
     const defaultStrategy = TypedStrategies.filter(
       item => item.token === strategy.token && item.strategyName !== strategy.strategyName,
     )[0];
     if (!defaultStrategy) {
       continue;
     }
+    const returnedStrategy = strategy.strategy.map(item => [item.contract, item.outputToken, item.isBorrow]);
+    const returnedDefaultStrategy = defaultStrategy.strategy.map(item => [
+      item.contract,
+      item.outputToken,
+      item.isBorrow,
+    ]);
 
-    const defaultStrategyHash = generateStrategyHash(
-      defaultStrategy.strategy,
-      TypedTokens[defaultStrategy.token.toUpperCase()],
-    );
     let isCheckDefault = false;
-    before(async () => {
-      const setDefaultStrategy = (await contracts["investStrategyRegistry"].getStrategy(defaultStrategyHash))
-        ._strategySteps[0];
-      if (!setDefaultStrategy) {
-        const defaultStrategySteps = generateStrategyStep(defaultStrategy.strategy);
-        await contracts["investStrategyRegistry"]["setStrategy(bytes32,(address,address,bool)[])"](
-          tokenHash,
-          defaultStrategySteps,
-        );
-      }
-      const setStrategy = (await contracts["investStrategyRegistry"].getStrategy(strategyHash))._strategySteps[0];
-      if (!setStrategy) {
-        const strategySteps = generateStrategyStep(strategy.strategy);
-        await contracts["investStrategyRegistry"]["setStrategy(bytes32,(address,address,bool)[])"](
-          tokenHash,
-          strategySteps,
-        );
-      }
-    });
     describe(strategy.strategyName, () => {
       for (let i = 0; i < scenario.stories.length; i++) {
         const story = scenario.stories[i];
@@ -159,11 +134,11 @@ describe(scenario.title, () => {
                 assert.isDefined(score, `args is wrong in ${action.action} testcase`);
                 break;
               }
-              case "setBestStrategy(uint256,bytes32,bytes32)": {
-                contracts[action.contract].rpToTokenToBestStrategy.returns(strategyHash);
+              case "setBestStrategy(uint256,bytes32,(address,address,bool)[])": {
+                contracts[action.contract].getRpToTokenToBestStrategy.returns(returnedStrategy);
                 break;
               }
-              case "setBestDefaultStrategy(uint256,bytes32,bytes32)": {
+              case "setBestDefaultStrategy(uint256,bytes32,(address,address,bool)[])": {
                 const { score }: ARGUMENTS = action.args;
                 const scoredPools: [string, number][] = [];
                 if (score) {
@@ -177,15 +152,9 @@ describe(scenario.title, () => {
                   }
                   await registry["rateLiquidityPool((address,uint8)[])"](scoredPools);
                 }
-                contracts[action.contract].rpToTokenToDefaultStrategy.returns(defaultStrategyHash);
+                contracts[action.contract].getRpToTokenToDefaultStrategy.returns(returnedDefaultStrategy);
                 isCheckDefault = true;
                 assert.isDefined(score, `args is wrong in ${action.action} testcase`);
-                break;
-              }
-              case "setDefaultStrategyState(uint8)": {
-                const { defaultStrategyState }: ARGUMENTS = action.args;
-                await contracts[action.contract].getDefaultStrategyState.returns(defaultStrategyState);
-                assert.isDefined(defaultStrategyState, `args is wrong in ${action.action} testcase`);
                 break;
               }
             }
@@ -193,13 +162,13 @@ describe(scenario.title, () => {
           for (let i = 0; i < story.getActions.length; i++) {
             const action = story.getActions[i];
             switch (action.action) {
-              case "getBestStrategy(uint256,address[])": {
-                expect(await riskManager[action.action](riskProfileCode, [TypedTokens[strategy.token]])).to.be.equal(
+              case "getBestStrategy(uint256,bytes32)": {
+                expect(await riskManager[action.action](riskProfileCode, tokenHash)).to.eql(
                   action.expectedValue !== ""
                     ? action.expectedValue
                     : isCheckDefault
-                    ? defaultStrategyHash
-                    : strategyHash,
+                    ? returnedDefaultStrategy
+                    : returnedStrategy,
                 );
                 break;
               }
@@ -212,6 +181,15 @@ describe(scenario.title, () => {
                 if (usedLps.length > 0) {
                   await registry[action.action](usedLps);
                 }
+                break;
+              }
+              case "setBestStrategy(uint256,bytes32,(address,address,bool)[])": {
+                contracts[action.contract].getRpToTokenToBestStrategy.returns([]);
+                break;
+              }
+              case "setBestDefaultStrategy(uint256,bytes32,(address,address,bool)[])": {
+                contracts[action.contract].getRpToTokenToDefaultStrategy.returns([]);
+                isCheckDefault = false;
                 break;
               }
             }
@@ -264,7 +242,7 @@ describe(scenario.title, () => {
         const action = story.cleanActions[i];
         switch (action.action) {
           case "deployRiskManager()": {
-            riskManager = await deployRiskManager(hre, owner, TESTING_DEPLOYMENT_ONCE, registry.address, 1);
+            riskManager = await deployRiskManager(hre, owner, TESTING_DEPLOYMENT_ONCE, registry.address, 2);
             break;
           }
         }

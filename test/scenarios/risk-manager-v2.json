@@ -1,22 +1,13 @@
 {
-  "title": "RiskManager",
+  "title": "RiskManagerV2",
   "description": "Test cases for RiskManager contract",
   "stories": [
     {
-      "description": "GetBestStrategy should return empty in StrategyProvider if strategy is not qualified, defaultStrategy is not set and defaultStrategyState is Zero ",
+      "description": "GetBestStrategy should return empty in StrategyProvider if strategy is not qualified, defaultStrategy is not set",
       "setActions": [
         {
           "contract": "strategyProvider",
-          "action": "setDefaultStrategyState(uint8)",
-          "args": {
-            "defaultStrategyState": 0
-          },
-          "expect": "success",
-          "message": ""
-        },
-        {
-          "contract": "strategyProvider",
-          "action": "setBestStrategy(uint256,bytes32,bytes32)",
+          "action": "setBestStrategy(uint256,bytes32,(address,address,bool)[])",
           "args": {},
           "expect": "success",
           "message": ""
@@ -25,9 +16,9 @@
       "getActions": [
         {
           "contract": "riskManager",
-          "action": "getBestStrategy(uint256,address[])",
+          "action": "getBestStrategy(uint256,bytes32)",
           "args": {},
-          "expectedValue": "0x0000000000000000000000000000000000000000000000000000000000000000"
+          "expectedValue": []
         }
       ],
       "cleanActions": []
@@ -60,7 +51,7 @@
         },
         {
           "contract": "strategyProvider",
-          "action": "setBestStrategy(uint256,bytes32,bytes32)",
+          "action": "setBestStrategy(uint256,bytes32,(address,address,bool)[])",
           "args": {},
           "expect": "success",
           "message": ""
@@ -69,7 +60,7 @@
       "getActions": [
         {
           "contract": "riskManager",
-          "action": "getBestStrategy(uint256,address[])",
+          "action": "getBestStrategy(uint256,bytes32)",
           "args": {},
           "expectedValue": ""
         }
@@ -86,14 +77,14 @@
       "setActions": [
         {
           "contract": "strategyProvider",
-          "action": "setBestStrategy(uint256,bytes32,bytes32)",
+          "action": "setBestStrategy(uint256,bytes32,(address,address,bool)[])",
           "args": {},
           "expect": "success",
           "message": ""
         },
         {
           "contract": "strategyProvider",
-          "action": "setBestDefaultStrategy(uint256,bytes32,bytes32)",
+          "action": "setBestDefaultStrategy(uint256,bytes32,(address,address,bool)[])",
           "args": { "score": [2, 2, 2] },
           "expect": "success",
           "message": ""
@@ -102,7 +93,7 @@
       "getActions": [
         {
           "contract": "riskManager",
-          "action": "getBestStrategy(uint256,address[])",
+          "action": "getBestStrategy(uint256,bytes32)",
           "args": {},
           "expectedValue": ""
         }
@@ -142,14 +133,14 @@
         },
         {
           "contract": "strategyProvider",
-          "action": "setBestStrategy(uint256,bytes32,bytes32)",
+          "action": "setBestStrategy(uint256,bytes32,(address,address,bool)[])",
           "args": {},
           "expect": "success",
           "message": ""
         },
         {
           "contract": "strategyProvider",
-          "action": "setBestDefaultStrategy(uint256,bytes32,bytes32)",
+          "action": "setBestDefaultStrategy(uint256,bytes32,(address,address,bool)[])",
           "args": { "score": [5, 5, 5] },
           "expect": "success",
           "message": ""
@@ -158,7 +149,7 @@
       "getActions": [
         {
           "contract": "riskManager",
-          "action": "getBestStrategy(uint256,address[])",
+          "action": "getBestStrategy(uint256,bytes32)",
           "args": {},
           "expectedValue": ""
         }
@@ -167,6 +158,14 @@
         {
           "contract": "registry",
           "action": "revokeLiquidityPool(address[])"
+        },
+        {
+          "contract": "strategyProvider",
+          "action": "setBestStrategy(uint256,bytes32,(address,address,bool)[])"
+        },
+        {
+          "contract": "strategyProvider",
+          "action": "setBestDefaultStrategy(uint256,bytes32,(address,address,bool)[])"
         }
       ]
     }
