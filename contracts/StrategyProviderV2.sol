@@ -54,6 +54,7 @@ contract StrategyProviderV2 is IStrategyProviderV2, Modifiers {
         require(_riskProfileStruct.exists, "!Rp_Exists");
         uint256 _index = registryContract.getTokensHashIndexByHash(_underlyingTokensHash);
         require(registryContract.getTokensHashByIndex(_index) == _underlyingTokensHash, "!TokenHashExists");
+        delete rpToTokenToBestStrategy[_riskProfileCode][_underlyingTokensHash];
         for (uint256 _i = 0; _i < _strategySteps.length; _i++) {
             rpToTokenToBestStrategy[_riskProfileCode][_underlyingTokensHash].push(_strategySteps[_i]);
         }
@@ -71,6 +72,7 @@ contract StrategyProviderV2 is IStrategyProviderV2, Modifiers {
         require(_riskProfileStruct.exists, "!Rp_Exists");
         uint256 _index = registryContract.getTokensHashIndexByHash(_underlyingTokensHash);
         require(registryContract.getTokensHashByIndex(_index) == _underlyingTokensHash, "!TokenHashExists");
+        delete rpToTokenToDefaultStrategy[_riskProfileCode][_underlyingTokensHash];
         for (uint256 _i = 0; _i < _strategySteps.length; _i++) {
             rpToTokenToDefaultStrategy[_riskProfileCode][_underlyingTokensHash].push(_strategySteps[_i]);
         }

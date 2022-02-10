@@ -29,6 +29,62 @@
       "cleanActions": []
     },
     {
+      "description": "[SetBestStrategy] - StrategyOperator should be able to set an empty strategy ",
+      "setActions": [
+        {
+          "contract": "strategyProvider",
+          "action": "setBestStrategy(uint256,bytes32,(address,address,bool)[])",
+          "args": {
+            "riskProfileCode": "1",
+            "isEmpty": true
+          },
+          "executor": "strategyOperator",
+          "expect": "success",
+          "message": ""
+        }
+      ],
+      "getActions": [
+        {
+          "contract": "strategyProvider",
+          "action": "getRpToTokenToBestStrategy(uint256,bytes32)",
+          "args": {
+            "riskProfileCode": "1",
+            "isEmpty": true
+          },
+          "expectedValue": {}
+        }
+      ],
+      "cleanActions": []
+    },
+    {
+      "description": "[SetBestStrategy] - Should receive an new strategy after setting strategy more than one",
+      "setActions": [
+        {
+          "contract": "strategyProvider",
+          "action": "setBestStrategy(uint256,bytes32,(address,address,bool)[])",
+          "args": {
+            "riskProfileCode": "1",
+            "isSecond": true
+          },
+          "executor": "strategyOperator",
+          "expect": "success",
+          "message": ""
+        }
+      ],
+      "getActions": [
+        {
+          "contract": "strategyProvider",
+          "action": "getRpToTokenToBestStrategy(uint256,bytes32)",
+          "args": {
+            "riskProfileCode": "1",
+            "isSecond": true
+          },
+          "expectedValue": {}
+        }
+      ],
+      "cleanActions": []
+    },
+    {
       "description": "[SetBestStrategy] - Non-StrategyOperator shouldn't be able to set best strategy",
       "setActions": [
         {
@@ -138,6 +194,62 @@
           "action": "getRpToTokenToDefaultStrategy(uint256,bytes32)",
           "args": {
             "riskProfileCode": "1"
+          },
+          "expectedValue": {}
+        }
+      ],
+      "cleanActions": []
+    },
+    {
+      "description": "[setBestDefaultStrategy] - StrategyOperator should be able to set an empty strategy ",
+      "setActions": [
+        {
+          "contract": "strategyProvider",
+          "action": "setBestDefaultStrategy(uint256,bytes32,(address,address,bool)[])",
+          "args": {
+            "riskProfileCode": "1",
+            "isEmpty": true
+          },
+          "executor": "strategyOperator",
+          "expect": "success",
+          "message": ""
+        }
+      ],
+      "getActions": [
+        {
+          "contract": "strategyProvider",
+          "action": "getRpToTokenToDefaultStrategy(uint256,bytes32)",
+          "args": {
+            "riskProfileCode": "1",
+            "isEmpty": true
+          },
+          "expectedValue": {}
+        }
+      ],
+      "cleanActions": []
+    },
+    {
+      "description": "[setBestDefaultStrategy] - Should receive an new strategy after setting strategy more than one",
+      "setActions": [
+        {
+          "contract": "strategyProvider",
+          "action": "setBestDefaultStrategy(uint256,bytes32,(address,address,bool)[])",
+          "args": {
+            "riskProfileCode": "1",
+            "isSecond": true
+          },
+          "executor": "strategyOperator",
+          "expect": "success",
+          "message": ""
+        }
+      ],
+      "getActions": [
+        {
+          "contract": "strategyProvider",
+          "action": "getRpToTokenToDefaultStrategy(uint256,bytes32)",
+          "args": {
+            "riskProfileCode": "1",
+            "isSecond": true
           },
           "expectedValue": {}
         }

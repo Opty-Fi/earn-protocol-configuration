@@ -16,6 +16,8 @@ import { NETWORKS_ID } from "../helpers/constants/network";
 chai.use(solidity);
 
 type ARGUMENTS = {
+  isSecond?: boolean;
+  isEmpty?: boolean;
   riskProfileCode?: string;
   strategyName?: string;
   tokenName?: string;
@@ -35,6 +37,8 @@ describe(scenario.title, () => {
   const usedTokenHash = generateTokenHashV2([usedToken], NETWORKS_ID.MAINNET);
   const nonApprovedTokenHash = generateTokenHashV2([nonApprovedToken], NETWORKS_ID.MAINNET);
   const usedStrategy = TypedStrategies.filter(strategy => strategy.token == "DAI")[0].strategy;
+  const secondStrategy = TypedStrategies.filter(strategy => strategy.token == "DAI")[1].strategy;
+
   const riskProfile = RISK_PROFILES[1];
   before(async () => {
     try {
@@ -103,12 +107,15 @@ describe(scenario.title, () => {
         switch (action.action) {
           case "getRpToTokenToDefaultStrategy(uint256,bytes32)":
           case "getRpToTokenToBestStrategy(uint256,bytes32)": {
+            const { isEmpty, isSecond }: ARGUMENTS = action.args;
+            const strategy = isSecond ? secondStrategy : usedStrategy;
+
             expect(
               await contracts[action.contract][action.action](
                 riskProfile.code,
                 generateTokenHashV2([usedToken], NETWORKS_ID.MAINNET),
               ),
-            ).to.be.eqls(usedStrategy.map(item => [item.contract, item.outputToken, item.isBorrow]));
+            ).to.be.eqls(isEmpty ? [] : strategy.map(item => [item.contract, item.outputToken, item.isBorrow]));
 
             break;
           }
@@ -167,20 +174,23 @@ describe(scenario.title, () => {
       }
       case "setBestStrategy(uint256,bytes32,(address,address,bool)[])":
       case "setBestDefaultStrategy(uint256,bytes32,(address,address,bool)[])": {
-        const { riskProfileCode, isNonApprovedToken }: ARGUMENTS = action.args;
+        const { riskProfileCode, isNonApprovedToken, isEmpty, isSecond }: ARGUMENTS = action.args;
         if (riskProfileCode) {
+          const strategy = isSecond ? secondStrategy : usedStrategy;
           if (action.expect === "success") {
-            await contracts[action.contract].connect(signers[action.executor])[action.action](
-              riskProfileCode,
-              usedTokenHash,
-              usedStrategy.map(item => [item.contract, item.outputToken, item.isBorrow]),
-            );
+            await contracts[action.contract]
+              .connect(signers[action.executor])
+              [action.action](
+                riskProfileCode,
+                usedTokenHash,
+                isEmpty ? [] : strategy.map(item => [item.contract, item.outputToken, item.isBorrow]),
+              );
           } else {
             await expect(
               contracts[action.contract].connect(signers[action.executor])[action.action](
                 riskProfileCode,
                 isNonApprovedToken ? nonApprovedTokenHash : usedTokenHash,
-                usedStrategy.map(item => [item.contract, item.outputToken, item.isBorrow]),
+                strategy.map(item => [item.contract, item.outputToken, item.isBorrow]),
               ),
             ).to.be.revertedWith(action.message);
           }
