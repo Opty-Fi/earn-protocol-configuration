@@ -84,8 +84,6 @@ contract RegistryV2 is IRegistryV2, ModifiersController {
         odefiVaultBooster = _odefiVaultBooster;
     }
 
-    ///@TODO Add staking pool contract addresses
-
     /**
      * @inheritdoc IRegistryV2
      */
