@@ -283,6 +283,12 @@ contract RegistryV2 is IRegistryV2, ModifiersController {
      */
     function setLiquidityPoolToAdapter(DataTypes.PoolAdapter[] memory _poolAdapters) external override onlyOperator {
         for (uint256 _i = 0; _i < _poolAdapters.length; _i++) {
+            require(_poolAdapters[_i].adapter.isContract(), "!_adapter.isContract()");
+            require(
+                liquidityPools[_poolAdapters[_i].pool].isLiquidityPool ||
+                    creditPools[_poolAdapters[_i].pool].isLiquidityPool,
+                "!liquidityPools"
+            );
             _setLiquidityPoolToAdapter(_poolAdapters[_i].pool, _poolAdapters[_i].adapter);
         }
     }
@@ -291,6 +297,8 @@ contract RegistryV2 is IRegistryV2, ModifiersController {
      * @inheritdoc IRegistryV2
      */
     function setLiquidityPoolToAdapter(address _pool, address _adapter) external override onlyOperator {
+        require(_adapter.isContract(), "!_adapter.isContract()");
+        require(liquidityPools[_pool].isLiquidityPool || creditPools[_pool].isLiquidityPool, "!liquidityPools");
         _setLiquidityPoolToAdapter(_pool, _adapter);
     }
 
@@ -334,6 +342,7 @@ contract RegistryV2 is IRegistryV2, ModifiersController {
     {
         for (uint256 _i = 0; _i < _tokensHashesDetails.length; _i++) {
             require(_areTokensApproved(_tokensHashesDetails[_i].tokens), "!tokens");
+            require(_isNewTokensHash(_tokensHash), "!_isNewTokensHash");
             _setTokensHashToTokens(_tokensHashesDetails[_i].tokensHash, _tokensHashesDetails[_i].tokens);
         }
     }
@@ -343,6 +352,7 @@ contract RegistryV2 is IRegistryV2, ModifiersController {
      */
     function setTokensHashToTokens(bytes32 _tokensHash, address[] memory _tokens) external override onlyOperator {
         require(_areTokensApproved(_tokens), "!tokens");
+        require(_isNewTokensHash(_tokensHash), "!_isNewTokensHash");
         _setTokensHashToTokens(_tokensHash, _tokens);
     }
 
@@ -805,14 +815,11 @@ contract RegistryV2 is IRegistryV2, ModifiersController {
     }
 
     function _setLiquidityPoolToAdapter(address _pool, address _adapter) internal {
-        require(_adapter.isContract(), "!_adapter.isContract()");
-        require(liquidityPools[_pool].isLiquidityPool || creditPools[_pool].isLiquidityPool, "!liquidityPools");
         liquidityPoolToAdapter[_pool] = _adapter;
         emit LogLiquidityPoolToAdapter(_pool, _adapter, msg.sender);
     }
 
     function _setTokensHashToTokens(bytes32 _tokensHash, address[] memory _tokens) internal {
-        require(_isNewTokensHash(_tokensHash), "!_isNewTokensHash");
         tokensHashIndexes.push(_tokensHash);
         tokensHashToTokens[_tokensHash].index = tokensHashIndexes.length - 1;
         tokensHashToTokens[_tokensHash].tokens = _tokens;
