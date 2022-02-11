@@ -374,6 +374,16 @@ contract RegistryV2 is IRegistryV2, ModifiersController {
     /**
      * @inheritdoc IRegistryV2
      */
+    function resetV1Contracts() external override onlyFinanceOperator {
+        investStrategyRegistry = address(0);
+        aprOracle = address(0);
+        strategyManager = address(0);
+        optyStakingRateBalancer = address(0);
+    }
+
+    /**
+     * @inheritdoc IRegistryV2
+     */
     function getTokenHashes() public view override returns (bytes32[] memory) {
         return tokensHashIndexes;
     }

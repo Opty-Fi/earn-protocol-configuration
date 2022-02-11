@@ -195,8 +195,12 @@ describe(scenario.title, () => {
             }
             break;
           }
-          case "isNewContract()": {
-            expect(await registryContract[action.action]()).to.be.equal(action.expectedValue);
+          case "resetV1Contracts()": {
+            await registryContract[action.action]();
+            expect(await registryContract.investStrategyRegistry()).to.be.equal(hre.ethers.constants.AddressZero);
+            expect(await registryContract.aprOracle()).to.be.equal(hre.ethers.constants.AddressZero);
+            expect(await registryContract.strategyManager()).to.be.equal(hre.ethers.constants.AddressZero);
+            expect(await registryContract.optyStakingRateBalancer()).to.be.equal(hre.ethers.constants.AddressZero);
             break;
           }
           case "verifyOldValue()": {
@@ -320,7 +324,7 @@ describe(scenario.title, () => {
       case "become(address)": {
         const newRegistry = await deployContract(
           hre,
-          TESTING_CONTRACTS.TEST_REGISTRY_NEW_IMPLEMENTATION,
+          ESSENTIAL_CONTRACTS.REGISTRY_V2,
           TESTING_DEPLOYMENT_ONCE,
           owner,
           [],
@@ -339,10 +343,7 @@ describe(scenario.title, () => {
           .withArgs(oldRegistry, newRegistry.address);
         await executeFunc(newRegistry, owner, "become(address)", [registryProxy.address]);
 
-        registryContract = await hre.ethers.getContractAt(
-          TESTING_CONTRACTS.TEST_REGISTRY_NEW_IMPLEMENTATION,
-          registryProxy.address,
-        );
+        registryContract = await hre.ethers.getContractAt(ESSENTIAL_CONTRACTS.REGISTRY_V2, registryProxy.address);
         break;
       }
       case "initData()": {

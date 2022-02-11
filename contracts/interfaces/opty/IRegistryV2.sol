@@ -257,6 +257,11 @@ interface IRegistryV2 {
     function removeRiskProfile(uint256 _index) external;
 
     /**
+     * @notice Reset all unused contracts from RegistryV1
+     */
+    function resetV1Contracts() external;
+
+    /**
      * @notice Get the list of tokensHash
      * @return Returns the list of tokensHash.
      */
