@@ -257,7 +257,7 @@ interface IRegistryV2 {
     function removeRiskProfile(uint256 _index) external;
 
     /**
-     * @notice Reset all unused contracts from RegistryV1
+     * @notice Reset all unused storage variables from Registry
      */
     function resetV1Contracts() external;
 
