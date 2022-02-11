@@ -1,7 +1,7 @@
 import chai, { expect, assert } from "chai";
 import { solidity } from "ethereum-waffle";
 import hre from "hardhat";
-import { Contract, Signer, BigNumber } from "ethers";
+import { Contract, Signer } from "ethers";
 import { deployRegistry } from "../helpers/contracts-deployments";
 import { CONTRACTS, TESTING_DEFAULT_DATA } from "../helpers/type";
 import { deployContract, executeFunc, generateTokenHashV2 } from "../helpers/helpers";
