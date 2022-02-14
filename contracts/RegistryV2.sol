@@ -239,7 +239,6 @@ contract RegistryV2 is IRegistryV2, ModifiersController {
      */
     function setLiquidityPoolToAdapter(DataTypes.PoolAdapter[] memory _poolAdapters) external override onlyOperator {
         for (uint256 _i = 0; _i < _poolAdapters.length; _i++) {
-            require(_poolAdapters[_i].adapter.isContract(), "!_adapter.isContract()");
             require(liquidityPools[_poolAdapters[_i].pool].isLiquidityPool, "!liquidityPools");
             _setLiquidityPoolToAdapter(_poolAdapters[_i].pool, _poolAdapters[_i].adapter);
         }
@@ -249,7 +248,6 @@ contract RegistryV2 is IRegistryV2, ModifiersController {
      * @inheritdoc IRegistryV2
      */
     function setLiquidityPoolToAdapter(address _pool, address _adapter) external override onlyOperator {
-        require(_adapter.isContract(), "!_adapter.isContract()");
         require(liquidityPools[_pool].isLiquidityPool, "!liquidityPools");
         _setLiquidityPoolToAdapter(_pool, _adapter);
     }
@@ -368,7 +366,7 @@ contract RegistryV2 is IRegistryV2, ModifiersController {
     /**
      * @inheritdoc IRegistryV2
      */
-    function resetV1Contracts() external override onlyFinanceOperator {
+    function resetV1Contracts() external override onlyOperator {
         investStrategyRegistry = address(0);
         aprOracle = address(0);
         strategyManager = address(0);
@@ -604,6 +602,7 @@ contract RegistryV2 is IRegistryV2, ModifiersController {
     }
 
     function _setLiquidityPoolToAdapter(address _pool, address _adapter) internal {
+        require(_adapter.isContract(), "!_adapter.isContract()");
         liquidityPoolToAdapter[_pool] = _adapter;
         emit LogLiquidityPoolToAdapter(_pool, _adapter, msg.sender);
     }

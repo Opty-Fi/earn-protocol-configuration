@@ -197,6 +197,9 @@ describe(scenario.title, () => {
           }
           case "resetV1Contracts()": {
             await registryContract[action.action]();
+            await expect(registryContract.connect(financeOperator)[action.action]()).to.be.revertedWith(
+              "caller is not the operator",
+            );
             expect(await registryContract.investStrategyRegistry()).to.be.equal(hre.ethers.constants.AddressZero);
             expect(await registryContract.aprOracle()).to.be.equal(hre.ethers.constants.AddressZero);
             expect(await registryContract.strategyManager()).to.be.equal(hre.ethers.constants.AddressZero);
