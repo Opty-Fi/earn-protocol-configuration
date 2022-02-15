@@ -3252,13 +3252,13 @@
       ],
       "getActions": [
         {
-          "action": "isNewContract()",
+          "action": "verifyOldValue()",
           "args": {},
-          "expectedValue": true,
+          "expectedValue": "",
           "expectedMultiValues": {}
         },
         {
-          "action": "verifyOldValue()",
+          "action": "resetV1Contracts()",
           "args": {},
           "expectedValue": "",
           "expectedMultiValues": {}

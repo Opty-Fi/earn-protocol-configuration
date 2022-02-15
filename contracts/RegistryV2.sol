@@ -47,32 +47,6 @@ contract RegistryV2 is IRegistryV2, ModifiersController {
     /**
      * @inheritdoc IRegistryV2
      */
-    function setWhitelistedUser(
-        address _vault,
-        address _user,
-        bool _whitelist
-    ) external override onlyOperator {
-        require(_vault.isContract(), "!isContract");
-        _setWhitelistedUser(_vault, _user, _whitelist);
-    }
-
-    /**
-     * @inheritdoc IRegistryV2
-     */
-    function setWhitelistedUsers(
-        address _vault,
-        address[] memory _users,
-        bool _whitelist
-    ) external override onlyOperator {
-        require(_vault.isContract(), "!isContract");
-        for (uint256 _i = 0; _i < _users.length; _i++) {
-            _setWhitelistedUser(_vault, _users[_i], _whitelist);
-        }
-    }
-
-    /**
-     * @inheritdoc IRegistryV2
-     */
     function setStrategyProvider(address _strategyProvider) external override onlyOperator {
         require(_strategyProvider.isContract(), "!isContract");
         strategyProvider = _strategyProvider;
@@ -97,25 +71,9 @@ contract RegistryV2 is IRegistryV2, ModifiersController {
     /**
      * @inheritdoc IRegistryV2
      */
-    function setStrategyManager(address _strategyManager) external override onlyOperator {
-        require(_strategyManager.isContract(), "!isContract");
-        strategyManager = _strategyManager;
-    }
-
-    /**
-     * @inheritdoc IRegistryV2
-     */
     function setOPTY(address _opty) external override onlyOperator {
         require(_opty.isContract(), "!isContract");
         opty = _opty;
-    }
-
-    /**
-     * @inheritdoc IRegistryV2
-     */
-    function setOPTYStakingRateBalancer(address _optyStakingRateBalancer) external override onlyOperator {
-        require(_optyStakingRateBalancer.isContract(), "!isContract");
-        optyStakingRateBalancer = _optyStakingRateBalancer;
     }
 
     /**
@@ -125,8 +83,6 @@ contract RegistryV2 is IRegistryV2, ModifiersController {
         require(_odefiVaultBooster.isContract(), "!isContract");
         odefiVaultBooster = _odefiVaultBooster;
     }
-
-    ///@TODO Add staking pool contract addresses
 
     /**
      * @inheritdoc IRegistryV2
@@ -283,6 +239,7 @@ contract RegistryV2 is IRegistryV2, ModifiersController {
      */
     function setLiquidityPoolToAdapter(DataTypes.PoolAdapter[] memory _poolAdapters) external override onlyOperator {
         for (uint256 _i = 0; _i < _poolAdapters.length; _i++) {
+            require(liquidityPools[_poolAdapters[_i].pool].isLiquidityPool, "!liquidityPools");
             _setLiquidityPoolToAdapter(_poolAdapters[_i].pool, _poolAdapters[_i].adapter);
         }
     }
@@ -291,6 +248,7 @@ contract RegistryV2 is IRegistryV2, ModifiersController {
      * @inheritdoc IRegistryV2
      */
     function setLiquidityPoolToAdapter(address _pool, address _adapter) external override onlyOperator {
+        require(liquidityPools[_pool].isLiquidityPool, "!liquidityPools");
         _setLiquidityPoolToAdapter(_pool, _adapter);
     }
 
@@ -344,142 +302,6 @@ contract RegistryV2 is IRegistryV2, ModifiersController {
     function setTokensHashToTokens(bytes32 _tokensHash, address[] memory _tokens) external override onlyOperator {
         require(_areTokensApproved(_tokens), "!tokens");
         _setTokensHashToTokens(_tokensHash, _tokens);
-    }
-
-    /**
-     * @inheritdoc IRegistryV2
-     */
-    function setWithdrawalFeeRange(DataTypes.WithdrawalFeeRange memory _withdrawalFeeRange)
-        external
-        override
-        onlyFinanceOperator
-    {
-        require(
-            _withdrawalFeeRange.lowerLimit >= 0 &&
-                _withdrawalFeeRange.lowerLimit < _withdrawalFeeRange.upperLimit &&
-                _withdrawalFeeRange.upperLimit <= 10000,
-            "!BasisRange"
-        );
-        withdrawalFeeRange = _withdrawalFeeRange;
-    }
-
-    /**
-     * @inheritdoc IRegistryV2
-     */
-    function setVaultConfiguration(
-        address _vault,
-        bool _isLimitedState,
-        bool _allowWhitelistedState,
-        DataTypes.TreasuryShare[] memory _treasuryShares,
-        uint256 _withdrawalFee,
-        uint256 _userDepositCap,
-        uint256 _minimumDepositAmount,
-        uint256 _totalValueLockedLimitInUnderlying
-    ) external override onlyFinanceOperator {
-        require(_vault.isContract(), "!isContract");
-        _setIsLimitedState(_vault, _isLimitedState);
-        _setAllowWhitelistedState(_vault, _allowWhitelistedState);
-        _setWithdrawalFee(_vault, _withdrawalFee);
-        _setTreasuryShares(_vault, _treasuryShares);
-        _setUserDepositCap(_vault, _userDepositCap);
-        _setMinimumDepositAmount(_vault, _minimumDepositAmount);
-        _setTotalValueLockedLimitInUnderlying(_vault, _totalValueLockedLimitInUnderlying);
-    }
-
-    /**
-     * @inheritdoc IRegistryV2
-     */
-    function discontinue(address _vault) external override onlyOperator {
-        require(_vault.isContract(), "!isContract");
-        _discontinue(_vault);
-    }
-
-    /**
-     * @inheritdoc IRegistryV2
-     */
-    function unpauseVaultContract(address _vault, bool _unpaused) external override onlyOperator {
-        require(_vault.isContract(), "!isContract");
-        _unpauseVaultContract(_vault, _unpaused);
-    }
-
-    /**
-     * @inheritdoc IRegistryV2
-     */
-    function setIsLimitedState(address _vault, bool _isLimitedState) external override onlyFinanceOperator {
-        require(_vault.isContract(), "!isContract");
-        _setIsLimitedState(_vault, _isLimitedState);
-    }
-
-    /**
-     * @inheritdoc IRegistryV2
-     */
-    function setAllowWhitelistedState(address _vault, bool _allowWhitelistedState)
-        external
-        override
-        onlyFinanceOperator
-    {
-        require(_vault.isContract(), "!isContract");
-        _setAllowWhitelistedState(_vault, _allowWhitelistedState);
-    }
-
-    /**
-     * @inheritdoc IRegistryV2
-     */
-    function setTreasuryShares(address _vault, DataTypes.TreasuryShare[] memory _treasuryShares)
-        external
-        override
-        onlyFinanceOperator
-    {
-        require(_vault.isContract(), "!isContract");
-        _setTreasuryShares(_vault, _treasuryShares);
-    }
-
-    /**
-     * @inheritdoc IRegistryV2
-     */
-    function setWithdrawalFee(address _vault, uint256 _withdrawalFee) external override onlyFinanceOperator {
-        require(_vault.isContract(), "!isContract");
-        _setWithdrawalFee(_vault, _withdrawalFee);
-    }
-
-    /**
-     * @inheritdoc IRegistryV2
-     */
-    function setUserDepositCap(address _vault, uint256 _userDepositCap) external override onlyFinanceOperator {
-        require(_vault.isContract(), "!isContract");
-        _setUserDepositCap(_vault, _userDepositCap);
-    }
-
-    /**
-     * @inheritdoc IRegistryV2
-     */
-    function setMinimumDepositAmount(address _vault, uint256 _minimumDepositAmount)
-        external
-        override
-        onlyFinanceOperator
-    {
-        require(_vault.isContract(), "!isContract");
-        _setMinimumDepositAmount(_vault, _minimumDepositAmount);
-    }
-
-    /**
-     * @inheritdoc IRegistryV2
-     */
-    function setTotalValueLockedLimitInUnderlying(address _vault, uint256 _totalValueLockedLimitInUnderlying)
-        external
-        override
-        onlyFinanceOperator
-    {
-        require(_vault.isContract(), "!isContract");
-        _setTotalValueLockedLimitInUnderlying(_vault, _totalValueLockedLimitInUnderlying);
-    }
-
-    /**
-     * @inheritdoc IRegistryV2
-     */
-    function setQueueCap(address _vault, uint256 _queueCap) external override onlyOperator {
-        require(_vault.isContract(), "!isContract");
-        _setQueueCap(_vault, _queueCap);
     }
 
     /**
@@ -544,6 +366,16 @@ contract RegistryV2 is IRegistryV2, ModifiersController {
     /**
      * @inheritdoc IRegistryV2
      */
+    function resetV1Contracts() external override onlyOperator {
+        investStrategyRegistry = address(0);
+        aprOracle = address(0);
+        strategyManager = address(0);
+        optyStakingRateBalancer = address(0);
+    }
+
+    /**
+     * @inheritdoc IRegistryV2
+     */
     function getTokenHashes() public view override returns (bytes32[] memory) {
         return tokensHashIndexes;
     }
@@ -572,13 +404,6 @@ contract RegistryV2 is IRegistryV2, ModifiersController {
     /**
      * @inheritdoc IRegistryV2
      */
-    function getInvestStrategyRegistry() public view override returns (address) {
-        return investStrategyRegistry;
-    }
-
-    /**
-     * @inheritdoc IRegistryV2
-     */
     function getTokensHashIndexByHash(bytes32 _tokensHash) public view override returns (uint256) {
         return tokensHashToTokens[_tokensHash].index;
     }
@@ -602,20 +427,6 @@ contract RegistryV2 is IRegistryV2, ModifiersController {
      */
     function getStrategyProvider() public view override returns (address) {
         return strategyProvider;
-    }
-
-    /**
-     * @inheritdoc IRegistryV2
-     */
-    function getStrategyManager() public view override returns (address) {
-        return strategyManager;
-    }
-
-    /**
-     * @inheritdoc IRegistryV2
-     */
-    function getAprOracle() public view override returns (address) {
-        return aprOracle;
     }
 
     /**
@@ -691,13 +502,6 @@ contract RegistryV2 is IRegistryV2, ModifiersController {
     /**
      * @inheritdoc IRegistryV2
      */
-    function getOPTYStakingRateBalancer() public view override returns (address) {
-        return optyStakingRateBalancer;
-    }
-
-    /**
-     * @inheritdoc IRegistryV2
-     */
     function getLiquidityPool(address _pool) public view override returns (DataTypes.LiquidityPool memory) {
         return liquidityPools[_pool];
     }
@@ -744,13 +548,6 @@ contract RegistryV2 is IRegistryV2, ModifiersController {
      */
     function getTreasuryShares(address _vault) public view override returns (DataTypes.TreasuryShare[] memory) {
         return vaultToVaultConfiguration[_vault].treasuryShares;
-    }
-
-    /**
-     * @inheritdoc IRegistryV2
-     */
-    function isUserWhitelisted(address _vault, address _user) public view override returns (bool) {
-        return whitelistedUsers[_vault][_user];
     }
 
     function _approveToken(address _token) internal {
@@ -806,7 +603,6 @@ contract RegistryV2 is IRegistryV2, ModifiersController {
 
     function _setLiquidityPoolToAdapter(address _pool, address _adapter) internal {
         require(_adapter.isContract(), "!_adapter.isContract()");
-        require(liquidityPools[_pool].isLiquidityPool || creditPools[_pool].isLiquidityPool, "!liquidityPools");
         liquidityPoolToAdapter[_pool] = _adapter;
         emit LogLiquidityPoolToAdapter(_pool, _adapter, msg.sender);
     }
@@ -888,89 +684,6 @@ contract RegistryV2 is IRegistryV2, ModifiersController {
             riskProfiles[_riskProfileCode].canBorrow,
             msg.sender
         );
-    }
-
-    function _discontinue(address _vault) internal {
-        vaultToVaultConfiguration[_vault].discontinued = true;
-        IVault(_vault).discontinue();
-        emit LogDiscontinueVault(_vault, vaultToVaultConfiguration[_vault].discontinued, msg.sender);
-    }
-
-    function _unpauseVaultContract(address _vault, bool _unpaused) internal {
-        vaultToVaultConfiguration[_vault].unpaused = _unpaused;
-        IVault(_vault).setUnpaused(vaultToVaultConfiguration[_vault].unpaused);
-        emit LogUnpauseVault(_vault, vaultToVaultConfiguration[_vault].unpaused, msg.sender);
-    }
-
-    function _setIsLimitedState(address _vault, bool _isLimitedState) internal {
-        vaultToVaultConfiguration[_vault].isLimitedState = _isLimitedState;
-        emit LogLimitStateVault(_vault, vaultToVaultConfiguration[_vault].isLimitedState, msg.sender);
-    }
-
-    function _setAllowWhitelistedState(address _vault, bool _allowWhitelistedState) internal {
-        vaultToVaultConfiguration[_vault].allowWhitelistedState = _allowWhitelistedState;
-        emit LogAllowWhitelistedStateVault(_vault, vaultToVaultConfiguration[_vault].allowWhitelistedState, msg.sender);
-    }
-
-    function _setTreasuryShares(address _vault, DataTypes.TreasuryShare[] memory _treasuryShares) internal {
-        if (_treasuryShares.length > 0) {
-            uint256 _sharesSum;
-            for (uint256 _i = 0; _i < _treasuryShares.length; _i++) {
-                require(_treasuryShares[_i].treasury != address(0), "!address(0)");
-                _sharesSum = _sharesSum.add(_treasuryShares[_i].share);
-            }
-            require(_sharesSum == vaultToVaultConfiguration[_vault].withdrawalFee, "FeeShares!=WithdrawalFee");
-
-            //  delete the existing the treasury accounts if any to reset them
-            if (vaultToVaultConfiguration[_vault].treasuryShares.length > 0) {
-                delete vaultToVaultConfiguration[_vault].treasuryShares;
-            }
-            for (uint256 _i = 0; _i < _treasuryShares.length; _i++) {
-                vaultToVaultConfiguration[_vault].treasuryShares.push(_treasuryShares[_i]);
-            }
-        }
-    }
-
-    function _setWithdrawalFee(address _vault, uint256 _withdrawalFee) internal {
-        require(
-            _withdrawalFee >= withdrawalFeeRange.lowerLimit && _withdrawalFee <= withdrawalFeeRange.upperLimit,
-            "!BasisRange"
-        );
-        vaultToVaultConfiguration[_vault].withdrawalFee = _withdrawalFee;
-    }
-
-    function _setUserDepositCap(address _vault, uint256 _userDepositCap) internal {
-        vaultToVaultConfiguration[_vault].userDepositCap = _userDepositCap;
-        emit LogUserDepositCapVault(_vault, vaultToVaultConfiguration[_vault].userDepositCap, msg.sender);
-    }
-
-    function _setMinimumDepositAmount(address _vault, uint256 _minimumDepositAmount) internal {
-        vaultToVaultConfiguration[_vault].minimumDepositAmount = _minimumDepositAmount;
-        emit LogMinimumDepositAmountVault(_vault, vaultToVaultConfiguration[_vault].minimumDepositAmount, msg.sender);
-    }
-
-    function _setTotalValueLockedLimitInUnderlying(address _vault, uint256 _totalValueLockedLimitInUnderlying)
-        internal
-    {
-        vaultToVaultConfiguration[_vault].totalValueLockedLimitInUnderlying = _totalValueLockedLimitInUnderlying;
-        emit LogVaultTotalValueLockedLimitInUnderlying(
-            _vault,
-            vaultToVaultConfiguration[_vault].totalValueLockedLimitInUnderlying,
-            msg.sender
-        );
-    }
-
-    function _setQueueCap(address _vault, uint256 _queueCap) internal {
-        vaultToVaultConfiguration[_vault].queueCap = _queueCap;
-        emit LogQueueCapVault(_vault, vaultToVaultConfiguration[_vault].queueCap, msg.sender);
-    }
-
-    function _setWhitelistedUser(
-        address _vault,
-        address _user,
-        bool _whitelist
-    ) internal {
-        whitelistedUsers[_vault][_user] = _whitelist;
     }
 
     /**

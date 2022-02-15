@@ -1,7 +1,7 @@
 import chai, { expect, assert } from "chai";
 import { solidity } from "ethereum-waffle";
 import hre from "hardhat";
-import { Contract, Signer, BigNumber } from "ethers";
+import { Contract, Signer } from "ethers";
 import { deployRegistry } from "../helpers/contracts-deployments";
 import { CONTRACTS, TESTING_DEFAULT_DATA } from "../helpers/type";
 import { deployContract, executeFunc, generateTokenHashV2 } from "../helpers/helpers";
@@ -100,9 +100,7 @@ describe(scenario.title, () => {
           case "getStrategyProvider()":
           case "getRiskManager()":
           case "getHarvestCodeProvider()":
-          case "getStrategyManager()":
           case "opty()":
-          case "getOPTYStakingRateBalancer()":
           case "getODEFIVaultBooster()": {
             const { contractName } = <any>action.expectedValue;
             if (contractName) {
@@ -231,30 +229,6 @@ describe(scenario.title, () => {
             assert.isDefined(contractName, `args is wrong in ${action.action} testcase`);
             break;
           }
-          case "getVaultConfiguration(address)": {
-            const {
-              discontinued,
-              unpaused,
-              isLimitedState,
-              allowWhitelistedState,
-              withdrawalFee,
-              userDepositCap,
-              minimumDepositAmount,
-              totalValueLockedLimitInUnderlying,
-              queueCap,
-            }: ARGUMENTS = action.expectedMultiValues;
-            const value = await registryContract.vaultToVaultConfiguration(contracts["vault"].address);
-            expect(value[0]).to.be.equal(discontinued);
-            expect(value[1]).to.be.equal(unpaused);
-            expect(value[2]).to.be.equal(isLimitedState);
-            expect(value[3]).to.be.equal(allowWhitelistedState);
-            expect(value[4]).to.be.equal(withdrawalFee);
-            expect(value[5]).to.be.equal(userDepositCap);
-            expect(value[6]).to.be.equal(minimumDepositAmount);
-            expect(value[7]).to.be.equal(totalValueLockedLimitInUnderlying);
-            expect(value[8]).to.be.equal(queueCap);
-            break;
-          }
           case "getIsLimitedState(address,bool)": {
             const value = await registryContract.vaultToVaultConfiguration(contracts["vault"].address);
             expect(value[2]).to.be.equal(action.expectedValue);
@@ -366,9 +340,7 @@ describe(scenario.title, () => {
       case "setStrategyProvider(address)":
       case "setRiskManager(address)":
       case "setHarvestCodeProvider(address)":
-      case "setStrategyManager(address)":
       case "setOPTY(address)":
-      case "setOPTYStakingRateBalancer(address)":
       case "setODEFIVaultBooster(address)": {
         const { contractName }: ARGUMENTS = action.args;
         if (contractName) {
@@ -469,210 +441,6 @@ describe(scenario.title, () => {
           }
         }
         assert.isDefined(newOptyDistributor, `args is wrong in ${action.action} testcase`);
-        break;
-      }
-      case "setVaultConfiguration(address,bool,bool,(address,uint256)[],uint256,uint256,uint256,uint256)": {
-        const {
-          isLimitedState,
-          allowWhitelistedState,
-          withdrawalFee,
-          userDepositCap,
-          minimumDepositAmount,
-          totalValueLockedLimitInUnderlying,
-        }: ARGUMENTS = action.args;
-        if (action.expect === "success") {
-          await expect(
-            registryContract
-              .connect(signers[action.executor])
-              [action.action](
-                contracts["vault"].address,
-                isLimitedState,
-                allowWhitelistedState,
-                [],
-                withdrawalFee,
-                userDepositCap,
-                minimumDepositAmount,
-                totalValueLockedLimitInUnderlying,
-              ),
-          );
-        } else {
-          await expect(
-            registryContract
-              .connect(signers[action.executor])
-              [action.action](
-                contracts["vault"].address,
-                isLimitedState,
-                allowWhitelistedState,
-                [],
-                withdrawalFee,
-                userDepositCap,
-                minimumDepositAmount,
-                totalValueLockedLimitInUnderlying,
-              ),
-          ).to.be.revertedWith(action.message);
-        }
-        break;
-      }
-      case "setIsLimitedState(address,bool)": {
-        const { state }: ARGUMENTS = action.args;
-        if (state) {
-          if (action.expect === "success") {
-            await expect(
-              registryContract.connect(signers[action.executor])[action.action](contracts["vault"].address, state),
-            )
-              .to.emit(registryContract, "LogLimitStateVault")
-              .withArgs(contracts["vault"].address, state, await signers[action.executor].getAddress());
-          } else {
-            await expect(
-              registryContract.connect(signers[action.executor])[action.action](contracts["vault"].address, state),
-            ).to.be.revertedWith(action.message);
-          }
-        }
-        assert.isDefined(state, `args is wrong in ${action.action} testcase`);
-        break;
-      }
-      case "setQueueCap(address,uint256)": {
-        const { value }: ARGUMENTS = action.args;
-        if (value) {
-          if (action.expect === "success") {
-            await expect(
-              registryContract.connect(signers[action.executor])[action.action](contracts["vault"].address, value),
-            )
-              .to.emit(registryContract, "LogQueueCapVault")
-              .withArgs(contracts["vault"].address, value, await signers[action.executor].getAddress());
-          } else {
-            await expect(
-              registryContract.connect(signers[action.executor])[action.action](contracts["vault"].address, value),
-            ).to.be.revertedWith(action.message);
-          }
-        }
-        assert.isDefined(value, `args is wrong in ${action.action} testcase`);
-        break;
-      }
-      case "setMinimumDepositAmount(address,uint256)": {
-        const { value }: ARGUMENTS = action.args;
-        if (value) {
-          if (action.expect === "success") {
-            await expect(
-              registryContract.connect(signers[action.executor])[action.action](contracts["vault"].address, value),
-            )
-              .to.emit(registryContract, "LogMinimumDepositAmountVault")
-              .withArgs(contracts["vault"].address, value, await signers[action.executor].getAddress());
-          } else {
-            await expect(
-              registryContract.connect(signers[action.executor])[action.action](contracts["vault"].address, value),
-            ).to.be.revertedWith(action.message);
-          }
-        }
-        assert.isDefined(value, `args is wrong in ${action.action} testcase`);
-        break;
-      }
-      case "setUserDepositCap(address,uint256)": {
-        const { value }: ARGUMENTS = action.args;
-        if (value) {
-          if (action.expect === "success") {
-            await expect(
-              registryContract.connect(signers[action.executor])[action.action](contracts["vault"].address, value),
-            )
-              .to.emit(registryContract, "LogUserDepositCapVault")
-              .withArgs(contracts["vault"].address, value, await signers[action.executor].getAddress());
-          } else {
-            await expect(
-              registryContract.connect(signers[action.executor])[action.action](contracts["vault"].address, value),
-            ).to.be.revertedWith(action.message);
-          }
-        }
-        assert.isDefined(value, `args is wrong in ${action.action} testcase`);
-        break;
-      }
-      case "setTotalValueLockedLimitInUnderlying(address,uint256)": {
-        const { value }: ARGUMENTS = action.args;
-        if (value) {
-          if (action.expect === "success") {
-            await expect(
-              registryContract.connect(signers[action.executor])[action.action](contracts["vault"].address, value),
-            )
-              .to.emit(registryContract, "LogVaultTotalValueLockedLimitInUnderlying")
-              .withArgs(contracts["vault"].address, value, await signers[action.executor].getAddress());
-          } else {
-            await expect(
-              registryContract.connect(signers[action.executor])[action.action](contracts["vault"].address, value),
-            ).to.be.revertedWith(action.message);
-          }
-        }
-        assert.isDefined(value, `args is wrong in ${action.action} testcase`);
-        break;
-      }
-      case "setAllowWhitelistedState(address,bool)": {
-        const { state }: ARGUMENTS = action.args;
-        if (state) {
-          if (action.expect === "success") {
-            await expect(
-              registryContract.connect(signers[action.executor])[action.action](contracts["vault"].address, state),
-            )
-              .to.emit(registryContract, "LogAllowWhitelistedStateVault")
-              .withArgs(contracts["vault"].address, state, await signers[action.executor].getAddress());
-          } else {
-            await expect(
-              registryContract.connect(signers[action.executor])[action.action](contracts["vault"].address, state),
-            ).to.be.revertedWith(action.message);
-          }
-        }
-        assert.isDefined(state, `args is wrong in ${action.action} testcase`);
-        break;
-      }
-      case "setWhitelistedUser(address,address,bool)": {
-        const { user, contractName }: ARGUMENTS = action.args;
-        if (user) {
-          if (action.expect === "success") {
-            await registryContract
-              .connect(signers[action.executor])
-              [action.action](contracts[contractName].address, callers[user], true);
-          } else {
-            await expect(
-              registryContract
-                .connect(signers[action.executor])
-                [action.action](
-                  contractName === "0"
-                    ? ADDRESS_ZERO
-                    : contractName === ""
-                    ? callers[user]
-                    : contracts[contractName].address,
-                  callers[user],
-                  true,
-                ),
-            ).to.be.revertedWith(action.message);
-          }
-        }
-        assert.isDefined(user, `args is wrong in ${action.action} testcase`);
-        break;
-      }
-      case "setWhitelistedUsers(address,address[],bool)": {
-        const { users, contractName }: ARGUMENTS = action.args;
-        if (users) {
-          const userAddresses = users.map((name: string) => callers[name]);
-          if (action.expect === "success") {
-            await registryContract
-              .connect(signers[action.executor])
-              [action.action](contracts[contractName].address, userAddresses, true);
-          } else {
-            await expect(
-              registryContract
-                .connect(signers[action.executor])
-                [action.action](
-                  contractName === "0"
-                    ? ADDRESS_ZERO
-                    : contractName === ""
-                    ? userAddresses[0]
-                    : contracts[contractName].address,
-                  userAddresses,
-                  true,
-                ),
-            ).to.be.revertedWith(action.message);
-          }
-        }
-
-        assert.isDefined(users, `args is wrong in ${action.action} testcase`);
         break;
       }
       case "approveToken(address[])":
@@ -1057,56 +825,6 @@ describe(scenario.title, () => {
         assert.isDefined(riskProfileCode ? riskProfileCode : index, `args is wrong in ${action.action} testcase`);
         break;
       }
-      case "setWithdrawalFeeRange((uint256,uint256))": {
-        const { range }: ARGUMENTS = action.args;
-        if (range) {
-          if (action.expect === "success") {
-            await registryContract.connect(signers[action.executor])[action.action](range);
-          } else {
-            await expect(registryContract.connect(signers[action.executor])[action.action](range)).to.be.revertedWith(
-              action.message,
-            );
-          }
-        }
-        assert.isDefined(range, `args is wrong in ${action.action} testcase`);
-        break;
-      }
-      case "setWithdrawalFee(address,uint256)": {
-        const { contractName, fee }: ARGUMENTS = action.args;
-        if (contractName && fee) {
-          if (action.expect === "success") {
-            await registryContract
-              .connect(signers[action.executor])
-              [action.action](contracts[contractName].address, fee);
-          } else {
-            await expect(
-              registryContract.connect(signers[action.executor])[action.action](contracts[contractName].address, fee),
-            ).to.be.revertedWith(action.message);
-          }
-        }
-        assert.isDefined(contractName, `args is wrong in ${action.action} testcase`);
-        assert.isDefined(fee, `args is wrong in ${action.action} testcase`);
-        break;
-      }
-      case "setTreasuryShares(address,(address,uint256)[])": {
-        const { contractName, treasuryShare }: ARGUMENTS = action.args;
-        if (contractName && treasuryShare) {
-          if (action.expect === "success") {
-            await registryContract
-              .connect(signers[action.executor])
-              [action.action](contracts[contractName].address, treasuryShare);
-          } else {
-            await expect(
-              registryContract
-                .connect(signers[action.executor])
-                [action.action](contracts[contractName].address, treasuryShare),
-            ).to.be.revertedWith(action.message);
-          }
-        }
-        assert.isDefined(contractName, `args is wrong in ${action.action} testcase`);
-        assert.isDefined(treasuryShare, `args is wrong in ${action.action} testcase`);
-        break;
-      }
       default:
         break;
     }
@@ -1159,33 +877,11 @@ const REGISTRY_TESTING_DEFAULT_DATA: TESTING_DEFAULT_DATA[] = [
     ],
   },
   {
-    setFunction: "setStrategyManager(address)",
-    input: ["0x5d3a536E4D6DbD6114cc1Ead35777bAB948E3643"],
-    getFunction: [
-      {
-        name: "strategyManager()",
-        input: [],
-        output: "0x5d3a536E4D6DbD6114cc1Ead35777bAB948E3643",
-      },
-    ],
-  },
-  {
     setFunction: "setOPTY(address)",
     input: ["0x5d3a536E4D6DbD6114cc1Ead35777bAB948E3643"],
     getFunction: [
       {
         name: "opty()",
-        input: [],
-        output: "0x5d3a536E4D6DbD6114cc1Ead35777bAB948E3643",
-      },
-    ],
-  },
-  {
-    setFunction: "setOPTYStakingRateBalancer(address)",
-    input: ["0x5d3a536E4D6DbD6114cc1Ead35777bAB948E3643"],
-    getFunction: [
-      {
-        name: "optyStakingRateBalancer()",
         input: [],
         output: "0x5d3a536E4D6DbD6114cc1Ead35777bAB948E3643",
       },
@@ -1273,17 +969,6 @@ const REGISTRY_TESTING_DEFAULT_DATA: TESTING_DEFAULT_DATA[] = [
         name: "riskProfilesArray(uint256)",
         input: ["0"],
         output: "1",
-      },
-    ],
-  },
-  {
-    setFunction: "setWithdrawalFee(address,uint256)",
-    input: ["0x6b175474e89094c44da98b954eedeac495271d0f", 10],
-    getFunction: [
-      {
-        name: "vaultToVaultConfiguration(address)",
-        input: ["0x6b175474e89094c44da98b954eedeac495271d0f"],
-        output: [false, false, false, false, BigNumber.from("10"), 0, 0, 0],
       },
     ],
   },
