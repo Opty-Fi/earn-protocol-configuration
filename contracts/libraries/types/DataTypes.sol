@@ -203,7 +203,7 @@ library DataTypes {
      *        - deposit of underlying tokens
      *        - withdraw and transfer of vault tokens
      * @param allowWhitelistedState vault's whitelisted state flag
-     * @param vaultFeeAddress address that collects vault deposit and withdraw fee
+     * @param vaultFeeCollector address that collects vault deposit and withdraw fee
      * @param depositFeeFlatUT flat deposit fee in underlying token
      * @param depositFeePct deposit fee in percentage basis points
      * @param withdrawalFeeFlatUT flat withdrawal fee in underlying token
@@ -216,7 +216,7 @@ library DataTypes {
         bool discontinued;
         bool unpaused;
         bool allowWhitelistedState;
-        address vaultFeeAddress;
+        address vaultFeeCollector;
         uint256 depositFeeFlatUT;
         uint256 depositFeePct;
         uint256 withdrawalFeeFlatUT;
