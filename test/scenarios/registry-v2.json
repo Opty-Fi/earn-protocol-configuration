@@ -44,22 +44,6 @@
       "cleanActions": []
     },
     {
-      "description": "Governance cannot set OPTYDistributor with EOA address",
-      "setActions": [
-        {
-          "action": "setOPTYDistributor(address)",
-          "args": {
-            "newOptyDistributor": ""
-          },
-          "executor": "owner",
-          "expect": "fail",
-          "message": "!isContract"
-        }
-      ],
-      "getActions": [],
-      "cleanActions": []
-    },
-    {
       "description": "Governance should be able to set FinanceOperator's address",
       "setActions": [
         {
@@ -609,40 +593,6 @@
           "message": ""
         }
       ]
-    },
-    {
-      "description": "Operator shouldn't be able to approve non-contract address",
-      "setActions": [
-        {
-          "action": "approveToken(address[])",
-          "args": {
-            "tokens": ["0x70eA4eCd78aBe80e6879c345aeD4838AB79a9c17"]
-          },
-          "executor": "operator",
-          "expect": "fail",
-          "message": "!isContract"
-        },
-        {
-          "action": "approveLiquidityPool(address[])",
-          "args": {
-            "lqs": ["0x70eA4eCd78aBe80e6879c345aeD4838AB79a9c17"]
-          },
-          "executor": "operator",
-          "expect": "fail",
-          "message": "!isContract"
-        },
-        {
-          "action": "approveCreditPool(address[])",
-          "args": {
-            "lqs": ["0x70eA4eCd78aBe80e6879c345aeD4838AB79a9c17"]
-          },
-          "executor": "operator",
-          "expect": "fail",
-          "message": "!isContract"
-        }
-      ],
-      "getActions": [],
-      "cleanActions": []
     },
     {
       "description": "Operator should be able to approve a liquidity pool",

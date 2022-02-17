@@ -48,7 +48,6 @@ contract RegistryV2 is IRegistryV2, ModifiersController {
      * @inheritdoc IRegistryV2
      */
     function setStrategyProvider(address _strategyProvider) external override onlyOperator {
-        require(_strategyProvider.isContract(), "!isContract");
         strategyProvider = _strategyProvider;
     }
 
@@ -56,7 +55,6 @@ contract RegistryV2 is IRegistryV2, ModifiersController {
      * @inheritdoc IRegistryV2
      */
     function setRiskManager(address _riskManager) external override onlyOperator {
-        require(_riskManager.isContract(), "!isContract");
         riskManager = _riskManager;
     }
 
@@ -64,7 +62,6 @@ contract RegistryV2 is IRegistryV2, ModifiersController {
      * @inheritdoc IRegistryV2
      */
     function setHarvestCodeProvider(address _harvestCodeProvider) external override onlyOperator {
-        require(_harvestCodeProvider.isContract(), "!isContract");
         harvestCodeProvider = _harvestCodeProvider;
     }
 
@@ -72,7 +69,6 @@ contract RegistryV2 is IRegistryV2, ModifiersController {
      * @inheritdoc IRegistryV2
      */
     function setOPTY(address _opty) external override onlyOperator {
-        require(_opty.isContract(), "!isContract");
         opty = _opty;
     }
 
@@ -80,7 +76,6 @@ contract RegistryV2 is IRegistryV2, ModifiersController {
      * @inheritdoc IRegistryV2
      */
     function setODEFIVaultBooster(address _odefiVaultBooster) external override onlyOperator {
-        require(_odefiVaultBooster.isContract(), "!isContract");
         odefiVaultBooster = _odefiVaultBooster;
     }
 
@@ -551,7 +546,6 @@ contract RegistryV2 is IRegistryV2, ModifiersController {
     }
 
     function _approveToken(address _token) internal {
-        require(_token.isContract(), "!isContract");
         require(!tokens[_token], "!tokens");
         tokens[_token] = true;
         emit LogToken(_token, tokens[_token], msg.sender);
@@ -564,7 +558,6 @@ contract RegistryV2 is IRegistryV2, ModifiersController {
     }
 
     function _approveLiquidityPool(address _pool) internal {
-        require(_pool.isContract(), "!isContract");
         require(!liquidityPools[_pool].isLiquidityPool, "!liquidityPools");
         liquidityPools[_pool].isLiquidityPool = true;
         emit LogLiquidityPool(_pool, liquidityPools[_pool].isLiquidityPool, msg.sender);
@@ -583,7 +576,6 @@ contract RegistryV2 is IRegistryV2, ModifiersController {
     }
 
     function _approveCreditPool(address _pool) internal {
-        require(_pool.isContract(), "!isContract");
         require(!creditPools[_pool].isLiquidityPool, "!creditPools");
         creditPools[_pool].isLiquidityPool = true;
         emit LogCreditPool(_pool, creditPools[_pool].isLiquidityPool, msg.sender);
@@ -602,7 +594,6 @@ contract RegistryV2 is IRegistryV2, ModifiersController {
     }
 
     function _setLiquidityPoolToAdapter(address _pool, address _adapter) internal {
-        require(_adapter.isContract(), "!_adapter.isContract()");
         liquidityPoolToAdapter[_pool] = _adapter;
         emit LogLiquidityPoolToAdapter(_pool, _adapter, msg.sender);
     }
