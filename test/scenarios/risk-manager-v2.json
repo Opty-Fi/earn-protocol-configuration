@@ -168,6 +168,70 @@
           "action": "setBestDefaultStrategy(uint256,bytes32,(address,address,bool)[])"
         }
       ]
+    },
+    {
+      "description": "GetBestStrategy should revert with non-exist underlyingTokenHash",
+      "setActions": [
+        {
+          "contract": "registry",
+          "action": "updateRPPoolRatings(uint256,(uint8,uint8))",
+          "args": {
+            "poolRatingRange": [3, 10]
+          },
+          "expect": "success",
+          "message": ""
+        },
+        {
+          "contract": "registry",
+          "action": "approveLiquidityPool(address[])",
+          "args": {},
+          "expect": "success",
+          "message": ""
+        },
+        {
+          "contract": "registry",
+          "action": "rateLiquidityPool((address,uint8)[])",
+          "args": { "score": [1, 1, 1] },
+          "expect": "success",
+          "message": ""
+        },
+        {
+          "contract": "strategyProvider",
+          "action": "setBestStrategy(uint256,bytes32,(address,address,bool)[])",
+          "args": {},
+          "expect": "success",
+          "message": ""
+        },
+        {
+          "contract": "strategyProvider",
+          "action": "setBestDefaultStrategy(uint256,bytes32,(address,address,bool)[])",
+          "args": { "score": [5, 5, 5] },
+          "expect": "success",
+          "message": ""
+        }
+      ],
+      "getActions": [
+        {
+          "contract": "riskManager",
+          "action": "getBestStrategy(uint256,bytes32)",
+          "args": {},
+          "expectedValue": ""
+        }
+      ],
+      "cleanActions": [
+        {
+          "contract": "registry",
+          "action": "revokeLiquidityPool(address[])"
+        },
+        {
+          "contract": "strategyProvider",
+          "action": "setBestStrategy(uint256,bytes32,(address,address,bool)[])"
+        },
+        {
+          "contract": "strategyProvider",
+          "action": "setBestDefaultStrategy(uint256,bytes32,(address,address,bool)[])"
+        }
+      ]
     }
   ],
   "standaloneStories": [
@@ -198,6 +262,43 @@
           "action": "deployRiskManager()"
         }
       ]
+    },
+    {
+      "description": "GetBestStrategy should revert with non-exist underlyingTokenHash",
+      "setActions": [],
+      "getActions": [
+        {
+          "contract": "riskManager",
+          "action": "getBestStrategy(uint256,bytes32)",
+          "args": {
+            "riskProfileCode": "1"
+          },
+          "expectedValue": "!TokenHashExists"
+        }
+      ],
+      "cleanActions": []
+    },
+    {
+      "description": "GetBestStrategy should revert with non-exist risk profile code",
+      "setActions": [
+        {
+          "contract": "registry",
+          "action": "approveAndMapTokenHashToToken(bytes32,address[])",
+          "args": {},
+          "expectedValue": ""
+        }
+      ],
+      "getActions": [
+        {
+          "contract": "riskManager",
+          "action": "getBestStrategy(uint256,bytes32)",
+          "args": {
+            "riskProfileCode": "4"
+          },
+          "expectedValue": "!Rp_Exists"
+        }
+      ],
+      "cleanActions": []
     }
   ]
 }

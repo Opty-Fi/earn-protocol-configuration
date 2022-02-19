@@ -67,6 +67,9 @@ contract RiskManagerV2 is IRiskManagerV2, RiskManagerStorage, Modifiers {
         view
         returns (DataTypes.StrategyStep[] memory)
     {
+        address[] memory _tokens = registryContract.getTokensHashToTokenList(_underlyingTokensHash);
+        require(_tokens.length > 0, "!TokenHashExists");
+
         DataTypes.RiskProfile memory _riskProfileStruct = registryContract.getRiskProfile(_riskProfileCode);
         require(_riskProfileStruct.exists, "!Rp_Exists");
 
