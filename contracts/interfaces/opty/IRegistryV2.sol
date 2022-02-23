@@ -340,15 +340,6 @@ interface IRegistryV2 {
     function getHarvestCodeProvider() external view returns (address);
 
     /**
-     * @notice Get the configuration of vault contract
-     * @return _vaultConfiguration Returns the configuration of vault contract
-     */
-    function getVaultConfiguration(address _vault)
-        external
-        view
-        returns (DataTypes.VaultConfiguration memory _vaultConfiguration);
-
-    /**
      * @notice Get the properties corresponding to riskProfile code provided
      * @return _riskProfile Returns the properties corresponding to riskProfile provided
      */
@@ -399,13 +390,6 @@ interface IRegistryV2 {
      * @return _adapter Returns the adapter address mapped to the _pool provided
      */
     function getLiquidityPoolToAdapter(address _pool) external view returns (address _adapter);
-
-    /**
-     * @notice Get the treasury accounts with their fee shares corresponding to vault contract
-     * @param _vault Vault contract address
-     * @return Returns Treasuries along with their fee shares
-     */
-    function getTreasuryShares(address _vault) external view returns (DataTypes.TreasuryShare[] memory);
 
     /**
      * @notice Check if the token is approved or not

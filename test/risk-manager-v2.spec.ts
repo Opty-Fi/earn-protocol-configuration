@@ -45,6 +45,8 @@ describe(scenario.title, () => {
       RISK_PROFILES[1].canBorrow,
       RISK_PROFILES[1].poolRating,
     );
+    //Initialize data for tokensHashIndexes
+    await approveAndMapTokenHashToTokenV2(owner, registry, TypedTokens["SUSD"], NETWORKS_ID.MAINNET, false);
   });
 
   describe("Integration Scenarios", () => {
