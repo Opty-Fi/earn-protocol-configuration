@@ -187,7 +187,8 @@ library DataTypes {
 
     /**
      * @notice Container for combining Vault contract's configuration
-     * @param discontinued If the vault contract is discontinued or not
+     * @param emergencyShutdown If the vault contract is in emergencyShutdown
+     *        state or not
      * @param unpaused If the vault contract is paused or unpaused
      *        Following operations cannot happen if vault is paused:
      *        - deposit of underlying tokens
@@ -200,7 +201,7 @@ library DataTypes {
      * @param withdrawalFeePct withdrawal fee in percentage basis points
      */
     struct VaultConfigurationV2 {
-        bool discontinued;
+        bool emergencyShutdown;
         bool unpaused;
         bool allowWhitelistedState;
         address vaultFeeAddress;
