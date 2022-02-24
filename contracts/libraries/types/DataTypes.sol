@@ -208,9 +208,6 @@ library DataTypes {
      * @param depositFeePct deposit fee in percentage basis points
      * @param withdrawalFeeFlatUT flat withdrawal fee in underlying token
      * @param withdrawalFeePct withdrawal fee in percentage basis points
-     * @param userDepositCapUT Maximum amount in underlying token allowed to be deposited by user
-     * @param minimumDepositValueUT Minimum deposit value in underlying token required
-     * @param totalValueLockedLimitUT Maximum TVL in underlying token allowed for the vault
      */
     struct VaultConfigurationV2 {
         bool discontinued;
@@ -221,9 +218,6 @@ library DataTypes {
         uint256 depositFeePct;
         uint256 withdrawalFeeFlatUT;
         uint256 withdrawalFeePct;
-        uint256 userDepositCapUT;
-        uint256 minimumDepositValueUT;
-        uint256 totalValueLockedLimitUT;
     }
 
     /**
