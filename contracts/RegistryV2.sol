@@ -497,20 +497,6 @@ contract RegistryV2 is IRegistryV2, ModifiersController {
     /**
      * @inheritdoc IRegistryV2
      */
-    function getStrategyConfiguration()
-        public
-        view
-        override
-        returns (DataTypes.StrategyConfiguration memory _strategyConfiguration)
-    {
-        _strategyConfiguration.investStrategyRegistry = investStrategyRegistry;
-        _strategyConfiguration.strategyProvider = strategyProvider;
-        _strategyConfiguration.aprOracle = aprOracle;
-    }
-
-    /**
-     * @inheritdoc IRegistryV2
-     */
     function getVaultStrategyConfiguration()
         public
         view

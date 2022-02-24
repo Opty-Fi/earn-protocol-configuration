@@ -367,15 +367,6 @@ interface IRegistryV2 {
     function getLiquidityPool(address _pool) external view returns (DataTypes.LiquidityPool memory _liquidityPool);
 
     /**
-     * @notice Get the configuration related to Strategy contracts
-     * @return _strategyConfiguration Returns the configuration related to Strategy contracts
-     */
-    function getStrategyConfiguration()
-        external
-        view
-        returns (DataTypes.StrategyConfiguration memory _strategyConfiguration);
-
-    /**
      * @notice Get the contract address required as part of strategy by vault contract
      * @return _vaultStrategyConfiguration Returns the configuration related to Strategy for Vault contracts
      */
