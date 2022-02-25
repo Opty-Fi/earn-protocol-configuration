@@ -198,6 +198,43 @@
           "action": "deployRiskManager()"
         }
       ]
+    },
+    {
+      "description": "GetBestStrategy should revert with non-exist underlyingTokenHash",
+      "setActions": [],
+      "getActions": [
+        {
+          "contract": "riskManager",
+          "action": "getBestStrategy(uint256,bytes32)",
+          "args": {
+            "riskProfileCode": "1"
+          },
+          "expectedValue": "!TokenHashExists"
+        }
+      ],
+      "cleanActions": []
+    },
+    {
+      "description": "GetBestStrategy should revert with non-exist risk profile code",
+      "setActions": [
+        {
+          "contract": "registry",
+          "action": "approveAndMapTokenHashToToken(bytes32,address[])",
+          "args": {},
+          "expectedValue": ""
+        }
+      ],
+      "getActions": [
+        {
+          "contract": "riskManager",
+          "action": "getBestStrategy(uint256,bytes32)",
+          "args": {
+            "riskProfileCode": "4"
+          },
+          "expectedValue": "!Rp_Exists"
+        }
+      ],
+      "cleanActions": []
     }
   ]
 }

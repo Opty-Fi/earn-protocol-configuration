@@ -392,13 +392,6 @@ contract RegistryV2 is IRegistryV2, ModifiersController {
     /**
      * @inheritdoc IRegistryV2
      */
-    function getVaultConfiguration(address _vault) public view override returns (DataTypes.VaultConfiguration memory) {
-        return vaultToVaultConfiguration[_vault];
-    }
-
-    /**
-     * @inheritdoc IRegistryV2
-     */
     function getTokensHashIndexByHash(bytes32 _tokensHash) public view override returns (uint256) {
         return tokensHashToTokens[_tokensHash].index;
     }
@@ -504,20 +497,6 @@ contract RegistryV2 is IRegistryV2, ModifiersController {
     /**
      * @inheritdoc IRegistryV2
      */
-    function getStrategyConfiguration()
-        public
-        view
-        override
-        returns (DataTypes.StrategyConfiguration memory _strategyConfiguration)
-    {
-        _strategyConfiguration.investStrategyRegistry = investStrategyRegistry;
-        _strategyConfiguration.strategyProvider = strategyProvider;
-        _strategyConfiguration.aprOracle = aprOracle;
-    }
-
-    /**
-     * @inheritdoc IRegistryV2
-     */
     function getVaultStrategyConfiguration()
         public
         view
@@ -536,13 +515,6 @@ contract RegistryV2 is IRegistryV2, ModifiersController {
      */
     function getLiquidityPoolToAdapter(address _pool) public view override returns (address) {
         return liquidityPoolToAdapter[_pool];
-    }
-
-    /**
-     * @inheritdoc IRegistryV2
-     */
-    function getTreasuryShares(address _vault) public view override returns (DataTypes.TreasuryShare[] memory) {
-        return vaultToVaultConfiguration[_vault].treasuryShares;
     }
 
     function _approveToken(address _token) internal {

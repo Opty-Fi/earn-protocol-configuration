@@ -67,18 +67,19 @@ contract RiskManagerV2 is IRiskManagerV2, RiskManagerStorage, Modifiers {
         view
         returns (DataTypes.StrategyStep[] memory)
     {
+        uint256 _index = registryContract.getTokensHashIndexByHash(_underlyingTokensHash);
+        require(registryContract.getTokensHashByIndex(_index) == _underlyingTokensHash, "!TokenHashExists");
+
         DataTypes.RiskProfile memory _riskProfileStruct = registryContract.getRiskProfile(_riskProfileCode);
         require(_riskProfileStruct.exists, "!Rp_Exists");
 
-        DataTypes.StrategyConfiguration memory _strategyConfiguration = registryContract.getStrategyConfiguration();
-
         DataTypes.StrategyStep[] memory _strategySteps =
-            IStrategyProviderV2(_strategyConfiguration.strategyProvider).getRpToTokenToBestStrategy(
+            IStrategyProviderV2(registryContract.getStrategyProvider()).getRpToTokenToBestStrategy(
                 _riskProfileCode,
                 _underlyingTokensHash
             );
         if (_strategySteps.length == 0 || _isInValidStrategy(_strategySteps, _riskProfileStruct)) {
-            _strategySteps = IStrategyProviderV2(_strategyConfiguration.strategyProvider).getRpToTokenToDefaultStrategy(
+            _strategySteps = IStrategyProviderV2(registryContract.getStrategyProvider()).getRpToTokenToDefaultStrategy(
                 _riskProfileCode,
                 _underlyingTokensHash
             );
