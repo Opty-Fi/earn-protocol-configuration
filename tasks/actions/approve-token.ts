@@ -2,7 +2,7 @@ import { task, types } from "hardhat/config";
 import { isAddress } from "../../helpers/helpers";
 import { ESSENTIAL_CONTRACTS } from "../../helpers/constants/essential-contracts-name";
 import { TypedTokens } from "../../helpers/data";
-import { approveAndMapTokenHashToTokenV2 } from "../../helpers/contracts-actions";
+import { approveAndMapTokenHashToToken } from "../../helpers/contracts-actions";
 import { getAddress } from "ethers/lib/utils";
 import TASKS from "../task-names";
 import { NETWORKS_ID } from "../../helpers/constants/network";
@@ -38,7 +38,7 @@ task(TASKS.ACTION_TASKS.APPROVE_TOKEN.NAME, TASKS.ACTION_TASKS.APPROVE_TOKEN.DES
     if (getAddress(token) !== getAddress(TypedTokens.ETH)) {
       const registryContract = await hre.ethers.getContractAt(ESSENTIAL_CONTRACTS.REGISTRY, registry);
       try {
-        await approveAndMapTokenHashToTokenV2(owner, registryContract, token, chainid, checkapproval);
+        await approveAndMapTokenHashToToken(owner, registryContract, token, chainid, checkapproval);
         console.log(`Finished approving token: ${token}`);
       } catch (error) {
         console.error(`${TASKS.ACTION_TASKS.APPROVE_TOKEN.NAME}:`, error);

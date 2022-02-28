@@ -3,7 +3,6 @@ import { Artifact, HardhatRuntimeEnvironment } from "hardhat/types";
 import { STRATEGY_DATA } from "./type";
 import { getSoliditySHA3Hash } from "./utils";
 import { MockContract } from "@defi-wonderland/smock";
-import { NETWORKS_ID } from "./constants/network";
 
 export async function deployContract(
   hre: HardhatRuntimeEnvironment,
@@ -50,18 +49,6 @@ export async function executeFunc(contract: Contract, executer: Signer, funcAbi:
   return tx;
 }
 
-export function generateStrategyHash(strategy: STRATEGY_DATA[], tokenAddress: string): string {
-  const strategyStepsHash: string[] = [];
-  const tokensHash = generateTokenHash([tokenAddress]);
-  for (let index = 0; index < strategy.length; index++) {
-    strategyStepsHash[index] = getSoliditySHA3Hash(
-      ["address", "address", "bool"],
-      [strategy[index].contract, strategy[index].outputToken, strategy[index].isBorrow],
-    );
-  }
-  return getSoliditySHA3Hash(["bytes32", "bytes32[]"], [tokensHash, strategyStepsHash]);
-}
-
 export function generateStrategyStep(strategy: STRATEGY_DATA[]): [string, string, boolean][] {
   const strategySteps: [string, string, boolean][] = [];
   for (let index = 0; index < strategy.length; index++) {
@@ -80,7 +67,7 @@ export function isAddress(address: string): boolean {
 }
 
 //  function to generate the token/list of tokens's hash
-export function generateTokenHashV2(addresses: string[], chainId: string): string {
+export function generateTokenHash(addresses: string[], chainId: string): string {
   return getSoliditySHA3Hash(["address[]", "string"], [addresses, chainId]);
 }
 
@@ -88,9 +75,4 @@ export async function deploySmockContract(smock: any, contractName: any, args: a
   const factory = await smock.mock(contractName);
   const contract = await factory.deploy(...args);
   return contract;
-}
-
-//  function to generate the token/list of tokens's hash
-export function generateTokenHash(addresses: string[]): string {
-  return getSoliditySHA3Hash(["address[]"], [addresses]);
 }

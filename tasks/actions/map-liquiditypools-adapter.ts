@@ -2,7 +2,7 @@ import { task, types } from "hardhat/config";
 import { isAddress } from "../../helpers/helpers";
 
 import { ESSENTIAL_CONTRACTS } from "../../helpers/constants/essential-contracts-name";
-import { approveLiquidityPoolAndMapAdaptersV2 } from "../../helpers/contracts-actions";
+import { approveLiquidityPoolAndMapAdapters } from "../../helpers/contracts-actions";
 import { TypedDefiPools } from "../../helpers/data/index";
 import { removeDuplicateFromStringArray } from "../../helpers/utils";
 import TASKS from "../task-names";
@@ -47,7 +47,7 @@ task(
         Object.keys(TypedDefiPools[adaptername]).map(name => TypedDefiPools[adaptername][name].pool),
       );
       const liquidityPoolsToAdapter = liquidityPools.map(lp => [lp, adapter as string]);
-      await approveLiquidityPoolAndMapAdaptersV2(
+      await approveLiquidityPoolAndMapAdapters(
         owner,
         registryContract,
         liquidityPools,

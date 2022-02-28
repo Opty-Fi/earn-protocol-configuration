@@ -4,7 +4,7 @@ import hre from "hardhat";
 import { Contract, Signer } from "ethers";
 import { deployRegistry } from "../helpers/contracts-deployments";
 import { CONTRACTS, TESTING_DEFAULT_DATA } from "../helpers/type";
-import { deployContract, executeFunc, generateTokenHashV2 } from "../helpers/helpers";
+import { deployContract, executeFunc, generateTokenHash } from "../helpers/helpers";
 import { TESTING_DEPLOYMENT_ONCE } from "../helpers/constants/utils";
 import { ESSENTIAL_CONTRACTS } from "../helpers/constants/essential-contracts-name";
 import { TESTING_CONTRACTS } from "../helpers/constants/test-contracts-name";
@@ -629,7 +629,7 @@ describe(scenario.title, () => {
         const { tokensDetails }: ARGUMENTS = action.args;
         if (tokensDetails) {
           const tokenLists = tokensDetails.map((detail: { tokens: string[]; chainId: string }) => [
-            generateTokenHashV2(detail.tokens, detail.chainId),
+            generateTokenHash(detail.tokens, detail.chainId),
             detail.tokens,
           ]);
           if (action.expect === "success") {
@@ -646,7 +646,7 @@ describe(scenario.title, () => {
       case "setTokensHashToTokens(bytes32,address[])": {
         const { tokens, chainId }: ARGUMENTS = action.args;
         if (tokens && chainId) {
-          const tokensHash = generateTokenHashV2(tokens, chainId);
+          const tokensHash = generateTokenHash(tokens, chainId);
           if (action.expect === "success") {
             await expect(registryContract.connect(signers[action.executor])[action.action](tokensHash, tokens))
               .to.emit(registryContract, "LogTokensToTokensHash")
@@ -664,7 +664,7 @@ describe(scenario.title, () => {
       case "approveTokenAndMapToTokensHash(bytes32,address[])": {
         const { tokens, chainId }: ARGUMENTS = action.args;
         if (tokens && chainId) {
-          const tokensHash = generateTokenHashV2(tokens, chainId);
+          const tokensHash = generateTokenHash(tokens, chainId);
           if (action.expect === "success") {
             await registryContract.connect(signers[action.executor])[action.action](tokensHash, tokens);
           } else {
@@ -681,7 +681,7 @@ describe(scenario.title, () => {
         const { details }: ARGUMENTS = action.args;
         if (details) {
           const tokenLists = details.map((detail: { tokens: string[]; chainId: string }) => [
-            generateTokenHashV2(detail.tokens, detail.chainId),
+            generateTokenHash(detail.tokens, detail.chainId),
             detail.tokens,
           ]);
           if (action.expect === "success") {

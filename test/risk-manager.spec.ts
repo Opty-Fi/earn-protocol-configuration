@@ -5,12 +5,12 @@ import { Signer, Contract } from "ethers";
 import { smock } from "@defi-wonderland/smock";
 import { MOCK_CONTRACTS } from "../helpers/type";
 import { TypedStrategies, TypedTokens } from "../helpers/data";
-import { generateTokenHashV2, executeFunc, deploySmockContract, deployContract } from "../helpers/helpers";
+import { generateTokenHash, executeFunc, deploySmockContract, deployContract } from "../helpers/helpers";
 import { TESTING_DEPLOYMENT_ONCE } from "../helpers/constants/utils";
 import { ESSENTIAL_CONTRACTS } from "../helpers/constants/essential-contracts-name";
 import { TESTING_CONTRACTS } from "../helpers/constants/test-contracts-name";
 import { deployRegistry, deployRiskManager } from "../helpers/contracts-deployments";
-import { approveAndMapTokenHashToTokenV2, addRiskProfile } from "../helpers/contracts-actions";
+import { approveAndMapTokenHashToToken, addRiskProfile } from "../helpers/contracts-actions";
 import scenario from "./scenarios/risk-manager.json";
 import { RISK_PROFILES } from "../helpers/constants/contracts-data";
 import { NETWORKS_ID } from "../helpers/constants/network";
@@ -46,12 +46,12 @@ describe(scenario.title, () => {
       RISK_PROFILES[1].poolRating,
     );
     //Initialize data for tokensHashIndexes
-    await approveAndMapTokenHashToTokenV2(owner, registry, TypedTokens["SUSD"], NETWORKS_ID.MAINNET, false);
+    await approveAndMapTokenHashToToken(owner, registry, TypedTokens["SUSD"], NETWORKS_ID.MAINNET, false);
   });
 
   describe("Integration Scenarios", () => {
     const usedToken = TypedTokens["USDT"];
-    const tokenHash = generateTokenHashV2([usedToken], NETWORKS_ID.MAINNET);
+    const tokenHash = generateTokenHash([usedToken], NETWORKS_ID.MAINNET);
     for (let i = 0; i < scenario.standaloneStories.length; i++) {
       const story = scenario.standaloneStories[i];
       it(story.description, async () => {
@@ -59,7 +59,7 @@ describe(scenario.title, () => {
           const action = story.setActions[i];
           switch (action.action) {
             case "approveAndMapTokenHashToToken(bytes32,address[])": {
-              await approveAndMapTokenHashToTokenV2(owner, registry, usedToken, NETWORKS_ID.MAINNET, false);
+              await approveAndMapTokenHashToToken(owner, registry, usedToken, NETWORKS_ID.MAINNET, false);
               break;
             }
             case "become(address)": {
@@ -130,7 +130,7 @@ describe(scenario.title, () => {
       );
       for (let i = 0; i < usedTokens.length; i++) {
         try {
-          await approveAndMapTokenHashToTokenV2(
+          await approveAndMapTokenHashToToken(
             owner,
             registry,
             TypedTokens[usedTokens[i].toUpperCase()],
@@ -144,7 +144,7 @@ describe(scenario.title, () => {
     });
     for (let i = 0; i < TypedStrategies.length; i++) {
       const strategy = TypedStrategies[i];
-      const tokenHash = generateTokenHashV2([TypedTokens[strategy.token.toUpperCase()]], NETWORKS_ID.MAINNET);
+      const tokenHash = generateTokenHash([TypedTokens[strategy.token.toUpperCase()]], NETWORKS_ID.MAINNET);
 
       const defaultStrategy = TypedStrategies.filter(
         item => item.token === strategy.token && item.strategyName !== strategy.strategyName,

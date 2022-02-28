@@ -1,7 +1,7 @@
 import { task, types } from "hardhat/config";
 import { isAddress } from "../../helpers/helpers";
 import { ESSENTIAL_CONTRACTS } from "../../helpers/constants/essential-contracts-name";
-import { approveLiquidityPoolAndMapAdapterV2 } from "../../helpers/contracts-actions";
+import { approveLiquidityPoolAndMapAdapter } from "../../helpers/contracts-actions";
 import TASKS from "../task-names";
 
 task(TASKS.ACTION_TASKS.MAP_LIQUIDITYPOOL_TO_ADAPTER.NAME, TASKS.ACTION_TASKS.MAP_LIQUIDITYPOOL_TO_ADAPTER.DESCRIPTION)
@@ -41,7 +41,7 @@ task(TASKS.ACTION_TASKS.MAP_LIQUIDITYPOOL_TO_ADAPTER.NAME, TASKS.ACTION_TASKS.MA
       console.log(`Start mapping liquidity pool to adapter.....`);
       console.log(`Adapter: ${adapter}`);
       console.log(`Liquidity pool: ${liquiditypool}`);
-      await approveLiquidityPoolAndMapAdapterV2(owner, registryContract, adapter, liquiditypool, checkapproval);
+      await approveLiquidityPoolAndMapAdapter(owner, registryContract, adapter, liquiditypool, checkapproval);
       console.log(`Finished mapping liquidity pool to adapter`);
     } catch (error) {
       console.error(`${TASKS.ACTION_TASKS.MAP_LIQUIDITYPOOL_TO_ADAPTER.NAME}: `, error);

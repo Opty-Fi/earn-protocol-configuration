@@ -6,9 +6,9 @@ pragma experimental ABIEncoderV2;
 import { ModifiersController } from "../../ModifiersController.sol";
 import { RegistryProxy } from "../../RegistryProxy.sol";
 import { RegistryStorage } from "../../RegistryStorage.sol";
-import { TestStorageV2 } from "./TestStorageV2.sol";
+import { TestStorage } from "./TestStorage.sol";
 
-contract TestRegistryNewImplementation is RegistryStorage, TestStorageV2, ModifiersController {
+contract TestRegistryNewImplementation is RegistryStorage, TestStorage, ModifiersController {
     /**
      * @dev Set TestRegistryNewImplementation to act as Registry
      * @param _registryProxy RegistryProxy Contract address to act as Registry
