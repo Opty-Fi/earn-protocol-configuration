@@ -1195,7 +1195,7 @@
           },
           "executor": "riskOperator",
           "expect": "fail",
-          "message": "!liquidityPools"
+          "message": "!creditPools"
         }
       ],
       "getActions": [],
