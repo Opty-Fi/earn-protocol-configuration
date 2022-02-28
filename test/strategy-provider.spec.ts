@@ -46,7 +46,7 @@ describe(scenario.title, () => {
       const ownerAddress = await owner.getAddress();
       const strategyOperator = owner;
       signers = { owner, strategyOperator, user1 };
-      const registry = await deployRegistry(hre, owner, TESTING_DEPLOYMENT_ONCE, 2);
+      const registry = await deployRegistry(hre, owner, TESTING_DEPLOYMENT_ONCE);
       DUMMY_VAULT_EMPTY_CONTRACT = await deployContract(
         hre,
         TESTING_CONTRACTS.TEST_DUMMY_EMPTY_CONTRACT,
@@ -73,7 +73,7 @@ describe(scenario.title, () => {
         .withArgs(usedTokenHash, ownerAddress);
       const strategyProvider = await deployContract(
         hre,
-        ESSENTIAL_CONTRACTS.STRATEGY_PROVIDER_V2,
+        ESSENTIAL_CONTRACTS.STRATEGY_PROVIDER,
         TESTING_DEPLOYMENT_ONCE,
         owner,
         [registry.address],

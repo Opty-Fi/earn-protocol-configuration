@@ -32,9 +32,9 @@ describe(scenario.title, () => {
 
   before(async () => {
     [owner] = await hre.ethers.getSigners();
-    registry = await deployRegistry(hre, owner, TESTING_DEPLOYMENT_ONCE, 2);
+    registry = await deployRegistry(hre, owner, TESTING_DEPLOYMENT_ONCE);
 
-    riskManager = await deployRiskManager(hre, owner, TESTING_DEPLOYMENT_ONCE, registry.address, 2);
+    riskManager = await deployRiskManager(hre, owner, TESTING_DEPLOYMENT_ONCE, registry.address);
 
     await addRiskProfile(
       registry,
@@ -107,7 +107,7 @@ describe(scenario.title, () => {
           const action = story.cleanActions[i];
           switch (action.action) {
             case "deployRiskManager()": {
-              riskManager = await deployRiskManager(hre, owner, TESTING_DEPLOYMENT_ONCE, registry.address, 2);
+              riskManager = await deployRiskManager(hre, owner, TESTING_DEPLOYMENT_ONCE, registry.address);
               break;
             }
           }
@@ -120,7 +120,7 @@ describe(scenario.title, () => {
     let contracts: MOCK_CONTRACTS = {};
 
     before(async () => {
-      const strategyProvider = await deploySmockContract(smock, ESSENTIAL_CONTRACTS.STRATEGY_PROVIDER_V2, [
+      const strategyProvider = await deploySmockContract(smock, ESSENTIAL_CONTRACTS.STRATEGY_PROVIDER, [
         registry.address,
       ]);
       contracts = { strategyProvider };

@@ -12,7 +12,7 @@ import { DataTypes } from "../../libraries/types/DataTypes.sol";
  * @notice Contains functions for setting and getting the best and default strategy
  * as well as vault reward token strategy
  */
-interface IStrategyProviderV2 {
+interface IStrategyProvider {
     /**
      * @notice Set the best stratetgy for the given riskProfile and tokenHash
      * @param _riskProfileCode Risk profile code (Eg: 1,2, and so on where 0 is reserved for 'no strategy')

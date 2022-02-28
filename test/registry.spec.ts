@@ -60,7 +60,7 @@ describe(scenario.title, () => {
     [owner, financeOperator, riskOperator, strategyOperator, operator, user0, user1] = await hre.ethers.getSigners();
     signers = { owner, financeOperator, riskOperator, strategyOperator, operator, user0, user1 };
 
-    registryContract = await deployRegistry(hre, owner, TESTING_DEPLOYMENT_ONCE, 2);
+    registryContract = await deployRegistry(hre, owner, TESTING_DEPLOYMENT_ONCE);
     const DUMMY_EMPTY_CONTRACT = await deployContract(
       hre,
       TESTING_CONTRACTS.TEST_DUMMY_EMPTY_CONTRACT,

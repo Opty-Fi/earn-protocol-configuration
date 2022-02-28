@@ -13,8 +13,8 @@ import { RiskManagerStorage } from "./RiskManagerStorage.sol";
 import { RiskManagerProxy } from "./RiskManagerProxy.sol";
 
 //  interfaces
-import { IStrategyProviderV2 } from "./interfaces/opty/IStrategyProviderV2.sol";
-import { IRiskManagerV2 } from "./interfaces/opty/IRiskManagerV2.sol";
+import { IStrategyProvider } from "./interfaces/opty/IStrategyProvider.sol";
+import { IRiskManager } from "./interfaces/opty/IRiskManager.sol";
 import { Constants } from "./utils/Constants.sol";
 
 /**
@@ -22,7 +22,7 @@ import { Constants } from "./utils/Constants.sol";
  * @author Opty.fi
  * @dev Contract contains functionality for getting the best invest and vaultRewardToken strategy
  */
-contract RiskManagerV2 is IRiskManagerV2, RiskManagerStorage, Modifiers {
+contract RiskManager is IRiskManager, RiskManagerStorage, Modifiers {
     using Address for address;
 
     /* solhint-disable no-empty-blocks */
@@ -37,7 +37,7 @@ contract RiskManagerV2 is IRiskManagerV2, RiskManagerStorage, Modifiers {
     }
 
     /**
-     * @inheritdoc IRiskManagerV2
+     * @inheritdoc IRiskManager
      */
     function getBestStrategy(uint256 _riskProfileCode, bytes32 _underlyingTokensHash)
         public
@@ -49,7 +49,7 @@ contract RiskManagerV2 is IRiskManagerV2, RiskManagerStorage, Modifiers {
     }
 
     /**
-     * @inheritdoc IRiskManagerV2
+     * @inheritdoc IRiskManager
      */
     function getVaultRewardTokenStrategy(bytes32 _underlyingTokensHash)
         public
@@ -58,8 +58,9 @@ contract RiskManagerV2 is IRiskManagerV2, RiskManagerStorage, Modifiers {
         returns (DataTypes.VaultRewardStrategy memory)
     {
         return
-            IStrategyProviderV2(registryContract.getStrategyProvider())
-                .getVaultRewardTokenHashToVaultRewardTokenStrategy(_underlyingTokensHash);
+            IStrategyProvider(registryContract.getStrategyProvider()).getVaultRewardTokenHashToVaultRewardTokenStrategy(
+                _underlyingTokensHash
+            );
     }
 
     function _getBestStrategy(uint256 _riskProfileCode, bytes32 _underlyingTokensHash)
@@ -74,12 +75,12 @@ contract RiskManagerV2 is IRiskManagerV2, RiskManagerStorage, Modifiers {
         require(_riskProfileStruct.exists, "!Rp_Exists");
 
         DataTypes.StrategyStep[] memory _strategySteps =
-            IStrategyProviderV2(registryContract.getStrategyProvider()).getRpToTokenToBestStrategy(
+            IStrategyProvider(registryContract.getStrategyProvider()).getRpToTokenToBestStrategy(
                 _riskProfileCode,
                 _underlyingTokensHash
             );
         if (_strategySteps.length == 0 || _isInValidStrategy(_strategySteps, _riskProfileStruct)) {
-            _strategySteps = IStrategyProviderV2(registryContract.getStrategyProvider()).getRpToTokenToDefaultStrategy(
+            _strategySteps = IStrategyProvider(registryContract.getStrategyProvider()).getRpToTokenToDefaultStrategy(
                 _riskProfileCode,
                 _underlyingTokensHash
             );

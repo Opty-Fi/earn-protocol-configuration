@@ -5,7 +5,7 @@ import { ESSENTIAL_CONTRACTS } from "../../helpers/constants/essential-contracts
 import TASKS from "../task-names";
 import { NETWORKS_ID } from "../../helpers/constants/network";
 
-task(TASKS.ACTION_TASKS.SET_BEST_STRATEGY_V2.NAME, TASKS.ACTION_TASKS.SET_BEST_STRATEGY_V2.DESCRIPTION)
+task(TASKS.ACTION_TASKS.SET_BEST_STRATEGY.NAME, TASKS.ACTION_TASKS.SET_BEST_STRATEGY.DESCRIPTION)
   .addParam("token", "the address of token", "", types.string)
   .addParam("strategy", "the string of strategy", "", types.string)
   .addParam("riskprofilecode", "the code of risk profile", 0, types.int)

@@ -9,9 +9,8 @@ export async function deployRegistry(
   hre: HardhatRuntimeEnvironment,
   owner: Signer,
   isDeployedOnce: boolean,
-  version: VERSION_TYPE,
 ): Promise<Contract> {
-  const registryContractName = version === 1 ? ESSENTIAL_CONTRACTS_DATA.REGISTRY : ESSENTIAL_CONTRACTS_DATA.REGISTRY_V2;
+  const registryContractName = ESSENTIAL_CONTRACTS_DATA.REGISTRY;
 
   let registry = await deployContract(hre, registryContractName, isDeployedOnce, owner, []);
   const registryProxy = await deployContract(hre, ESSENTIAL_CONTRACTS_DATA.REGISTRY_PROXY, isDeployedOnce, owner, []);
@@ -26,10 +25,8 @@ export async function deployRiskManager(
   owner: Signer,
   isDeployedOnce: boolean,
   registry: string,
-  version: VERSION_TYPE,
 ): Promise<Contract> {
-  const riskManagerContractName =
-    version === 1 ? ESSENTIAL_CONTRACTS_DATA.RISK_MANAGER : ESSENTIAL_CONTRACTS_DATA.RISK_MANAGER_V2;
+  const riskManagerContractName = ESSENTIAL_CONTRACTS_DATA.RISK_MANAGER;
 
   let riskManager = await deployContract(hre, riskManagerContractName, isDeployedOnce, owner, [registry]);
 
@@ -53,10 +50,9 @@ export async function deployEssentialContracts(
   hre: HardhatRuntimeEnvironment,
   owner: Signer,
   isDeployedOnce: boolean,
-  version: VERSION_TYPE,
 ): Promise<CONTRACTS> {
   console.log("\n Deploying Registry...");
-  const registry = await deployRegistry(hre, owner, isDeployedOnce, version);
+  const registry = await deployRegistry(hre, owner, isDeployedOnce);
   console.log("\n Adding risk profiles...");
   await addRiskProfiles(owner, registry);
 
@@ -69,7 +65,7 @@ export async function deployEssentialContracts(
   );
   await executeFunc(registry, owner, "setStrategyProvider(address)", [strategyProvider.address]);
 
-  const riskManager = await deployRiskManager(hre, owner, isDeployedOnce, registry.address, version);
+  const riskManager = await deployRiskManager(hre, owner, isDeployedOnce, registry.address);
   await executeFunc(registry, owner, "setRiskManager(address)", [riskManager.address]);
 
   const essentialContracts: CONTRACTS = {
@@ -78,21 +74,5 @@ export async function deployEssentialContracts(
     riskManager,
   };
 
-  if (version === 1) {
-    const investStrategyRegistry = await deployContract(
-      hre,
-      ESSENTIAL_CONTRACTS_DATA.INVEST_STRATEGY_REGISTRY,
-      isDeployedOnce,
-      owner,
-      [registry.address],
-    );
-
-    await executeFunc(registry, owner, "setInvestStrategyRegistry(address)", [investStrategyRegistry.address]);
-
-    const aprOracle = await deployContract(hre, ESSENTIAL_CONTRACTS_DATA.APR_ORACLE, isDeployedOnce, owner, [
-      registry.address,
-    ]);
-    await executeFunc(registry, owner, "setAPROracle(address)", [aprOracle.address]);
-  }
   return essentialContracts;
 }

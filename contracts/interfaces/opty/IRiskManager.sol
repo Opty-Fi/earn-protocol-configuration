@@ -12,7 +12,7 @@ import { DataTypes } from "../../libraries/types/DataTypes.sol";
  * @notice A layer between vault and registry contract to get the best invest strategy as well
  * as vault reward token strategy
  */
-interface IRiskManagerV2 {
+interface IRiskManager {
     /**
      * @notice Get the best strategy for respective RiskProfiles
      * @param _riskProfileCode Risk profile code (Eg: 1,2, and so on where 0 is reserved for 'no strategy')

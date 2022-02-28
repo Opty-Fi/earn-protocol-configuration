@@ -11,7 +11,7 @@ import { SafeMath } from "@openzeppelin/contracts/math/SafeMath.sol";
 import { Modifiers } from "./Modifiers.sol";
 
 //  interfaces
-import { IStrategyProviderV2 } from "./interfaces/opty/IStrategyProviderV2.sol";
+import { IStrategyProvider } from "./interfaces/opty/IStrategyProvider.sol";
 import { Constants } from "./utils/Constants.sol";
 
 /**
@@ -21,7 +21,7 @@ import { Constants } from "./utils/Constants.sol";
  * @dev Contracts contains logic for setting and getting the best and default strategy
  * as well as vault reward token strategy
  */
-contract StrategyProviderV2 is IStrategyProviderV2, Modifiers {
+contract StrategyProvider is IStrategyProvider, Modifiers {
     using SafeMath for uint256;
 
     /**
@@ -43,7 +43,7 @@ contract StrategyProviderV2 is IStrategyProviderV2, Modifiers {
     constructor(address _registry) public Modifiers(_registry) {}
 
     /**
-     * @inheritdoc IStrategyProviderV2
+     * @inheritdoc IStrategyProvider
      */
     function setBestStrategy(
         uint256 _riskProfileCode,
@@ -61,7 +61,7 @@ contract StrategyProviderV2 is IStrategyProviderV2, Modifiers {
     }
 
     /**
-     * @inheritdoc IStrategyProviderV2
+     * @inheritdoc IStrategyProvider
      */
     function setBestDefaultStrategy(
         uint256 _riskProfileCode,
@@ -79,7 +79,7 @@ contract StrategyProviderV2 is IStrategyProviderV2, Modifiers {
     }
 
     /**
-     * @inheritdoc IStrategyProviderV2
+     * @inheritdoc IStrategyProvider
      */
     function setVaultRewardStrategy(
         bytes32 _vaultRewardTokenHash,
@@ -100,7 +100,7 @@ contract StrategyProviderV2 is IStrategyProviderV2, Modifiers {
     }
 
     /**
-     * @inheritdoc IStrategyProviderV2
+     * @inheritdoc IStrategyProvider
      */
     function getVaultRewardTokenHashToVaultRewardTokenStrategy(bytes32 _vaultRewardTokenHash)
         public
@@ -112,7 +112,7 @@ contract StrategyProviderV2 is IStrategyProviderV2, Modifiers {
     }
 
     /**
-     * @inheritdoc IStrategyProviderV2
+     * @inheritdoc IStrategyProvider
      */
     function getRpToTokenToBestStrategy(uint256 _riskProfileCode, bytes32 _underlyingTokensHash)
         external
@@ -124,7 +124,7 @@ contract StrategyProviderV2 is IStrategyProviderV2, Modifiers {
     }
 
     /**
-     * @inheritdoc IStrategyProviderV2
+     * @inheritdoc IStrategyProvider
      */
     function getRpToTokenToDefaultStrategy(uint256 _riskProfileCode, bytes32 _underlyingTokensHash)
         external
