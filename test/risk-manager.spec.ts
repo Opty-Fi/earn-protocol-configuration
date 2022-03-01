@@ -49,7 +49,7 @@ describe(scenario.title, () => {
     await approveAndMapTokenHashToToken(owner, registry, TypedTokens["SUSD"], NETWORKS_ID.MAINNET, false);
   });
 
-  describe("Integration Scenarios", () => {
+  describe("Standalone Scenarios", () => {
     const usedToken = TypedTokens["USDT"];
     const tokenHash = generateTokenHash([usedToken], NETWORKS_ID.MAINNET);
     for (let i = 0; i < scenario.standaloneStories.length; i++) {
