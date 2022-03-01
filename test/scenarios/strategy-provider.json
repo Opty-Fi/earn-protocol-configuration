@@ -1,5 +1,5 @@
 {
-  "title": "StrategyProviderV2",
+  "title": "StrategyProvider",
   "description": "Test cases for checking Functions' Visibility of StrategyProvider contract",
   "stories": [
     {
