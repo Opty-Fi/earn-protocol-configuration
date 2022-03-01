@@ -518,25 +518,21 @@ contract RegistryV2 is IRegistryV2, ModifiersController {
     }
 
     function _approveToken(address _token) internal {
-        require(!tokens[_token], "!tokens");
         tokens[_token] = true;
         emit LogToken(_token, tokens[_token], msg.sender);
     }
 
     function _revokeToken(address _token) internal {
-        require(tokens[_token], "!tokens");
         tokens[_token] = false;
         emit LogToken(_token, tokens[_token], msg.sender);
     }
 
     function _approveLiquidityPool(address _pool) internal {
-        require(!liquidityPools[_pool].isLiquidityPool, "!liquidityPools");
         liquidityPools[_pool].isLiquidityPool = true;
         emit LogLiquidityPool(_pool, liquidityPools[_pool].isLiquidityPool, msg.sender);
     }
 
     function _revokeLiquidityPool(address _pool) internal {
-        require(liquidityPools[_pool].isLiquidityPool, "!liquidityPools");
         liquidityPools[_pool].isLiquidityPool = false;
         emit LogLiquidityPool(_pool, liquidityPools[_pool].isLiquidityPool, msg.sender);
     }
@@ -548,19 +544,17 @@ contract RegistryV2 is IRegistryV2, ModifiersController {
     }
 
     function _approveCreditPool(address _pool) internal {
-        require(!creditPools[_pool].isLiquidityPool, "!creditPools");
         creditPools[_pool].isLiquidityPool = true;
         emit LogCreditPool(_pool, creditPools[_pool].isLiquidityPool, msg.sender);
     }
 
     function _revokeCreditPool(address _pool) internal {
-        require(creditPools[_pool].isLiquidityPool, "!creditPools");
         creditPools[_pool].isLiquidityPool = false;
         emit LogCreditPool(_pool, creditPools[_pool].isLiquidityPool, msg.sender);
     }
 
     function _rateCreditPool(address _pool, uint8 _rate) internal {
-        require(creditPools[_pool].isLiquidityPool, "!liquidityPools");
+        require(creditPools[_pool].isLiquidityPool, "!creditPools");
         creditPools[_pool].rating = _rate;
         emit LogRateCreditPool(_pool, creditPools[_pool].rating, msg.sender);
     }
