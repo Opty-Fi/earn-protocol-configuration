@@ -7,7 +7,7 @@ import { Address } from "@openzeppelin/contracts/utils/Address.sol";
 import { DataTypes } from "./libraries/types/DataTypes.sol";
 
 //  interfaces
-import { IRegistry } from "./interfaces/opty/IRegistryOld.sol";
+import { IRegistryOld } from "./interfaces/opty/IRegistryOld.sol";
 import { IModifiers } from "./interfaces/opty/IModifiers.sol";
 
 /**
@@ -20,12 +20,12 @@ abstract contract Modifiers is IModifiers {
     /**
      * @notice Registry contract instance address
      */
-    IRegistry public registryContract;
+    IRegistryOld public registryContract;
 
     using Address for address;
 
     constructor(address _registry) internal {
-        registryContract = IRegistry(_registry);
+        registryContract = IRegistryOld(_registry);
     }
 
     /**
@@ -33,7 +33,7 @@ abstract contract Modifiers is IModifiers {
      */
     function setRegistry(address _registry) external override onlyOperator {
         require(_registry.isContract(), "!isContract");
-        registryContract = IRegistry(_registry);
+        registryContract = IRegistryOld(_registry);
     }
 
     /**
