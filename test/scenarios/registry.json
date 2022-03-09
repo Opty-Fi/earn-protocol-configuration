@@ -3,47 +3,6 @@
   "description": "Test cases for Registry contract",
   "stories": [
     {
-      "description": "Governance should be able to set OPTYDistributor's address",
-      "setActions": [
-        {
-          "action": "setOPTYDistributor(address)",
-          "args": {
-            "newOptyDistributor": "optyDistributor"
-          },
-          "executor": "owner",
-          "expect": "success",
-          "message": ""
-        }
-      ],
-      "getActions": [
-        {
-          "action": "getOPTYDistributor()",
-          "args": {},
-          "expectedValue": {
-            "addressName": "optyDistributor"
-          },
-          "expectedMultiValues": {}
-        }
-      ],
-      "cleanActions": []
-    },
-    {
-      "description": "Non-Governance shouldn't be able to set OPTYDistributor's address",
-      "setActions": [
-        {
-          "action": "setOPTYDistributor(address)",
-          "args": {
-            "newOptyDistributor": "optyDistributor"
-          },
-          "executor": "user1",
-          "expect": "fail",
-          "message": "caller is not having governance"
-        }
-      ],
-      "getActions": [],
-      "cleanActions": []
-    },
-    {
       "description": "Governance should be able to set FinanceOperator's address",
       "setActions": [
         {
@@ -290,6 +249,22 @@
       "cleanActions": []
     },
     {
+      "description": "Operator shouldn't be able to set StrategyProvider Contract address with wrong registry address",
+      "setActions": [
+        {
+          "action": "setStrategyProvider(address)",
+          "args": {
+            "contractName": "dummyContract"
+          },
+          "executor": "operator",
+          "expect": "fail",
+          "message": "!registryContract"
+        }
+      ],
+      "getActions": [],
+      "cleanActions": []
+    },
+    {
       "description": "Operator should be able to set RiskManager Contract address",
       "setActions": [
         {
@@ -325,6 +300,22 @@
           "executor": "user0",
           "expect": "fail",
           "message": "caller is not the operator"
+        }
+      ],
+      "getActions": [],
+      "cleanActions": []
+    },
+    {
+      "description": "Operator shouldn't be able to set RiskManager Contract address with wrong registry address",
+      "setActions": [
+        {
+          "action": "setRiskManager(address)",
+          "args": {
+            "contractName": "dummyContract"
+          },
+          "executor": "operator",
+          "expect": "fail",
+          "message": "!registryContract"
         }
       ],
       "getActions": [],
@@ -372,6 +363,22 @@
       "cleanActions": []
     },
     {
+      "description": "Operator shouldn't be able to set HarvestCodeProvider Contract address with wrong registry address",
+      "setActions": [
+        {
+          "action": "setHarvestCodeProvider(address)",
+          "args": {
+            "contractName": "dummyContract"
+          },
+          "executor": "operator",
+          "expect": "fail",
+          "message": "!registryContract"
+        }
+      ],
+      "getActions": [],
+      "cleanActions": []
+    },
+    {
       "description": "Operator should be able to set OPTY Contract address",
       "setActions": [
         {
@@ -413,6 +420,22 @@
       "cleanActions": []
     },
     {
+      "description": "Operator shouldn't be able to set OPTY Contract address with wrong registry address",
+      "setActions": [
+        {
+          "action": "setOPTY(address)",
+          "args": {
+            "contractName": "dummyContract"
+          },
+          "executor": "operator",
+          "expect": "fail",
+          "message": "!registryContract"
+        }
+      ],
+      "getActions": [],
+      "cleanActions": []
+    },
+    {
       "description": "Operator should be able to set ODEFIVaultBooster Contract address",
       "setActions": [
         {
@@ -448,6 +471,22 @@
           "executor": "user0",
           "expect": "fail",
           "message": "caller is not the operator"
+        }
+      ],
+      "getActions": [],
+      "cleanActions": []
+    },
+    {
+      "description": "Operator shouldn't be able to set ODEFIVaultBooster Contract address with wrong registry address",
+      "setActions": [
+        {
+          "action": "setODEFIVaultBooster(address)",
+          "args": {
+            "contractName": "dummyContract"
+          },
+          "executor": "operator",
+          "expect": "fail",
+          "message": "!registryContract"
         }
       ],
       "getActions": [],
@@ -2382,41 +2421,6 @@
       ],
       "getActions": [],
       "cleanActions": []
-    },
-    {
-      "description": "Old-Operator shouldn't be able to execute function allowing only operator",
-      "setActions": [
-        {
-          "action": "setOperator(address)",
-          "args": {
-            "newOperator": "user1"
-          },
-          "executor": "owner",
-          "expect": "success",
-          "message": ""
-        },
-        {
-          "action": "setInvestStrategyRegistry(address)",
-          "args": {
-            "contractName": "investStrategyRegistry"
-          },
-          "executor": "operator",
-          "expect": "fail",
-          "message": "caller is not the operator"
-        }
-      ],
-      "getActions": [],
-      "cleanActions": [
-        {
-          "action": "setOperator(address)",
-          "args": {
-            "newOperator": "operator"
-          },
-          "executor": "owner",
-          "expect": "success",
-          "message": ""
-        }
-      ]
     },
     {
       "description": "Old-RiskOperator shouldn't be able to execute function allowing only riskOperator",

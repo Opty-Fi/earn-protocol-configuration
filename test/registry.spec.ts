@@ -1,20 +1,22 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import chai, { expect, assert } from "chai";
 import { solidity } from "ethereum-waffle";
 import hre from "hardhat";
 import { Contract, Signer } from "ethers";
 import { deployRegistry } from "../helpers/contracts-deployments";
-import { CONTRACTS, TESTING_DEFAULT_DATA } from "../helpers/type";
-import { deployContract, executeFunc, generateTokenHash } from "../helpers/helpers";
+import { MOCK_CONTRACTS, TESTING_DEFAULT_DATA } from "../helpers/type";
+import { deployContract, executeFunc, generateTokenHash, deploySmockContract } from "../helpers/helpers";
 import { TESTING_DEPLOYMENT_ONCE } from "../helpers/constants/utils";
 import { ESSENTIAL_CONTRACTS } from "../helpers/constants/essential-contracts-name";
 import { TESTING_CONTRACTS } from "../helpers/constants/test-contracts-name";
 import { RISK_PROFILES } from "../helpers/constants/contracts-data";
 import scenario from "./scenarios/registry.json";
+import { smock } from "@defi-wonderland/smock";
 
 chai.use(solidity);
 
 type ARGUMENTS = {
-  [key: string]: any; // eslint-disable-line @typescript-eslint/no-explicit-any
+  [key: string]: any;
 };
 
 const adapters: {
@@ -40,33 +42,34 @@ describe(scenario.title, () => {
   let user0: Signer;
   let user1: Signer;
   let signers: any;
-  const contracts: CONTRACTS = {};
+  const contracts: MOCK_CONTRACTS = {};
   const callers: { [key: string]: string } = {};
   const contractNames = [
     "treasury",
     "investStrategyRegistry",
     "strategyProvider",
     "riskManager",
-    "optyDistributor",
     "harvestCodeProvider",
-    "strategyManager",
     "opty",
-    "optyStakingRateBalancer",
     "odefiVaultBooster",
     "vault",
   ];
+
   const callerNames = ["owner", "financeOperator", "riskOperator", "strategyOperator", "operator", "user0", "user1"];
   before(async () => {
     [owner, financeOperator, riskOperator, strategyOperator, operator, user0, user1] = await hre.ethers.getSigners();
     signers = { owner, financeOperator, riskOperator, strategyOperator, operator, user0, user1 };
 
     registryContract = await deployRegistry(hre, owner, TESTING_DEPLOYMENT_ONCE);
-    const DUMMY_EMPTY_CONTRACT = await deployContract(
-      hre,
-      TESTING_CONTRACTS.TEST_DUMMY_EMPTY_CONTRACT,
-      TESTING_DEPLOYMENT_ONCE,
-      owner,
-      [],
+    const DUMMY_EMPTY_CONTRACT = await deploySmockContract(
+      smock,
+      TESTING_CONTRACTS.TEST_DUMMY_EMPTY_CONTRACT_WITH_REGISTRY,
+      [registryContract.address],
+    );
+    contracts["dummyContract"] = await deploySmockContract(
+      smock,
+      TESTING_CONTRACTS.TEST_DUMMY_EMPTY_CONTRACT_WITH_REGISTRY,
+      [DUMMY_EMPTY_CONTRACT.address],
     );
     assert.isDefined(
       DUMMY_EMPTY_CONTRACT,
@@ -192,6 +195,7 @@ describe(scenario.title, () => {
           }
           case "verifyOldValue()": {
             await verifyDefaultData(registryContract, REGISTRY_TESTING_DEFAULT_DATA);
+            await verifyOptyfiContracts(registryContract, REGISTRY_OPTYFI_CONTRACTS, contracts);
             break;
           }
           case "withdrawalFeeRange()": {
@@ -421,26 +425,6 @@ describe(scenario.title, () => {
           }
         }
         assert.isDefined(newOperator, `args is wrong in ${action.action} testcase`);
-        break;
-      }
-      case "setOPTYDistributor(address)": {
-        const { newOptyDistributor }: ARGUMENTS = action.args;
-        if (newOptyDistributor !== undefined) {
-          if (action.expect === "success") {
-            await expect(
-              registryContract.connect(signers[action.executor])[action.action](contracts[newOptyDistributor].address),
-            )
-              .to.emit(registryContract, "TransferOPTYDistributor")
-              .withArgs(contracts[newOptyDistributor].address, callers[action.executor]);
-          } else {
-            await expect(
-              registryContract
-                .connect(signers[action.executor])
-                [action.action](newOptyDistributor ? contracts[newOptyDistributor].address : callers["owner"]),
-            ).to.be.revertedWith(action.message);
-          }
-        }
-        assert.isDefined(newOptyDistributor, `args is wrong in ${action.action} testcase`);
         break;
       }
       case "approveToken(address[])":
@@ -844,61 +828,6 @@ const REGISTRY_TESTING_DEFAULT_DATA: TESTING_DEFAULT_DATA[] = [
     ],
   },
   {
-    setFunction: "setStrategyProvider(address)",
-    input: ["0x5d3a536E4D6DbD6114cc1Ead35777bAB948E3643"],
-    getFunction: [
-      {
-        name: "strategyProvider()",
-        input: [],
-        output: "0x5d3a536E4D6DbD6114cc1Ead35777bAB948E3643",
-      },
-    ],
-  },
-  {
-    setFunction: "setRiskManager(address)",
-    input: ["0x5d3a536E4D6DbD6114cc1Ead35777bAB948E3643"],
-    getFunction: [
-      {
-        name: "riskManager()",
-        input: [],
-        output: "0x5d3a536E4D6DbD6114cc1Ead35777bAB948E3643",
-      },
-    ],
-  },
-  {
-    setFunction: "setHarvestCodeProvider(address)",
-    input: ["0x5d3a536E4D6DbD6114cc1Ead35777bAB948E3643"],
-    getFunction: [
-      {
-        name: "harvestCodeProvider()",
-        input: [],
-        output: "0x5d3a536E4D6DbD6114cc1Ead35777bAB948E3643",
-      },
-    ],
-  },
-  {
-    setFunction: "setOPTY(address)",
-    input: ["0x5d3a536E4D6DbD6114cc1Ead35777bAB948E3643"],
-    getFunction: [
-      {
-        name: "opty()",
-        input: [],
-        output: "0x5d3a536E4D6DbD6114cc1Ead35777bAB948E3643",
-      },
-    ],
-  },
-  {
-    setFunction: "setODEFIVaultBooster(address)",
-    input: ["0x5d3a536E4D6DbD6114cc1Ead35777bAB948E3643"],
-    getFunction: [
-      {
-        name: "odefiVaultBooster()",
-        input: [],
-        output: "0x5d3a536E4D6DbD6114cc1Ead35777bAB948E3643",
-      },
-    ],
-  },
-  {
     setFunction: "approveToken(address)",
     input: ["0x6b175474e89094c44da98b954eedeac495271d0f"],
     getFunction: [
@@ -974,6 +903,14 @@ const REGISTRY_TESTING_DEFAULT_DATA: TESTING_DEFAULT_DATA[] = [
   },
 ];
 
+const REGISTRY_OPTYFI_CONTRACTS = [
+  "strategyProvider",
+  "riskManager",
+  "harvestCodeProvider",
+  "opty",
+  "odefiVaultBooster",
+];
+
 async function initDefaultData(contract: Contract, data: TESTING_DEFAULT_DATA[], owner: Signer): Promise<void> {
   for (let i = 0; i < data.length; i++) {
     try {
@@ -1007,5 +944,15 @@ async function verifyDefaultData(contract: Contract, data: TESTING_DEFAULT_DATA[
         expect(value).to.be.eq(getFunction.output);
       }
     }
+  }
+}
+
+async function verifyOptyfiContracts(
+  registry: Contract,
+  contractNames: string[],
+  contracts: MOCK_CONTRACTS,
+): Promise<void> {
+  for (let i = 0; i < contractNames.length; i++) {
+    expect(await registry[`${contractNames[i]}()`]()).to.be.eq(contracts[contractNames[i]].address);
   }
 }

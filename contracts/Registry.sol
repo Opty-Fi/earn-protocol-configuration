@@ -15,6 +15,7 @@ import { RegistryProxy } from "./RegistryProxy.sol";
 //  interfaces
 import { IVault } from "./interfaces/opty/IVault.sol";
 import { IRegistry } from "./interfaces/opty/IRegistry.sol";
+import { IContractRegistry } from "./interfaces/opty/IContractRegistry.sol";
 import { Constants } from "./utils/Constants.sol";
 
 /**
@@ -48,6 +49,7 @@ contract Registry is IRegistry, ModifiersController {
      * @inheritdoc IRegistry
      */
     function setStrategyProvider(address _strategyProvider) external override onlyOperator {
+        require(IContractRegistry(_strategyProvider).registryContract() == address(this), "!registryContract");
         strategyProvider = _strategyProvider;
     }
 
@@ -55,6 +57,7 @@ contract Registry is IRegistry, ModifiersController {
      * @inheritdoc IRegistry
      */
     function setRiskManager(address _riskManager) external override onlyOperator {
+        require(IContractRegistry(_riskManager).registryContract() == address(this), "!registryContract");
         riskManager = _riskManager;
     }
 
@@ -62,6 +65,7 @@ contract Registry is IRegistry, ModifiersController {
      * @inheritdoc IRegistry
      */
     function setHarvestCodeProvider(address _harvestCodeProvider) external override onlyOperator {
+        require(IContractRegistry(_harvestCodeProvider).registryContract() == address(this), "!registryContract");
         harvestCodeProvider = _harvestCodeProvider;
     }
 
@@ -69,6 +73,7 @@ contract Registry is IRegistry, ModifiersController {
      * @inheritdoc IRegistry
      */
     function setOPTY(address _opty) external override onlyOperator {
+        require(IContractRegistry(_opty).registryContract() == address(this), "!registryContract");
         opty = _opty;
     }
 
@@ -76,6 +81,7 @@ contract Registry is IRegistry, ModifiersController {
      * @inheritdoc IRegistry
      */
     function setODEFIVaultBooster(address _odefiVaultBooster) external override onlyOperator {
+        require(IContractRegistry(_odefiVaultBooster).registryContract() == address(this), "!registryContract");
         odefiVaultBooster = _odefiVaultBooster;
     }
 
