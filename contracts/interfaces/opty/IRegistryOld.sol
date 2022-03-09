@@ -12,7 +12,7 @@ import { DataTypes } from "../../libraries/types/DataTypes.sol";
  * @notice Interface of the opty.fi's protocol reegistry to store all the mappings, governance
  * operator, minter, strategist and all optyFi's protocol contract addresses
  */
-interface IRegistry {
+interface IRegistryOld {
     /**
      * @notice Set the treasury's address for optyfi's earn protocol
      * @param _treasury Treasury's address
