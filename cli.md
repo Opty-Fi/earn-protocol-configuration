@@ -8,6 +8,93 @@ Follow the below command to run a specific task :
 yarn hardhat `taskName` --network `network` --optionName `optionValue`
 ```
 
+## Deployment Tasks
+
+To deploy OptyFi's contracts.
+
+### deploy-registry
+
+```
+Usage: deploy Registry contract
+
+Options:
+--deployedonce       optional <bool>   allow checking whether contracts were deployed previously (default: true)
+--network            optional <string> name of the network provider (default: hardhat)
+```
+
+- Example:
+
+```
+  yarn hardhat deploy-registry \
+  --deployedonce false \
+  --network localhost
+```
+
+### deploy-risk-manager
+
+```
+Usage: deploy RiskManager contract
+
+Options:
+--registry     required <string>  the address of registry
+--deployedonce optional <bool>    allow checking whether contracts were deployed previously (default: true)
+--network      optional <string>  name of the network provider (default: hardhat) (default: hardhat)
+```
+
+- Example:
+
+```
+  yarn hardhat deploy-risk-manager \
+  --registry 0x0000000000000000000000000000000000000000 \
+  --deployedonce false \
+  --network localhost
+```
+
+### deploy-strategy-provider
+
+```
+Usage: deploy StrategyProvider contract
+
+Options:
+--registry     required <address> the address of registry
+--deployedonce optional <bool>    allow checking whether contracts were deployed previously (default: true)
+--network      optional <string>  name of the network provider (default: hardhat)
+```
+
+- Example:
+
+```
+  yarn hardhat deploy-strategy-provider \
+  --network localhost \
+  --registry 0x0000000000000000000000000000000000000000
+```
+
+### deploy-erc20
+
+```
+Usage: deploy erc20 contract
+
+Options:
+--name         required <string> the name of token
+--symbol       required <string> the symbol of token
+--total        optional <number> the totalSupply of token (default: 0)
+--decimal      required <number> the decimal of token(defaukt: 18)
+--deployedonce optional <bool>   allow checking whether contracts were deployed previously (default: true)
+--network      optional <string> name of the network provider (default: hardhat)
+
+```
+
+- Example:
+
+```
+  yarn hardhat deploy-erc20 \
+  --network localhost \
+  --name ERC20 \
+  --symbol ERC20 \
+  --total 0 \
+  --decimal 18
+```
+
 ## Action Tasks
 
 To execute functions in a OptyFi's contract.
