@@ -376,41 +376,6 @@
           "message": ""
         }
       ]
-    },
-    {
-      "description": "[setVaultRewardStrategy] - Cannot set best Vault Reward strategy with non-exist reward token",
-      "setActions": [
-        {
-          "contract": "strategyProvider",
-          "action": "setVaultRewardStrategy(bytes32,(uint256,uint256))",
-          "args": {
-            "vaultRewardStrategy": [5000, 5000],
-            "isNonApprovedToken": true
-          },
-          "executor": "strategyOperator",
-          "expect": "fail",
-          "message": "!VaultRewardTokenHashExists"
-        }
-      ],
-      "getActions": [],
-      "cleanActions": []
-    },
-    {
-      "description": "[setVaultRewardStrategy] - Cannot set best Vault Reward strategy with unqualified vaultRewardStrategy",
-      "setActions": [
-        {
-          "contract": "strategyProvider",
-          "action": "setVaultRewardStrategy(bytes32,(uint256,uint256))",
-          "args": {
-            "vaultRewardStrategy": [1000, 1000]
-          },
-          "executor": "strategyOperator",
-          "expect": "fail",
-          "message": "!HoldConvertBasisRange"
-        }
-      ],
-      "getActions": [],
-      "cleanActions": []
     }
   ]
 }

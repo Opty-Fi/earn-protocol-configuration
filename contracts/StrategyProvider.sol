@@ -77,15 +77,6 @@ contract StrategyProvider is IStrategyProvider, Modifiers {
         bytes32 _vaultRewardTokenHash,
         DataTypes.VaultRewardStrategy memory _vaultRewardStrategy
     ) external override onlyStrategyOperator returns (DataTypes.VaultRewardStrategy memory) {
-        require(_vaultRewardTokenHash != Constants.ZERO_BYTES32, "!bytes32(0)");
-        uint256 _index = registryContract.getTokensHashIndexByHash(_vaultRewardTokenHash);
-        require(registryContract.getTokensHashByIndex(_index) == _vaultRewardTokenHash, "!VaultRewardTokenHashExists");
-        require(
-            (_vaultRewardStrategy.hold.add(_vaultRewardStrategy.convert) == uint256(10000)) ||
-                (_vaultRewardStrategy.hold.add(_vaultRewardStrategy.convert) == uint256(0)),
-            "!HoldConvertBasisRange"
-        );
-
         vaultRewardTokenHashToVaultRewardTokenStrategy[_vaultRewardTokenHash].hold = _vaultRewardStrategy.hold;
         vaultRewardTokenHashToVaultRewardTokenStrategy[_vaultRewardTokenHash].convert = _vaultRewardStrategy.convert;
         return vaultRewardTokenHashToVaultRewardTokenStrategy[_vaultRewardTokenHash];
