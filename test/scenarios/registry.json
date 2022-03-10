@@ -420,22 +420,6 @@
       "cleanActions": []
     },
     {
-      "description": "Operator shouldn't be able to set OPTY Contract address with wrong registry address",
-      "setActions": [
-        {
-          "action": "setOPTY(address)",
-          "args": {
-            "contractName": "dummyContract"
-          },
-          "executor": "operator",
-          "expect": "fail",
-          "message": "!registryContract"
-        }
-      ],
-      "getActions": [],
-      "cleanActions": []
-    },
-    {
       "description": "Operator should be able to set ODEFIVaultBooster Contract address",
       "setActions": [
         {
@@ -1381,6 +1365,44 @@
       ],
       "getActions": [],
       "cleanActions": []
+    },
+    {
+      "description": "Operator shouldn't be able to set liquidity pool to adapter with wrong registry contract",
+      "setActions": [
+        {
+          "action": "approveLiquidityPool(address)",
+          "args": {
+            "lqs": "0x5d3a536E4D6DbD6114cc1Ead35777bAB948E3643"
+          },
+          "executor": "operator",
+          "expect": "success",
+          "message": ""
+        },
+        {
+          "action": "setLiquidityPoolToAdapter(address,address)",
+          "args": {
+            "lqs": {
+              "liquidityPool": "0x5d3a536E4D6DbD6114cc1Ead35777bAB948E3643",
+              "adapterName": "dummyContract"
+            }
+          },
+          "executor": "operator",
+          "expect": "fail",
+          "message": "!registryContract"
+        }
+      ],
+      "getActions": [],
+      "cleanActions": [
+        {
+          "action": "revokeLiquidityPool(address)",
+          "args": {
+            "lqs": "0x5d3a536E4D6DbD6114cc1Ead35777bAB948E3643"
+          },
+          "executor": "operator",
+          "expect": "success",
+          "message": ""
+        }
+      ]
     },
     {
       "description": "Operator should be able to set multiple liquidity pools to adapters",

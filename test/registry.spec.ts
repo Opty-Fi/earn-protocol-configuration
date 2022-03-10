@@ -19,18 +19,7 @@ type ARGUMENTS = {
   [key: string]: any;
 };
 
-const adapters: {
-  [name: string]: {
-    address: string;
-  };
-} = {
-  CompoundAdapter: {
-    address: "0x5d3a536E4D6DbD6114cc1Ead35777bAB948E3643",
-  },
-  AaveV1Adapter: {
-    address: "0x24a42fD28C976A61Df5D00D0599C34c4f90748c8",
-  },
-};
+const USED_ADAPTERS = ["CompoundAdapter", "AaveV1Adapter"];
 
 describe(scenario.title, () => {
   let registryContract: Contract;
@@ -43,6 +32,7 @@ describe(scenario.title, () => {
   let user1: Signer;
   let signers: any;
   const contracts: MOCK_CONTRACTS = {};
+  const adapters: MOCK_CONTRACTS = {};
   const callers: { [key: string]: string } = {};
   const contractNames = [
     "treasury",
@@ -71,6 +61,10 @@ describe(scenario.title, () => {
       TESTING_CONTRACTS.TEST_DUMMY_EMPTY_CONTRACT_WITH_REGISTRY,
       [DUMMY_EMPTY_CONTRACT.address],
     );
+    USED_ADAPTERS.forEach(item => {
+      adapters[item] = DUMMY_EMPTY_CONTRACT;
+    });
+    adapters["dummyContract"] = contracts["dummyContract"];
     assert.isDefined(
       DUMMY_EMPTY_CONTRACT,
       `Dummy contract (to be used for testing Contract setter functions) not deployed`,
@@ -857,17 +851,6 @@ const REGISTRY_TESTING_DEFAULT_DATA: TESTING_DEFAULT_DATA[] = [
         name: "creditPools(address)",
         input: ["0x5d3a536E4D6DbD6114cc1Ead35777bAB948E3643"],
         output: [0, true],
-      },
-    ],
-  },
-  {
-    setFunction: "setLiquidityPoolToAdapter(address,address)",
-    input: ["0x5d3a536E4D6DbD6114cc1Ead35777bAB948E3643", "0x5d3a536E4D6DbD6114cc1Ead35777bAB948E3643"],
-    getFunction: [
-      {
-        name: "liquidityPoolToAdapter(address)",
-        input: ["0x5d3a536E4D6DbD6114cc1Ead35777bAB948E3643"],
-        output: "0x5d3a536E4D6DbD6114cc1Ead35777bAB948E3643",
       },
     ],
   },

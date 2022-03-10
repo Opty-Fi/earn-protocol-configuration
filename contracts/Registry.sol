@@ -73,7 +73,6 @@ contract Registry is IRegistry, ModifiersController {
      * @inheritdoc IRegistry
      */
     function setOPTY(address _opty) external override onlyOperator {
-        require(IContractRegistry(_opty).registryContract() == address(this), "!registryContract");
         opty = _opty;
     }
 
@@ -566,6 +565,7 @@ contract Registry is IRegistry, ModifiersController {
     }
 
     function _setLiquidityPoolToAdapter(address _pool, address _adapter) internal {
+        require(IContractRegistry(_adapter).registryContract() == address(this), "!registryContract");
         liquidityPoolToAdapter[_pool] = _adapter;
         emit LogLiquidityPoolToAdapter(_pool, _adapter, msg.sender);
     }
