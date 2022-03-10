@@ -50,10 +50,6 @@ contract StrategyProvider is IStrategyProvider, Modifiers {
         bytes32 _underlyingTokensHash,
         DataTypes.StrategyStep[] memory _strategySteps
     ) external override onlyStrategyOperator {
-        DataTypes.RiskProfile memory _riskProfileStruct = registryContract.getRiskProfile(_riskProfileCode);
-        require(_riskProfileStruct.exists, "!Rp_Exists");
-        uint256 _index = registryContract.getTokensHashIndexByHash(_underlyingTokensHash);
-        require(registryContract.getTokensHashByIndex(_index) == _underlyingTokensHash, "!TokenHashExists");
         delete rpToTokenToBestStrategy[_riskProfileCode][_underlyingTokensHash];
         for (uint256 _i = 0; _i < _strategySteps.length; _i++) {
             rpToTokenToBestStrategy[_riskProfileCode][_underlyingTokensHash].push(_strategySteps[_i]);
@@ -68,10 +64,6 @@ contract StrategyProvider is IStrategyProvider, Modifiers {
         bytes32 _underlyingTokensHash,
         DataTypes.StrategyStep[] memory _strategySteps
     ) external override onlyStrategyOperator {
-        DataTypes.RiskProfile memory _riskProfileStruct = registryContract.getRiskProfile(_riskProfileCode);
-        require(_riskProfileStruct.exists, "!Rp_Exists");
-        uint256 _index = registryContract.getTokensHashIndexByHash(_underlyingTokensHash);
-        require(registryContract.getTokensHashByIndex(_index) == _underlyingTokensHash, "!TokenHashExists");
         delete rpToTokenToDefaultStrategy[_riskProfileCode][_underlyingTokensHash];
         for (uint256 _i = 0; _i < _strategySteps.length; _i++) {
             rpToTokenToDefaultStrategy[_riskProfileCode][_underlyingTokensHash].push(_strategySteps[_i]);

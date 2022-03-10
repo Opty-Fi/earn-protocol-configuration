@@ -62,6 +62,10 @@ describe(scenario.title, () => {
               await approveAndMapTokenHashToToken(owner, registry, usedToken, NETWORKS_ID.MAINNET, false);
               break;
             }
+            case "revokeToken(address[])": {
+              await registry[action.action]([usedToken]);
+              break;
+            }
             case "become(address)": {
               const newRiskManager = await deployContract(
                 hre,

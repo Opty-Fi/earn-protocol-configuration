@@ -34,6 +34,10 @@ contract Registry is IRegistry, ModifiersController {
     function become(RegistryProxy _registryProxy) external {
         require(msg.sender == _registryProxy.governance(), "!governance");
         require(_registryProxy.acceptImplementation() == 0, "!unauthorized");
+        investStrategyRegistry = address(0);
+        aprOracle = address(0);
+        strategyManager = address(0);
+        optyStakingRateBalancer = address(0);
     }
 
     /**
@@ -88,7 +92,7 @@ contract Registry is IRegistry, ModifiersController {
      * @inheritdoc IRegistry
      */
     function approveToken(address[] memory _tokens) external override onlyOperator {
-        for (uint256 _i = 0; _i < _tokens.length; _i++) {
+        for (uint256 _i; _i < _tokens.length; _i++) {
             _approveToken(_tokens[_i]);
         }
     }
@@ -104,7 +108,7 @@ contract Registry is IRegistry, ModifiersController {
      * @inheritdoc IRegistry
      */
     function revokeToken(address[] memory _tokens) external override onlyOperator {
-        for (uint256 _i = 0; _i < _tokens.length; _i++) {
+        for (uint256 _i; _i < _tokens.length; _i++) {
             _revokeToken(_tokens[_i]);
         }
     }
@@ -120,7 +124,7 @@ contract Registry is IRegistry, ModifiersController {
      * @inheritdoc IRegistry
      */
     function approveLiquidityPool(address[] memory _pools) external override onlyOperator {
-        for (uint256 _i = 0; _i < _pools.length; _i++) {
+        for (uint256 _i; _i < _pools.length; _i++) {
             _approveLiquidityPool(_pools[_i]);
         }
     }
@@ -136,7 +140,7 @@ contract Registry is IRegistry, ModifiersController {
      * @inheritdoc IRegistry
      */
     function revokeLiquidityPool(address[] memory _pools) external override onlyOperator {
-        for (uint256 _i = 0; _i < _pools.length; _i++) {
+        for (uint256 _i; _i < _pools.length; _i++) {
             _revokeLiquidityPool(_pools[_i]);
         }
     }
@@ -152,7 +156,7 @@ contract Registry is IRegistry, ModifiersController {
      * @inheritdoc IRegistry
      */
     function rateLiquidityPool(DataTypes.PoolRate[] memory _poolRates) external override onlyRiskOperator {
-        for (uint256 _i = 0; _i < _poolRates.length; _i++) {
+        for (uint256 _i; _i < _poolRates.length; _i++) {
             _rateLiquidityPool(_poolRates[_i].pool, _poolRates[_i].rate);
         }
     }
@@ -172,7 +176,7 @@ contract Registry is IRegistry, ModifiersController {
         override
         onlyOperator
     {
-        for (uint256 _i = 0; _i < _poolAdapters.length; _i++) {
+        for (uint256 _i; _i < _poolAdapters.length; _i++) {
             _approveLiquidityPool(_poolAdapters[_i].pool);
             _setLiquidityPoolToAdapter(_poolAdapters[_i].pool, _poolAdapters[_i].adapter);
         }
@@ -190,7 +194,7 @@ contract Registry is IRegistry, ModifiersController {
      * @inheritdoc IRegistry
      */
     function approveCreditPool(address[] memory _pools) external override onlyOperator {
-        for (uint256 _i = 0; _i < _pools.length; _i++) {
+        for (uint256 _i; _i < _pools.length; _i++) {
             _approveCreditPool(_pools[_i]);
         }
     }
@@ -206,7 +210,7 @@ contract Registry is IRegistry, ModifiersController {
      * @inheritdoc IRegistry
      */
     function revokeCreditPool(address[] memory _pools) external override onlyOperator {
-        for (uint256 _i = 0; _i < _pools.length; _i++) {
+        for (uint256 _i; _i < _pools.length; _i++) {
             _revokeCreditPool(_pools[_i]);
         }
     }
@@ -222,7 +226,7 @@ contract Registry is IRegistry, ModifiersController {
      * @inheritdoc IRegistry
      */
     function rateCreditPool(DataTypes.PoolRate[] memory _poolRates) external override onlyRiskOperator {
-        for (uint256 _i = 0; _i < _poolRates.length; _i++) {
+        for (uint256 _i; _i < _poolRates.length; _i++) {
             _rateCreditPool(_poolRates[_i].pool, _poolRates[_i].rate);
         }
     }
@@ -238,7 +242,7 @@ contract Registry is IRegistry, ModifiersController {
      * @inheritdoc IRegistry
      */
     function setLiquidityPoolToAdapter(DataTypes.PoolAdapter[] memory _poolAdapters) external override onlyOperator {
-        for (uint256 _i = 0; _i < _poolAdapters.length; _i++) {
+        for (uint256 _i; _i < _poolAdapters.length; _i++) {
             require(liquidityPools[_poolAdapters[_i].pool].isLiquidityPool, "!liquidityPools");
             _setLiquidityPoolToAdapter(_poolAdapters[_i].pool, _poolAdapters[_i].adapter);
         }
@@ -260,8 +264,8 @@ contract Registry is IRegistry, ModifiersController {
         override
         onlyOperator
     {
-        for (uint256 _i = 0; _i < _tokensHashesDetails.length; _i++) {
-            for (uint256 _j = 0; _j < _tokensHashesDetails[_i].tokens.length; _j++) {
+        for (uint256 _i; _i < _tokensHashesDetails.length; _i++) {
+            for (uint256 _j; _j < _tokensHashesDetails[_i].tokens.length; _j++) {
                 _approveToken(_tokensHashesDetails[_i].tokens[_j]);
             }
             _setTokensHashToTokens(_tokensHashesDetails[_i].tokensHash, _tokensHashesDetails[_i].tokens);
@@ -276,7 +280,7 @@ contract Registry is IRegistry, ModifiersController {
         override
         onlyOperator
     {
-        for (uint256 _i = 0; _i < _tokens.length; _i++) {
+        for (uint256 _i; _i < _tokens.length; _i++) {
             _approveToken(_tokens[_i]);
         }
         _setTokensHashToTokens(_tokensHash, _tokens);
@@ -290,7 +294,7 @@ contract Registry is IRegistry, ModifiersController {
         override
         onlyOperator
     {
-        for (uint256 _i = 0; _i < _tokensHashesDetails.length; _i++) {
+        for (uint256 _i; _i < _tokensHashesDetails.length; _i++) {
             require(_areTokensApproved(_tokensHashesDetails[_i].tokens), "!tokens");
             _setTokensHashToTokens(_tokensHashesDetails[_i].tokensHash, _tokensHashesDetails[_i].tokens);
         }
@@ -340,7 +344,7 @@ contract Registry is IRegistry, ModifiersController {
         require(_riskProfileCodes.length == _names.length, "!RP_namesLength");
         require(_riskProfileCodes.length == _symbols.length, "!RP_symbolsLength");
 
-        for (uint256 _i = 0; _i < _riskProfileCodes.length; _i++) {
+        for (uint256 _i; _i < _riskProfileCodes.length; _i++) {
             _addRiskProfile(_riskProfileCodes[_i], _names[_i], _symbols[_i], _canBorrow[_i], _poolRatingRanges[_i]);
         }
     }
@@ -361,16 +365,6 @@ contract Registry is IRegistry, ModifiersController {
      */
     function removeRiskProfile(uint256 _index) external override onlyRiskOperator {
         _removeRiskProfile(_index);
-    }
-
-    /**
-     * @inheritdoc IRegistry
-     */
-    function resetV1Contracts() external override onlyOperator {
-        investStrategyRegistry = address(0);
-        aprOracle = address(0);
-        strategyManager = address(0);
-        optyStakingRateBalancer = address(0);
     }
 
     /**
@@ -497,22 +491,6 @@ contract Registry is IRegistry, ModifiersController {
      */
     function getLiquidityPool(address _pool) public view override returns (DataTypes.LiquidityPool memory) {
         return liquidityPools[_pool];
-    }
-
-    /**
-     * @inheritdoc IRegistry
-     */
-    function getVaultStrategyConfiguration()
-        public
-        view
-        override
-        returns (DataTypes.VaultStrategyConfiguration memory _vaultStrategyConfiguration)
-    {
-        _vaultStrategyConfiguration.strategyManager = strategyManager;
-        _vaultStrategyConfiguration.riskManager = riskManager;
-        _vaultStrategyConfiguration.optyDistributor = optyDistributor;
-        _vaultStrategyConfiguration.odefiVaultBooster = odefiVaultBooster;
-        _vaultStrategyConfiguration.operator = operator;
     }
 
     /**
@@ -666,7 +644,7 @@ contract Registry is IRegistry, ModifiersController {
      * @param _tokens List of the token addresses
      */
     function _areTokensApproved(address[] memory _tokens) internal view returns (bool) {
-        for (uint256 _i = 0; _i < _tokens.length; _i++) {
+        for (uint256 _i; _i < _tokens.length; _i++) {
             if (!tokens[_tokens[_i]]) {
                 return false;
             }

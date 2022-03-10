@@ -257,11 +257,6 @@ interface IRegistry {
     function removeRiskProfile(uint256 _index) external;
 
     /**
-     * @notice Reset all unused storage variables from Registry
-     */
-    function resetV1Contracts() external;
-
-    /**
      * @notice Get the list of tokensHash
      * @return Returns the list of tokensHash.
      */
@@ -365,15 +360,6 @@ interface IRegistry {
      * @return _liquidityPool Returns the rating and Is pool a liquidity pool for the _pool provided
      */
     function getLiquidityPool(address _pool) external view returns (DataTypes.LiquidityPool memory _liquidityPool);
-
-    /**
-     * @notice Get the contract address required as part of strategy by vault contract
-     * @return _vaultStrategyConfiguration Returns the configuration related to Strategy for Vault contracts
-     */
-    function getVaultStrategyConfiguration()
-        external
-        view
-        returns (DataTypes.VaultStrategyConfiguration memory _vaultStrategyConfiguration);
 
     /**
      * @notice Get the adapter address mapped to the _pool provided

@@ -235,6 +235,28 @@
         }
       ],
       "cleanActions": []
+    },
+    {
+      "description": "GetBestStrategy should revert with non-approved token",
+      "setActions": [
+        {
+          "contract": "registry",
+          "action": "revokeToken(address[])",
+          "args": {},
+          "expectedValue": ""
+        }
+      ],
+      "getActions": [
+        {
+          "contract": "riskManager",
+          "action": "getBestStrategy(uint256,bytes32)",
+          "args": {
+            "riskProfileCode": "1"
+          },
+          "expectedValue": "!Token"
+        }
+      ],
+      "cleanActions": []
     }
   ]
 }

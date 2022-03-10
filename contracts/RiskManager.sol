@@ -68,8 +68,12 @@ contract RiskManager is IRiskManager, RiskManagerStorage, Modifiers {
         view
         returns (DataTypes.StrategyStep[] memory)
     {
-        uint256 _index = registryContract.getTokensHashIndexByHash(_underlyingTokensHash);
-        require(registryContract.getTokensHashByIndex(_index) == _underlyingTokensHash, "!TokenHashExists");
+        address[] memory _tokens = registryContract.getTokensHashToTokenList(_underlyingTokensHash);
+        require(_tokens.length > 0, "!TokenHashExists");
+
+        for (uint256 _i; _i < _tokens.length; _i++) {
+            require(registryContract.isApprovedToken(_tokens[_i]), "!Token");
+        }
 
         DataTypes.RiskProfile memory _riskProfileStruct = registryContract.getRiskProfile(_riskProfileCode);
         require(_riskProfileStruct.exists, "!Rp_Exists");
