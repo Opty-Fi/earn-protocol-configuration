@@ -150,41 +150,6 @@
       ]
     },
     {
-      "description": "[SetBestStrategy] - Cannot set best strategy for non-exist risk profile",
-      "setActions": [
-        {
-          "contract": "strategyProvider",
-          "action": "setBestStrategy(uint256,bytes32,(address,address,bool)[])",
-          "args": {
-            "riskProfileCode": "2"
-          },
-          "executor": "strategyOperator",
-          "expect": "fail",
-          "message": "!Rp_Exists"
-        }
-      ],
-      "getActions": [],
-      "cleanActions": []
-    },
-    {
-      "description": "[SetBestStrategy] - Cannot set best strategy for non-exist token",
-      "setActions": [
-        {
-          "contract": "strategyProvider",
-          "action": "setBestStrategy(uint256,bytes32,(address,address,bool)[])",
-          "args": {
-            "riskProfileCode": "1",
-            "isNonApprovedToken": true
-          },
-          "executor": "strategyOperator",
-          "expect": "fail",
-          "message": "!TokenHashExists"
-        }
-      ],
-      "getActions": [],
-      "cleanActions": []
-    },
-    {
       "description": "[setBestDefaultStrategy] - StrategyOperator should be able to set best default strategy",
       "setActions": [
         {
@@ -330,41 +295,6 @@
           "message": ""
         }
       ]
-    },
-    {
-      "description": "[setBestDefaultStrategy] - Cannot set best default strategy for non-exist risk profile",
-      "setActions": [
-        {
-          "contract": "strategyProvider",
-          "action": "setBestDefaultStrategy(uint256,bytes32,(address,address,bool)[])",
-          "args": {
-            "riskProfileCode": "2"
-          },
-          "executor": "strategyOperator",
-          "expect": "fail",
-          "message": "!Rp_Exists"
-        }
-      ],
-      "getActions": [],
-      "cleanActions": []
-    },
-    {
-      "description": "[setBestDefaultStrategy] - Cannot set best default strategy for non-exist token",
-      "setActions": [
-        {
-          "contract": "strategyProvider",
-          "action": "setBestDefaultStrategy(uint256,bytes32,(address,address,bool)[])",
-          "args": {
-            "riskProfileCode": "1",
-            "isNonApprovedToken": true
-          },
-          "executor": "strategyOperator",
-          "expect": "fail",
-          "message": "!TokenHashExists"
-        }
-      ],
-      "getActions": [],
-      "cleanActions": []
     },
     {
       "description": "[setVaultRewardStrategy] - StrategyOperator should be able to set best Vault Reward strategy",
