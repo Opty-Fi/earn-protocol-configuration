@@ -13,9 +13,7 @@ import { RiskManagerStorage } from "./RiskManagerStorage.sol";
 import { RiskManagerProxy } from "./RiskManagerProxy.sol";
 
 //  interfaces
-import { IInvestStrategyRegistry } from "./interfaces/opty/IInvestStrategyRegistry.sol";
 import { IStrategyProvider } from "./interfaces/opty/IStrategyProvider.sol";
-import { IAPROracle } from "./interfaces/opty/IAPROracle.sol";
 import { IRiskManager } from "./interfaces/opty/IRiskManager.sol";
 import { Constants } from "./utils/Constants.sol";
 
@@ -41,88 +39,64 @@ contract RiskManager is IRiskManager, RiskManagerStorage, Modifiers {
     /**
      * @inheritdoc IRiskManager
      */
-    function getBestStrategy(uint256 _riskProfileCode, address[] memory _underlyingTokens)
+    function getBestStrategy(uint256 _riskProfileCode, bytes32 _underlyingTokensHash)
         public
         view
         override
-        returns (bytes32)
+        returns (DataTypes.StrategyStep[] memory)
     {
-        bytes32 tokensHash = keccak256(abi.encodePacked(_underlyingTokens));
-        DataTypes.StrategyConfiguration memory _strategyConfiguration = registryContract.getStrategyConfiguration();
-        bytes32 _strategyHash = _getBestStrategy(_riskProfileCode, tokensHash, _strategyConfiguration);
-        return _strategyHash;
+        return _getBestStrategy(_riskProfileCode, _underlyingTokensHash);
     }
 
     /**
      * @inheritdoc IRiskManager
      */
-    function getVaultRewardTokenStrategy(address[] memory _underlyingTokens)
+    function getVaultRewardTokenStrategy(bytes32 _underlyingTokensHash)
         public
         view
         override
         returns (DataTypes.VaultRewardStrategy memory)
     {
-        bytes32 _vaultRewardTokenHash = keccak256(abi.encodePacked(_underlyingTokens));
         return
             IStrategyProvider(registryContract.getStrategyProvider()).getVaultRewardTokenHashToVaultRewardTokenStrategy(
-                _vaultRewardTokenHash
+                _underlyingTokensHash
             );
     }
 
-    function _getBestStrategy(
-        uint256 _riskProfileCode,
-        bytes32 _tokensHash,
-        DataTypes.StrategyConfiguration memory _strategyConfiguration
-    ) internal view returns (bytes32) {
+    function _getBestStrategy(uint256 _riskProfileCode, bytes32 _underlyingTokensHash)
+        internal
+        view
+        returns (DataTypes.StrategyStep[] memory)
+    {
+        address[] memory _tokens = registryContract.getTokensHashToTokenList(_underlyingTokensHash);
+        require(_tokens.length > 0, "!TokenHashExists");
+
+        for (uint256 _i; _i < _tokens.length; _i++) {
+            require(registryContract.isApprovedToken(_tokens[_i]), "!Token");
+        }
+
         DataTypes.RiskProfile memory _riskProfileStruct = registryContract.getRiskProfile(_riskProfileCode);
         require(_riskProfileStruct.exists, "!Rp_Exists");
 
-        // getbeststrategy from strategyProvider
-        bytes32 _strategyHash =
-            IStrategyProvider(_strategyConfiguration.strategyProvider).rpToTokenToBestStrategy(
+        DataTypes.StrategyStep[] memory _strategySteps =
+            IStrategyProvider(registryContract.getStrategyProvider()).getRpToTokenToBestStrategy(
                 _riskProfileCode,
-                _tokensHash
+                _underlyingTokensHash
             );
-
-        if (
-            _strategyHash == Constants.ZERO_BYTES32 ||
-            _isInValidStrategy(_strategyHash, _strategyConfiguration.investStrategyRegistry, _riskProfileStruct)
-        ) {
-            _strategyHash = IStrategyProvider(_strategyConfiguration.strategyProvider).rpToTokenToDefaultStrategy(
+        if (_strategySteps.length == 0 || _isInValidStrategy(_strategySteps, _riskProfileStruct)) {
+            _strategySteps = IStrategyProvider(registryContract.getStrategyProvider()).getRpToTokenToDefaultStrategy(
                 _riskProfileCode,
-                _tokensHash
+                _underlyingTokensHash
             );
-        } else {
-            return _strategyHash;
         }
 
-        if (
-            _strategyHash == Constants.ZERO_BYTES32 ||
-            _isInValidStrategy(_strategyHash, _strategyConfiguration.investStrategyRegistry, _riskProfileStruct)
-        ) {
-            if (
-                IStrategyProvider(_strategyConfiguration.strategyProvider).getDefaultStrategyState() ==
-                DataTypes.DefaultStrategyState.CompoundOrAave
-            ) {
-                _strategyHash = IAPROracle(registryContract.getAprOracle()).getBestAPR(_tokensHash);
-                (, DataTypes.StrategyStep[] memory _strategySteps_) =
-                    IInvestStrategyRegistry(_strategyConfiguration.investStrategyRegistry).getStrategy(_strategyHash);
-                return _strategySteps_.length > 0 ? _strategyHash : Constants.ZERO_BYTES32;
-            } else {
-                return Constants.ZERO_BYTES32;
-            }
-        }
-        return _strategyHash;
+        return _strategySteps;
     }
 
     function _isInValidStrategy(
-        bytes32 _strategyHash,
-        address _strategyRegistry,
+        DataTypes.StrategyStep[] memory _strategySteps,
         DataTypes.RiskProfile memory _riskProfileStruct
     ) internal view returns (bool) {
-        (, DataTypes.StrategyStep[] memory _strategySteps) =
-            IInvestStrategyRegistry(_strategyRegistry).getStrategy(_strategyHash);
-
         for (uint256 _i = 0; _i < _strategySteps.length; _i++) {
             DataTypes.LiquidityPool memory _liquidityPool = registryContract.getLiquidityPool(_strategySteps[_i].pool);
             bool _isStrategyInvalid =

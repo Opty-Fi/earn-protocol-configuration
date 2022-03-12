@@ -6,9 +6,9 @@ pragma experimental ABIEncoderV2;
 import { RiskManagerStorage } from "../../RiskManagerStorage.sol";
 import { RiskManagerProxy } from "../../RiskManagerProxy.sol";
 import { Modifiers } from "../../Modifiers.sol";
-import { TestStorageV2 } from "./TestStorageV2.sol";
+import { TestStorage } from "./TestStorage.sol";
 
-contract TestRiskManagerNewImplementation is RiskManagerStorage, TestStorageV2, Modifiers {
+contract TestRiskManagerNewImplementation is RiskManagerStorage, TestStorage, Modifiers {
     /* solhint-disable no-empty-blocks */
     constructor(address _registry) public Modifiers(_registry) {}
 

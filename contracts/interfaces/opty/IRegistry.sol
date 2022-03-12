@@ -20,42 +20,6 @@ interface IRegistry {
     function setTreasury(address _treasury) external;
 
     /**
-     * @notice Whitelist users that are allowed to deposit
-     * @param _vault The vault in which the user is going to be whitelisted or not
-     * @param _user The user to be whitelisted
-     * @param _whitelist Allow user to deposit if true
-     */
-    function setWhitelistedUser(
-        address _vault,
-        address _user,
-        bool _whitelist
-    ) external;
-
-    /**
-     * @notice Whitelist users that are allowed to deposit
-     * @param _vault The vault in which the user is going to be whitelisted or not
-     * @param _users List of users to be whitelisted
-     * @param _whitelist Allow user to deposit if true
-     */
-    function setWhitelistedUsers(
-        address _vault,
-        address[] memory _users,
-        bool _whitelist
-    ) external;
-
-    /**
-     * @notice Set the investStrategyRegistry contract address
-     * @param _investStrategyRegistry InvestStrategyRegistry contract address
-     */
-    function setInvestStrategyRegistry(address _investStrategyRegistry) external;
-
-    /**
-     * @notice Set the APROracle contract address
-     * @param _aprOracle Address of APR Pracle contract to be set
-     */
-    function setAPROracle(address _aprOracle) external;
-
-    /**
      * @notice Set the StrategyProvider contract address
      * @param _strategyProvider Address of StrategyProvider Contract
      */
@@ -74,22 +38,10 @@ interface IRegistry {
     function setHarvestCodeProvider(address _harvestCodeProvider) external;
 
     /**
-     * @notice Set the StrategyManager contract address
-     * @param _strategyManager Address of StrategyManager Contract
-     */
-    function setStrategyManager(address _strategyManager) external;
-
-    /**
      * @notice Set the $OPTY token's contract address
      * @param _opty Address of Opty Contract
      */
     function setOPTY(address _opty) external;
-
-    /**
-     * @notice Set the OPTYStakingRateBalancer contract address
-     * @param _optyStakingRateBalancer Address of OptyStakingRateBalancer Contract
-     */
-    function setOPTYStakingRateBalancer(address _optyStakingRateBalancer) external;
 
     /**
      * @notice Set the ODEFIVaultBooster contract address
@@ -161,6 +113,19 @@ interface IRegistry {
     function rateLiquidityPool(address _pool, uint8 _rate) external;
 
     /**
+     * @notice Approve and map the multiple pools to their adapter
+     * @param _poolAdapters List of [pool, adapter] pairs to set
+     */
+    function approveLiquidityPoolAndMapToAdapter(DataTypes.PoolAdapter[] memory _poolAdapters) external;
+
+    /**
+     * @notice Approve and map the pool to the adapter
+     * @param _pool the address of liquidity pool
+     * @param _adapter the address of adapter
+     */
+    function approveLiquidityPoolAndMapToAdapter(address _pool, address _adapter) external;
+
+    /**
      * @notice Approves multiple credit pools in one transaction
      * @param _pools List of pools for approval to be considered as creditPool
      */
@@ -212,113 +177,29 @@ interface IRegistry {
 
     /**
      * @notice Maps multiple token pairs to their keccak256 hash
-     * @param _setOfTokens List of mulitple token addresses to map with their (paired tokens) hashes
+     * @param _tokensHashesDetails List of mulitple tokens' hashes details
      */
-    function setTokensHashToTokens(address[][] memory _setOfTokens) external;
+    function setTokensHashToTokens(DataTypes.TokensHashDetail[] memory _tokensHashesDetails) external;
 
     /**
      * @notice Sets token pair to its keccak256 hash
-     * @param _tokens List of token addresses to map with their hashes
+     * @param _tokensHash Hash of tokens
+     * @param _tokens List of tokens
      */
-    function setTokensHashToTokens(address[] memory _tokens) external;
+    function setTokensHashToTokens(bytes32 _tokensHash, address[] memory _tokens) external;
 
     /**
-     * @notice Set the withdrawal fee's range
-     * @param _withdrawalFeeRange the withdrawal fee's range
+     * @notice Approve tokens and map tokens hash
+     * @param _tokensHash Hash of tokens
+     * @param _tokens List of tokens
      */
-    function setWithdrawalFeeRange(DataTypes.WithdrawalFeeRange memory _withdrawalFeeRange) external;
+    function approveTokenAndMapToTokensHash(bytes32 _tokensHash, address[] memory _tokens) external;
 
     /**
-     * @notice Set the complete vault configuration
-     * @param _vault Vault address to be configured
-     * @param _isLimitedState A boolean value that indicates whether the vault is in limited state (true) or not (false)
-     * @param _allowWhitelistedState It indicates whether the vault only accepts whitelisted users (true) or not (false)
-     * @param _treasuryShares Array of treasuries and their fee shares
-     * @param _withdrawalFee Withdrawal fee to be set for vault contract
-     * @param _userDepositCap Maximum deposit amount allowed for each user in the given vault
-     * @param _minimumDepositAmount Minimum deposit amount allowed for each deposit without rebalance in the given vault
-     * @param _totalValueLockedLimitInUnderlying Maximum TVL allowed for the vault
+     * @notice Approve tokens and map multiple tokens'hashes
+     * @param _tokensHashesDetails List of mulitple tokens' hashes details
      */
-    function setVaultConfiguration(
-        address _vault,
-        bool _isLimitedState,
-        bool _allowWhitelistedState,
-        DataTypes.TreasuryShare[] memory _treasuryShares,
-        uint256 _withdrawalFee,
-        uint256 _userDepositCap,
-        uint256 _minimumDepositAmount,
-        uint256 _totalValueLockedLimitInUnderlying
-    ) external;
-
-    /**
-     * @notice Discontinue the Vault contract from use permanently
-     * @dev Once Vault contract is disconitnued, then it CAN NOT be re-activated for usage
-     * @param _vault Vault address to discontinue
-     */
-    function discontinue(address _vault) external;
-
-    /**
-     * @notice Pause/Unpause the Vault contract for use temporarily during any emergency
-     * @param _vault Vault contract address to pause
-     * @param _unpaused A boolean value true to unpause vault contract and false for pause vault contract
-     */
-    function unpauseVaultContract(address _vault, bool _unpaused) external;
-
-    /**
-     * @notice Enable or disable the limit on user deposits
-     * @param _vault Vault contract address
-     * @param _isLimitedState A boolean value true to limit user deposits and false to unlimit user deposits
-     */
-    function setIsLimitedState(address _vault, bool _isLimitedState) external;
-
-    /**
-     * @notice Enable or disable the limit on user deposits
-     * @param _vault Vault contract address
-     * @param _allowWhitelistedState A boolean value true to only allow whitelisted users' deposits
-     */
-    function setAllowWhitelistedState(address _vault, bool _allowWhitelistedState) external;
-
-    /**
-     * @notice Set the treasury accounts with their fee shares corresponding to vault contract
-     * @param _vault Vault contract address
-     * @param _treasuryShares Array of treasuries and their fee shares
-     */
-    function setTreasuryShares(address _vault, DataTypes.TreasuryShare[] memory _treasuryShares) external;
-
-    /**
-     * @notice Set the withdrawal fee for the vault contract
-     * @param _vault Vault contract address
-     * @param _withdrawalFee Withdrawal fee to be set for vault contract
-     */
-    function setWithdrawalFee(address _vault, uint256 _withdrawalFee) external;
-
-    /**
-     * @notice Set the maximum total deposits in a Vault for each user
-     * @param _vault Vault contract address
-     * @param _userDepositCap Maximum deposit amount allowed for each user
-     */
-    function setUserDepositCap(address _vault, uint256 _userDepositCap) external;
-
-    /**
-     * @notice Set the minimum deposit amount when the user is not rebalancing the Vault
-     * @param _vault Vault contract address
-     * @param _minimumDepositAmount Minimum deposit amount allowed for each deposit without rebalance
-     */
-    function setMinimumDepositAmount(address _vault, uint256 _minimumDepositAmount) external;
-
-    /**
-     * @notice Set the TVL limit for the vault
-     * @param _vault Vault contract address
-     * @param _totalValueLockedLimitInUnderlying maximum TVL allowed in underlying token of the vault
-     */
-    function setTotalValueLockedLimitInUnderlying(address _vault, uint256 _totalValueLockedLimitInUnderlying) external;
-
-    /**
-     * @notice Set the maximum length of the queue in a specific Vault
-     * @param _vault Vault contract address
-     * @param _queueCap Maximum queue length
-     */
-    function setQueueCap(address _vault, uint256 _queueCap) external;
+    function approveTokenAndMapToTokensHash(DataTypes.TokensHashDetail[] memory _tokensHashesDetails) external;
 
     /**
      * @notice Adds the risk profile in Registry contract Storage
@@ -394,22 +275,10 @@ interface IRegistry {
     function getRiskProfileList() external view returns (uint256[] memory);
 
     /**
-     * @notice Retrieve the StrategyManager contract address
-     * @return Returns the StrategyManager contract address
-     */
-    function getStrategyManager() external view returns (address);
-
-    /**
      * @notice Retrieve the StrategyProvider contract address
      * @return Returns the StrategyProvider contract address
      */
     function getStrategyProvider() external view returns (address);
-
-    /**
-     * @notice Retrieve the InvestStrategyRegistry contract address
-     * @return Returns the InvestStrategyRegistry contract address
-     */
-    function getInvestStrategyRegistry() external view returns (address);
 
     /**
      * @notice Retrieve the RiskManager contract address
@@ -466,27 +335,6 @@ interface IRegistry {
     function getHarvestCodeProvider() external view returns (address);
 
     /**
-     * @notice Retrieve the AprOracle contract address
-     * @return Returns the AprOracle contract address
-     */
-    function getAprOracle() external view returns (address);
-
-    /**
-     * @notice Retrieve the OPTYStakingRateBalancer contract address
-     * @return Returns the OPTYStakingRateBalancer contract address
-     */
-    function getOPTYStakingRateBalancer() external view returns (address);
-
-    /**
-     * @notice Get the configuration of vault contract
-     * @return _vaultConfiguration Returns the configuration of vault contract
-     */
-    function getVaultConfiguration(address _vault)
-        external
-        view
-        returns (DataTypes.VaultConfiguration memory _vaultConfiguration);
-
-    /**
      * @notice Get the properties corresponding to riskProfile code provided
      * @return _riskProfile Returns the properties corresponding to riskProfile provided
      */
@@ -514,24 +362,6 @@ interface IRegistry {
     function getLiquidityPool(address _pool) external view returns (DataTypes.LiquidityPool memory _liquidityPool);
 
     /**
-     * @notice Get the configuration related to Strategy contracts
-     * @return _strategyConfiguration Returns the configuration related to Strategy contracts
-     */
-    function getStrategyConfiguration()
-        external
-        view
-        returns (DataTypes.StrategyConfiguration memory _strategyConfiguration);
-
-    /**
-     * @notice Get the contract address required as part of strategy by vault contract
-     * @return _vaultStrategyConfiguration Returns the configuration related to Strategy for Vault contracts
-     */
-    function getVaultStrategyConfiguration()
-        external
-        view
-        returns (DataTypes.VaultStrategyConfiguration memory _vaultStrategyConfiguration);
-
-    /**
      * @notice Get the adapter address mapped to the _pool provided
      * @param _pool Liquidity Pool (like cDAI etc.) address
      * @return _adapter Returns the adapter address mapped to the _pool provided
@@ -539,24 +369,9 @@ interface IRegistry {
     function getLiquidityPoolToAdapter(address _pool) external view returns (address _adapter);
 
     /**
-     * @notice Get the treasury accounts with their fee shares corresponding to vault contract
-     * @param _vault Vault contract address
-     * @return Returns Treasuries along with their fee shares
-     */
-    function getTreasuryShares(address _vault) external view returns (DataTypes.TreasuryShare[] memory);
-
-    /**
      * @notice Check if the token is approved or not
      * @param _token Token address for which to check if it is approved or not
      * @return _isTokenApproved Returns a boolean for token approved or not
      */
     function isApprovedToken(address _token) external view returns (bool _isTokenApproved);
-
-    /**
-     * @notice Check if the user is whitelisted or not
-     * @param _vault Vault contract address
-     * @param _user User address for which to check if it is whitelisted or not
-     * @return _isUserWhitelisted Returns a boolean for user whitelisted or not
-     */
-    function isUserWhitelisted(address _vault, address _user) external view returns (bool _isUserWhitelisted);
 }

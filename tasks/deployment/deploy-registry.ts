@@ -4,15 +4,11 @@ import TASKS from "../task-names";
 
 task(TASKS.DEPLOYMENT_TASKS.DEPLOY_REGISTRY.NAME, TASKS.DEPLOYMENT_TASKS.DEPLOY_REGISTRY.DESCRIPTION)
   .addParam("deployedonce", "allow checking whether contracts were deployed previously", true, types.boolean)
-  .addParam("contractversion", "the version of registry", 1, types.int)
-  .setAction(async ({ deployedonce, contractversion }, hre) => {
-    if (contractversion !== 1 && contractversion !== 2) {
-      throw new Error("contractversion is invalid");
-    }
+  .setAction(async ({ deployedonce }, hre) => {
     try {
       const [owner] = await hre.ethers.getSigners();
       console.log("Deploying Registry...");
-      const registry = await deployRegistry(hre, owner, deployedonce, contractversion);
+      const registry = await deployRegistry(hre, owner, deployedonce);
       console.log("Finished deploying registry");
       console.log(`Contract registry : ${registry.address}`);
     } catch (error) {

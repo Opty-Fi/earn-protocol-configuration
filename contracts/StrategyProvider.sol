@@ -27,39 +27,33 @@ contract StrategyProvider is IStrategyProvider, Modifiers {
     /**
      * @notice Mapping of RiskProfile (eg: RP1, RP2, etc) to tokensHash to the best strategy hash
      */
-    mapping(uint256 => mapping(bytes32 => bytes32)) public override rpToTokenToBestStrategy;
+    mapping(uint256 => mapping(bytes32 => DataTypes.StrategyStep[])) public rpToTokenToBestStrategy;
 
     /**
      * @notice Mapping of RiskProfile (eg: RP1, RP2, etc) to tokensHash to best default strategy hash
      */
-    mapping(uint256 => mapping(bytes32 => bytes32)) public override rpToTokenToDefaultStrategy;
+    mapping(uint256 => mapping(bytes32 => DataTypes.StrategyStep[])) public rpToTokenToDefaultStrategy;
 
     /**
      * @notice Mapping of vaultRewardToken address hash to vault reward token strategy
      */
     mapping(bytes32 => DataTypes.VaultRewardStrategy) public vaultRewardTokenHashToVaultRewardTokenStrategy;
 
-    /** @notice Stores the default strategy state (zero or compound or aave) */
-    DataTypes.DefaultStrategyState public defaultStrategyState;
-
     /* solhint-disable no-empty-blocks */
-    constructor(address _registry) public Modifiers(_registry) {
-        setDefaultStrategyState(DataTypes.DefaultStrategyState.CompoundOrAave);
-    }
+    constructor(address _registry) public Modifiers(_registry) {}
 
     /**
      * @inheritdoc IStrategyProvider
      */
     function setBestStrategy(
         uint256 _riskProfileCode,
-        bytes32 _tokenHash,
-        bytes32 _strategyHash
+        bytes32 _underlyingTokensHash,
+        DataTypes.StrategyStep[] memory _strategySteps
     ) external override onlyStrategyOperator {
-        DataTypes.RiskProfile memory _riskProfileStruct = registryContract.getRiskProfile(_riskProfileCode);
-        require(_riskProfileStruct.exists, "!Rp_Exists");
-        uint256 _index = registryContract.getTokensHashIndexByHash(_tokenHash);
-        require(registryContract.getTokensHashByIndex(_index) == _tokenHash, "!TokenHashExists");
-        rpToTokenToBestStrategy[_riskProfileCode][_tokenHash] = _strategyHash;
+        delete rpToTokenToBestStrategy[_riskProfileCode][_underlyingTokensHash];
+        for (uint256 _i = 0; _i < _strategySteps.length; _i++) {
+            rpToTokenToBestStrategy[_riskProfileCode][_underlyingTokensHash].push(_strategySteps[_i]);
+        }
     }
 
     /**
@@ -67,14 +61,13 @@ contract StrategyProvider is IStrategyProvider, Modifiers {
      */
     function setBestDefaultStrategy(
         uint256 _riskProfileCode,
-        bytes32 _tokenHash,
-        bytes32 _strategyHash
+        bytes32 _underlyingTokensHash,
+        DataTypes.StrategyStep[] memory _strategySteps
     ) external override onlyStrategyOperator {
-        DataTypes.RiskProfile memory _riskProfileStruct = registryContract.getRiskProfile(_riskProfileCode);
-        require(_riskProfileStruct.exists, "!Rp_Exists");
-        uint256 _index = registryContract.getTokensHashIndexByHash(_tokenHash);
-        require(registryContract.getTokensHashByIndex(_index) == _tokenHash, "!TokenHashExists");
-        rpToTokenToDefaultStrategy[_riskProfileCode][_tokenHash] = _strategyHash;
+        delete rpToTokenToDefaultStrategy[_riskProfileCode][_underlyingTokensHash];
+        for (uint256 _i = 0; _i < _strategySteps.length; _i++) {
+            rpToTokenToDefaultStrategy[_riskProfileCode][_underlyingTokensHash].push(_strategySteps[_i]);
+        }
     }
 
     /**
@@ -84,15 +77,6 @@ contract StrategyProvider is IStrategyProvider, Modifiers {
         bytes32 _vaultRewardTokenHash,
         DataTypes.VaultRewardStrategy memory _vaultRewardStrategy
     ) external override onlyStrategyOperator returns (DataTypes.VaultRewardStrategy memory) {
-        require(_vaultRewardTokenHash != Constants.ZERO_BYTES32, "!bytes32(0)");
-        uint256 _index = registryContract.getTokensHashIndexByHash(_vaultRewardTokenHash);
-        require(registryContract.getTokensHashByIndex(_index) == _vaultRewardTokenHash, "!VaultRewardTokenHashExists");
-        require(
-            (_vaultRewardStrategy.hold.add(_vaultRewardStrategy.convert) == uint256(10000)) ||
-                (_vaultRewardStrategy.hold.add(_vaultRewardStrategy.convert) == uint256(0)),
-            "!HoldConvertBasisRange"
-        );
-
         vaultRewardTokenHashToVaultRewardTokenStrategy[_vaultRewardTokenHash].hold = _vaultRewardStrategy.hold;
         vaultRewardTokenHashToVaultRewardTokenStrategy[_vaultRewardTokenHash].convert = _vaultRewardStrategy.convert;
         return vaultRewardTokenHashToVaultRewardTokenStrategy[_vaultRewardTokenHash];
@@ -101,30 +85,36 @@ contract StrategyProvider is IStrategyProvider, Modifiers {
     /**
      * @inheritdoc IStrategyProvider
      */
-    function setDefaultStrategyState(DataTypes.DefaultStrategyState _defaultStrategyState)
-        public
-        override
-        onlyStrategyOperator
-    {
-        defaultStrategyState = _defaultStrategyState;
-    }
-
-    /**
-     * @inheritdoc IStrategyProvider
-     */
-    function getDefaultStrategyState() public view override returns (DataTypes.DefaultStrategyState) {
-        return defaultStrategyState;
-    }
-
-    /**
-     * @inheritdoc IStrategyProvider
-     */
-    function getVaultRewardTokenHashToVaultRewardTokenStrategy(bytes32 _tokensHash)
+    function getVaultRewardTokenHashToVaultRewardTokenStrategy(bytes32 _vaultRewardTokenHash)
         public
         view
         override
         returns (DataTypes.VaultRewardStrategy memory)
     {
-        return vaultRewardTokenHashToVaultRewardTokenStrategy[_tokensHash];
+        return vaultRewardTokenHashToVaultRewardTokenStrategy[_vaultRewardTokenHash];
+    }
+
+    /**
+     * @inheritdoc IStrategyProvider
+     */
+    function getRpToTokenToBestStrategy(uint256 _riskProfileCode, bytes32 _underlyingTokensHash)
+        external
+        view
+        override
+        returns (DataTypes.StrategyStep[] memory)
+    {
+        return rpToTokenToBestStrategy[_riskProfileCode][_underlyingTokensHash];
+    }
+
+    /**
+     * @inheritdoc IStrategyProvider
+     */
+    function getRpToTokenToDefaultStrategy(uint256 _riskProfileCode, bytes32 _underlyingTokensHash)
+        external
+        view
+        override
+        returns (DataTypes.StrategyStep[] memory)
+    {
+        return rpToTokenToDefaultStrategy[_riskProfileCode][_underlyingTokensHash];
     }
 }
