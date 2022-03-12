@@ -295,25 +295,29 @@ describe(scenario.title, () => {
           ESSENTIAL_CONTRACTS.REGISTRY_PROXY,
           registryContract.address,
         );
-        const oldRegistry = await registryProxy.pendingRegistryImplementation();
+        if (action.expect == "success") {
+          const oldRegistry = await registryProxy.pendingRegistryImplementation();
+          await expect(
+            await executeFunc(registryProxy, owner, "setPendingImplementation(address)", [newRegistry.address]),
+          )
+            .to.emit(registryProxy, "NewPendingImplementation")
+            .withArgs(oldRegistry, newRegistry.address);
+          await executeFunc(newRegistry, owner, "become(address)", [registryProxy.address]);
+          registryContract = await hre.ethers.getContractAt(
+            TESTING_CONTRACTS.TEST_REGISTRY_NEW_IMPLEMENTATION,
+            registryProxy.address,
+          );
 
-        await expect(
-          await executeFunc(registryProxy, owner, "setPendingImplementation(address)", [newRegistry.address]),
-        )
-          .to.emit(registryProxy, "NewPendingImplementation")
-          .withArgs(oldRegistry, newRegistry.address);
-        await executeFunc(newRegistry, owner, "become(address)", [registryProxy.address]);
-        await expect(executeFunc(newRegistry, user1, "become(address)", [registryProxy.address])).to.revertedWith(
-          "!governance",
-        );
-        registryContract = await hre.ethers.getContractAt(
-          TESTING_CONTRACTS.TEST_REGISTRY_NEW_IMPLEMENTATION,
-          registryProxy.address,
-        );
-        expect(await registryContract.investStrategyRegistry()).to.be.equal(hre.ethers.constants.AddressZero);
-        expect(await registryContract.aprOracle()).to.be.equal(hre.ethers.constants.AddressZero);
-        expect(await registryContract.strategyManager()).to.be.equal(hre.ethers.constants.AddressZero);
-        expect(await registryContract.optyStakingRateBalancer()).to.be.equal(hre.ethers.constants.AddressZero);
+          expect(await registryContract.investStrategyRegistry()).to.be.equal(hre.ethers.constants.AddressZero);
+          expect(await registryContract.aprOracle()).to.be.equal(hre.ethers.constants.AddressZero);
+          expect(await registryContract.strategyManager()).to.be.equal(hre.ethers.constants.AddressZero);
+          expect(await registryContract.optyStakingRateBalancer()).to.be.equal(hre.ethers.constants.AddressZero);
+        } else {
+          await expect(
+            executeFunc(newRegistry, signers[action.executor], "become(address)", [registryProxy.address]),
+          ).to.revertedWith(action.message);
+        }
+
         break;
       }
       case "initData()": {

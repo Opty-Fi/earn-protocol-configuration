@@ -2486,6 +2486,20 @@
       ]
     },
     {
+      "description": "[Upgradability] Shouldn't execute become with non-governance",
+      "setActions": [
+        {
+          "action": "become(address)",
+          "args": {},
+          "executor": "user1",
+          "expect": "fail",
+          "message": "!governance"
+        }
+      ],
+      "getActions": [],
+      "cleanActions": []
+    },
+    {
       "description": "[Upgradability] Should be able to use functions and variables in new contracts and maintains old variable states",
       "setActions": [
         {
