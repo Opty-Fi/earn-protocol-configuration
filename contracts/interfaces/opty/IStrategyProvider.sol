@@ -17,24 +17,24 @@ interface IStrategyProvider {
      * @notice Set the best stratetgy for the given riskProfile and tokenHash
      * @param _riskProfileCode Risk profile code (Eg: 1,2, and so on where 0 is reserved for 'no strategy')
      * @param _underlyingTokensHash Hash of the underlying token address/addresses and chainId (like 0x1 etc.)
-     * @param _strategySteps Strategy steps to be set as best strategy
+     * @param _strategies Strategy portfolio to be set as best strategy
      */
     function setBestStrategy(
         uint256 _riskProfileCode,
         bytes32 _underlyingTokensHash,
-        DataTypes.StrategyStep[] memory _strategySteps
+        DataTypes.Strategy[] memory _strategies
     ) external;
 
     /**
      * @notice Set the best default stratetgy for the given riskProfile and tokenHash
      * @param _riskProfileCode Risk profile code (Eg: 1,2, and so on where 0 is reserved for 'no strategy')
      * @param _underlyingTokensHash Hash of the underlying token address/addresses and chainId (like 0x1 etc.)
-     * @param _strategySteps Strategy steps to be set as best default strategy
+     * @param _strategies Strategy portfolio to be set as best strategy
      */
     function setBestDefaultStrategy(
         uint256 _riskProfileCode,
         bytes32 _underlyingTokensHash,
-        DataTypes.StrategyStep[] memory _strategySteps
+        DataTypes.Strategy[] memory _strategies
     ) external;
 
     /**
@@ -52,23 +52,23 @@ interface IStrategyProvider {
      * @notice Get the Best strategy corresponding to riskProfile and tokenHash provided
      * @param _riskProfileCode Risk profile code (Eg: 1,2, and so on where 0 is reserved for 'no strategy')
      * @param _underlyingTokensHash Hash of the underlying token address/addresses and chainId (like 0x1 etc.)
-     * @return Returns the best strategy corresponding to riskProfile and tokenHash provided
+     * @return Returns the best strategy portfolio corresponding to riskProfile and tokenHash provided
      */
     function getRpToTokenToBestStrategy(uint256 _riskProfileCode, bytes32 _underlyingTokensHash)
         external
         view
-        returns (DataTypes.StrategyStep[] memory);
+        returns (DataTypes.Strategy[] memory);
 
     /**
      * @notice Get the Best Default strategy corresponding to riskProfile and tokenHash provided
      * @param _riskProfileCode Risk profile code (Eg: 1,2, and so on where 0 is reserved for 'no strategy')
      * @param _underlyingTokensHash Hash of the underlying token address/addresses and chainId (like 0x1 etc.)
-     * @return Returns the best default strategy corresponding to riskProfile and tokenHash provided
+     * @return Returns the best default strategy portfolio corresponding to riskProfile and tokenHash provided
      */
     function getRpToTokenToDefaultStrategy(uint256 _riskProfileCode, bytes32 _underlyingTokensHash)
         external
         view
-        returns (DataTypes.StrategyStep[] memory);
+        returns (DataTypes.Strategy[] memory);
 
     /**
      * @notice Get the Vault reward token's strategy corresponding to the tokensHash provided

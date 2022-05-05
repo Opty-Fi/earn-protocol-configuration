@@ -5,6 +5,7 @@ pragma experimental ABIEncoderV2;
 
 //  libraries
 import { Address } from "@openzeppelin/contracts/utils/Address.sol";
+import { SafeMath } from "@openzeppelin/contracts/math/SafeMath.sol";
 import { DataTypes } from "./libraries/types/DataTypes.sol";
 
 //  helper contracts
@@ -24,6 +25,7 @@ import { Constants } from "./utils/Constants.sol";
  */
 contract RiskManager is IRiskManager, RiskManagerStorage, Modifiers {
     using Address for address;
+    using SafeMath for uint256;
 
     /* solhint-disable no-empty-blocks */
     constructor(address _registry) public Modifiers(_registry) {}
@@ -43,7 +45,7 @@ contract RiskManager is IRiskManager, RiskManagerStorage, Modifiers {
         public
         view
         override
-        returns (DataTypes.StrategyStep[] memory)
+        returns (DataTypes.Strategy[] memory)
     {
         return _getBestStrategy(_riskProfileCode, _underlyingTokensHash);
     }
@@ -66,7 +68,7 @@ contract RiskManager is IRiskManager, RiskManagerStorage, Modifiers {
     function _getBestStrategy(uint256 _riskProfileCode, bytes32 _underlyingTokensHash)
         internal
         view
-        returns (DataTypes.StrategyStep[] memory)
+        returns (DataTypes.Strategy[] memory)
     {
         address[] memory _tokens = registryContract.getTokensHashToTokenList(_underlyingTokensHash);
         require(_tokens.length > 0, "!TokenHashExists");
@@ -78,38 +80,50 @@ contract RiskManager is IRiskManager, RiskManagerStorage, Modifiers {
         DataTypes.RiskProfile memory _riskProfileStruct = registryContract.getRiskProfile(_riskProfileCode);
         require(_riskProfileStruct.exists, "!Rp_Exists");
 
-        DataTypes.StrategyStep[] memory _strategySteps =
+        DataTypes.Strategy[] memory _strategies =
             IStrategyProvider(registryContract.getStrategyProvider()).getRpToTokenToBestStrategy(
                 _riskProfileCode,
                 _underlyingTokensHash
             );
-        if (_strategySteps.length == 0 || _isInValidStrategy(_strategySteps, _riskProfileStruct)) {
-            _strategySteps = IStrategyProvider(registryContract.getStrategyProvider()).getRpToTokenToDefaultStrategy(
+        if (_strategies.length == 0 || _isInValidStrategy(_strategies, _riskProfileStruct)) {
+            _strategies = IStrategyProvider(registryContract.getStrategyProvider()).getRpToTokenToDefaultStrategy(
                 _riskProfileCode,
                 _underlyingTokensHash
             );
         }
 
-        return _strategySteps;
+        return _strategies;
     }
 
     function _isInValidStrategy(
-        DataTypes.StrategyStep[] memory _strategySteps,
+        DataTypes.Strategy[] memory _strategies,
         DataTypes.RiskProfile memory _riskProfileStruct
     ) internal view returns (bool) {
-        for (uint256 _i = 0; _i < _strategySteps.length; _i++) {
-            DataTypes.LiquidityPool memory _liquidityPool = registryContract.getLiquidityPool(_strategySteps[_i].pool);
-            bool _isStrategyInvalid =
-                !_liquidityPool.isLiquidityPool ||
-                    !(_liquidityPool.rating >= _riskProfileStruct.poolRatingsRange.lowerLimit &&
-                        _liquidityPool.rating <= _riskProfileStruct.poolRatingsRange.upperLimit);
+        uint256 totalTargetAllocationPercent;
+        for (uint256 _i = 0; _i < _strategies.length; _i++) {
+            totalTargetAllocationPercent = totalTargetAllocationPercent.add(
+                _strategies[_i].targetPercentAllocationInBasis
+            );
+            if (totalTargetAllocationPercent >= uint256(10000)) {
+                return false;
+            }
+        }
+        for (uint256 _i = 0; _i < _strategies.length; _i++) {
+            for (uint256 _j = 0; _j < _strategies[_i].strategySteps.length; _j++) {
+                DataTypes.LiquidityPool memory _liquidityPool =
+                    registryContract.getLiquidityPool(_strategies[_i].strategySteps[_j].pool);
+                bool _isStrategyInvalid =
+                    !_liquidityPool.isLiquidityPool ||
+                        !(_liquidityPool.rating >= _riskProfileStruct.poolRatingsRange.lowerLimit &&
+                            _liquidityPool.rating <= _riskProfileStruct.poolRatingsRange.upperLimit);
 
-            _isStrategyInvalid = !_riskProfileStruct.canBorrow && !_isStrategyInvalid
-                ? _strategySteps[_i].isBorrow
-                : _isStrategyInvalid;
+                _isStrategyInvalid = !_riskProfileStruct.canBorrow && !_isStrategyInvalid
+                    ? _strategies[_i].strategySteps[_j].isBorrow
+                    : _isStrategyInvalid;
 
-            if (_isStrategyInvalid) {
-                return _isStrategyInvalid;
+                if (_isStrategyInvalid) {
+                    return _isStrategyInvalid;
+                }
             }
         }
 

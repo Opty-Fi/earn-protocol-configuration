@@ -18,12 +18,12 @@ interface IRiskManager {
      * @param _riskProfileCode Risk profile code (Eg: 1,2, and so on where 0 is reserved for 'no strategy')
      * corresponding to which get the best strategy
      * @param _underlyingTokensHash Hash of the underlying token address/addresses and chainId (like 0x1 etc.)
-     * @return Returns the hash of the best strategy corresponding to the riskProfile provided
+     * @return Returns the hash of the best strategy portfolio corresponding to the riskProfile provided
      */
     function getBestStrategy(uint256 _riskProfileCode, bytes32 _underlyingTokensHash)
         external
         view
-        returns (DataTypes.StrategyStep[] memory);
+        returns (DataTypes.Strategy[] memory);
 
     /**
      * @notice Get the VaultRewardToken strategy for respective VaultRewardToken hash

@@ -49,12 +49,13 @@ library DataTypes {
 
     /**
      * @notice Container for Strategy used by Vault contract
-     * @param index Index at which strategy is stored
      * @param strategySteps StrategySteps consisting pool, outputToken and isBorrow
+     * @param targetPercentAllocationInBasis percentage of Vault's funds that should be allocated to this strategy
      */
     struct Strategy {
-        uint256 index;
-        StrategyStep[] strategySteps;
+        mapping(uint256 => StrategyStep) strategySteps;
+        uint256 strategyStepSize;
+        uint256 targetPercentAllocationInBasis;
     }
 
     /**

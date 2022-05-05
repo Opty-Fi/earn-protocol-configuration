@@ -27,12 +27,12 @@ contract StrategyProvider is IStrategyProvider, Modifiers {
     /**
      * @notice Mapping of RiskProfile (eg: RP1, RP2, etc) to tokensHash to the best strategy hash
      */
-    mapping(uint256 => mapping(bytes32 => DataTypes.StrategyStep[])) public rpToTokenToBestStrategy;
+    mapping(uint256 => mapping(bytes32 => DataTypes.Strategy[])) public rpToTokenToBestStrategy;
 
     /**
      * @notice Mapping of RiskProfile (eg: RP1, RP2, etc) to tokensHash to best default strategy hash
      */
-    mapping(uint256 => mapping(bytes32 => DataTypes.StrategyStep[])) public rpToTokenToDefaultStrategy;
+    mapping(uint256 => mapping(bytes32 => DataTypes.Strategy[])) public rpToTokenToDefaultStrategy;
 
     /**
      * @notice Mapping of vaultRewardToken address hash to vault reward token strategy
@@ -48,11 +48,11 @@ contract StrategyProvider is IStrategyProvider, Modifiers {
     function setBestStrategy(
         uint256 _riskProfileCode,
         bytes32 _underlyingTokensHash,
-        DataTypes.StrategyStep[] memory _strategySteps
+        DataTypes.Strategy[] memory _strategies
     ) external override onlyStrategyOperator {
         delete rpToTokenToBestStrategy[_riskProfileCode][_underlyingTokensHash];
-        for (uint256 _i = 0; _i < _strategySteps.length; _i++) {
-            rpToTokenToBestStrategy[_riskProfileCode][_underlyingTokensHash].push(_strategySteps[_i]);
+        for (uint256 _i = 0; _i < _strategies.length; _i++) {
+            rpToTokenToBestStrategy[_riskProfileCode][_underlyingTokensHash].push(_strategies[_i]);
         }
     }
 
@@ -62,11 +62,11 @@ contract StrategyProvider is IStrategyProvider, Modifiers {
     function setBestDefaultStrategy(
         uint256 _riskProfileCode,
         bytes32 _underlyingTokensHash,
-        DataTypes.StrategyStep[] memory _strategySteps
+        DataTypes.Strategy[] memory _strategies
     ) external override onlyStrategyOperator {
         delete rpToTokenToDefaultStrategy[_riskProfileCode][_underlyingTokensHash];
-        for (uint256 _i = 0; _i < _strategySteps.length; _i++) {
-            rpToTokenToDefaultStrategy[_riskProfileCode][_underlyingTokensHash].push(_strategySteps[_i]);
+        for (uint256 _i = 0; _i < _strategies.length; _i++) {
+            rpToTokenToDefaultStrategy[_riskProfileCode][_underlyingTokensHash].push(_strategies[_i]);
         }
     }
 
@@ -101,7 +101,7 @@ contract StrategyProvider is IStrategyProvider, Modifiers {
         external
         view
         override
-        returns (DataTypes.StrategyStep[] memory)
+        returns (DataTypes.Strategy[] memory)
     {
         return rpToTokenToBestStrategy[_riskProfileCode][_underlyingTokensHash];
     }
@@ -113,7 +113,7 @@ contract StrategyProvider is IStrategyProvider, Modifiers {
         external
         view
         override
-        returns (DataTypes.StrategyStep[] memory)
+        returns (DataTypes.Strategy[] memory)
     {
         return rpToTokenToDefaultStrategy[_riskProfileCode][_underlyingTokensHash];
     }
