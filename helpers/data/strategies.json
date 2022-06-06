@@ -72,7 +72,7 @@
     ]
   },
   {
-    "strategyName": "WETH-USDC-deposit-SUSHISWAP-SLP",
+    "strategyName": "WETH-USDC-deposit-SUSHISWAP_FARM-SLP",
     "token": "SLP_WETH_USDC",
     "strategy": [
       {
