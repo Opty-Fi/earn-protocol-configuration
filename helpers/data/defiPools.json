@@ -1863,7 +1863,7 @@
       "tokens": ["0x8798249c2E607446EfB7Ad49eC89dD1865Ff4272"]
     }
   },
-  "SushiswapAdapter": {
+  "SushiswapMasterChefV1Adapter": {
     "sushi-weth-usdt": {
       "pool": "0xc2EdaD668740f1aA35E4D8f227fB8E17dcA888Cd",
       "lpToken": "0x0000000000000000000000000000000000000000",
