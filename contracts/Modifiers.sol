@@ -115,7 +115,7 @@ abstract contract Modifiers is IModifiers {
     function _onlyRiskOperator() private view {
         require(msg.sender == registryContract.getRiskOperator(), "caller is not the riskOperator");
     }
-    
+
     function _onlyStrategyOperator() private view {
         require(msg.sender == registryContract.getStrategyOperator(), "caller is not the strategyOperator");
     }
