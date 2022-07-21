@@ -265,4 +265,20 @@ library DataTypes {
         uint256 internalTransactionIndex;
         uint256 internalTransactionCount;
     }
+
+    /**
+     * @notice Container for permit parameters
+     * @param amount quantity of tokens to approve
+     * @param deadline the timestamp at which the permit is no longer valid
+     * @param v secp256k1 'v' value
+     * @param r secp256k1 'r' value
+     * @param s secp256k1 's' value
+     */
+    struct Permit {
+        uint256 value;
+        uint256 deadline;
+        uint8 v;
+        bytes32 r;
+        bytes32 s;
+    }
 }
