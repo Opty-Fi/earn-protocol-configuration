@@ -48,7 +48,7 @@ abstract contract Modifiers is IModifiers {
      * @notice Modifier to check caller is governance or not
      */
     modifier onlyGovernance() {
-        _onlyGovernance();
+        _onlyAuthorizedUser(registryContract.getGovernance(), "caller is not having governance");
         _;
     }
 
@@ -56,7 +56,7 @@ abstract contract Modifiers is IModifiers {
      * @notice Modifier to check caller is financeOperator or not
      */
     modifier onlyFinanceOperator() {
-        _onlyFinanceOperator();
+        _onlyAuthorizedUser(registryContract.getFinanceOperator(), "caller is not the financeOperator");
         _;
     }
 
@@ -64,7 +64,7 @@ abstract contract Modifiers is IModifiers {
      * @notice Modifier to check caller is riskOperator or not
      */
     modifier onlyRiskOperator() {
-        _onlyRiskOperator();
+        _onlyAuthorizedUser(registryContract.getRiskOperator(), "caller is not the riskOperator");
         _;
     }
 
@@ -72,7 +72,7 @@ abstract contract Modifiers is IModifiers {
      * @notice Modifier to check caller is operator or not
      */
     modifier onlyStrategyOperator() {
-        _onlyStrategyOperator();
+        _onlyAuthorizedUser(registryContract.getStrategyOperator(), "caller is not the strategyOperator");
         _;
     }
 
@@ -80,7 +80,7 @@ abstract contract Modifiers is IModifiers {
      * @notice Modifier to check caller is operator or not
      */
     modifier onlyOperator() {
-        _onlyOperator();
+        _onlyAuthorizedUser(registryContract.getOperator(), "caller is not the operator");
         _;
     }
 
@@ -88,7 +88,7 @@ abstract contract Modifiers is IModifiers {
      * @notice Modifier to check caller is optyDistributor or not
      */
     modifier onlyOPTYDistributor() {
-        _onlyOPTYDistributor();
+        _onlyAuthorizedUser(registryContract.getOPTYDistributor(), "!optyDistributor");
         _;
     }
 
@@ -96,39 +96,15 @@ abstract contract Modifiers is IModifiers {
      * @notice Modifier to check caller is registry or not
      */
     modifier onlyRegistry() {
-        _onlyRegistry();
+        _onlyAuthorizedUser(address(registryContract), "!Registry Contract");
         _;
+    }
+
+    function _onlyAuthorizedUser(address authorizedUserAddress, string memory errorMessage) private view {
+        require(msg.sender == authorizedUserAddress, errorMessage);
     }
 
     function _onlyValidAddress() private view {
         require(msg.sender != address(0), "caller is zero address");
-    }
-
-    function _onlyGovernance() private view {
-        require(msg.sender == registryContract.getGovernance(), "caller is not having governance");
-    }
-
-    function _onlyFinanceOperator() private view {
-        require(msg.sender == registryContract.getFinanceOperator(), "caller is not the financeOperator");
-    }
-
-    function _onlyRiskOperator() private view {
-        require(msg.sender == registryContract.getRiskOperator(), "caller is not the riskOperator");
-    }
-
-    function _onlyStrategyOperator() private view {
-        require(msg.sender == registryContract.getStrategyOperator(), "caller is not the strategyOperator");
-    }
-
-    function _onlyOperator() private view {
-        require(msg.sender == registryContract.getOperator(), "caller is not the operator");
-    }
-
-    function _onlyOPTYDistributor() private view {
-        require(msg.sender == registryContract.getOPTYDistributor(), "!optyDistributor");
-    }
-
-    function _onlyRegistry() private view {
-        require(msg.sender == address(registryContract), "!Registry Contract");
     }
 }
