@@ -189,6 +189,12 @@ interface IRegistry {
     function setTokensHashToTokens(bytes32 _tokensHash, address[] memory _tokens) external;
 
     /**
+     * @notice sets the address of InvestStrategyRegistry
+     * @param _investStrategyRegistry the address of the InvestStrategyRegistry
+     */
+    function setInvestStrategyRegistry(address _investStrategyRegistry) external;
+
+    /**
      * @notice Approve tokens and map tokens hash
      * @param _tokensHash Hash of tokens
      * @param _tokens List of tokens
@@ -367,6 +373,12 @@ interface IRegistry {
      * @return _adapter Returns the adapter address mapped to the _pool provided
      */
     function getLiquidityPoolToAdapter(address _pool) external view returns (address _adapter);
+
+    /**
+     * @notice returns the address of InvestStrategyRegistry
+     * @return address of InvestStrategyRegistry
+     */
+    function getInvestStrategyRegistry() external view returns (address);
 
     /**
      * @notice Check if the token is approved or not

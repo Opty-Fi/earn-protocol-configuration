@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.6.12;
 
+import { EnumerableSet } from "@openzeppelin/contracts/utils/EnumerableSet.sol";
+
 library DataTypes {
     /**
      * @notice Container for User Deposit/withdraw operations
@@ -264,5 +266,26 @@ library DataTypes {
         uint256 initialStepInputAmount;
         uint256 internalTransactionIndex;
         uint256 internalTransactionCount;
+    }
+
+    /**
+     * @notice Container for the portfolio of a vault when investing in multiple strategies
+     * @param strategies Enumerable Bytes32 set to hold strategy hashes
+     * @param balances mapping of strategy hash to its balance in LP
+     * @param steps mapping of strategh hash to strategy steps
+     * @param configurations mapping of strategy hash to strategy configuration
+     * @param withdrawalBuffers mapping of strategy hash to withdrawal buffer
+     */
+    struct Portfolio {
+        /** @dev set of active strategies */
+        EnumerableSet.Bytes32Set strategies;
+        /** @dev strategy => balance in underlying tokens */
+        mapping(bytes32 => uint256) balances;
+        /** @dev strategy => strategy metadata */
+        mapping(bytes32 => DataTypes.StrategyStep[]) steps;
+        /** @dev strategy => strategy configuration*/
+        mapping(bytes32 => DataTypes.StrategyConfiguration) configurations;
+        /** @dev strategy hash => withdrawal buffer */
+        mapping(bytes32 => uint256) withdrawalBuffers;
     }
 }
