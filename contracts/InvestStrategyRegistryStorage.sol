@@ -6,5 +6,8 @@ import { EnumerableSet } from "@openzeppelin/contracts/utils/EnumerableSet.sol";
 import { DataTypes } from "./libraries/types/DataTypes.sol";
 
 contract InvestStrategyRegistryStorage {
-        mapping(address => DataTypes.Portfolio) portfolios;
+        /** @dev strategy => strategy metadata */
+        mapping(bytes32 => DataTypes.StrategyStep[]) internal steps;
+        /** @dev strategy hash => vault => withdrawal buffer */
+        mapping(bytes32 => mapping(address => uint256)) internal vaultStrategyWithdrawalBuffers;
 }

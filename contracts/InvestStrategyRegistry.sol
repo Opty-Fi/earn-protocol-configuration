@@ -3,6 +3,8 @@
 pragma solidity ^0.6.12;
 pragma experimental ABIEncoderV2;
 
+//RENAME: StrategyRegistry.sol
+
 //  libraries
 import { DataTypes } from "./libraries/types/DataTypes.sol";
 
@@ -29,89 +31,62 @@ contract InvestStrategyRegistry is IInvestStrategyRegistry, Modifiers, InvestStr
      */
     event LogSetVaultInvestStrategy(bytes32 indexed tokensHash, bytes32 indexed strategyHash, address indexed caller);
 
-    event AddStrategy(address _vault, bytes32 _strategyHash);
-
-    event RemoveStrategy(address _vault, bytes32 _strategyHash);
-
     /* solhint-disable no-empty-blocks */
     constructor(address _registry) public Modifiers(_registry) {}
 
     /**
      * @inheritdoc IInvestStrategyRegistry
      */
-    function addStrategy(
-        address _vault, 
-        bytes32 _strategyHash, 
-        DataTypes.StrategyStep[] memory _steps, 
-        DataTypes.StrategyConfiguration memory _configuration, 
-        uint256 _withdrawalBuffer
-    ) external override onlyStrategyOperator {
-        _addStrategy(_vault, _strategyHash, _steps, _configuration, _withdrawalBuffer);
-    }
+    function getStrategySteps(
+        bytes32 _strategyHash
+    ) external view override returns (DataTypes.StrategyStep[] memory) {
+        return steps[_strategyHash]; 
+    } 
 
     /**
      * @inheritdoc IInvestStrategyRegistry
      */
-    function removeStrategy(
-        address _vault,
+    function getStrategyWithdrawalBuffer(
+        address _vault, 
         bytes32 _strategyHash
-    ) external override onlyStrategyOperator {
-        _removeStrategy(_vault, _strategyHash);
+    ) external view override returns (uint256) {
+        return vaultStrategyWithdrawalBuffers[_strategyHash][_vault];
     }
 
-    function _addStrategy(
-        address _vault, 
+    function addStrategySteps(
         bytes32 _strategyHash, 
-        DataTypes.StrategyStep[] memory _steps, 
-        DataTypes.StrategyConfiguration memory _configuration, 
-        uint256 _withdrawalBuffer
-    ) internal {
-        DataTypes.Portfolio storage p = portfolios[_vault];
-        
-        require(
-            !p.strategies.contains(_strategyHash),
-            "InvestStrategyRegistry: strategy already set"
-        );
-
-        p.strategies.add(_strategyHash);
-
-        DataTypes.StrategyStep[] storage steps_ = p.steps[_strategyHash];
+        DataTypes.StrategyStep[] memory _steps
+    ) external onlyStrategyOperator {
+        DataTypes.StrategyStep[] storage steps_ = steps[_strategyHash];
         uint256 stepLength = _steps.length;
 
         for(uint i; i < stepLength; i++) {
             steps_.push(_steps[i]);
         }
-
-        
-        p.configurations[_strategyHash] = _configuration;
-        p.withdrawalBuffers[_strategyHash] = _withdrawalBuffer;
-        
-        emit AddStrategy(_vault, _strategyHash);
     }
 
-    function _removeStrategy(
-        address _vault,
+    function deleteStrategySteps(
         bytes32 _strategyHash
-    ) internal {
-        DataTypes.Portfolio storage p = portfolios[_vault];
-
-        require(
-            p.balances[_strategyHash] == 0,
-            "InvestStrategyRegistry: cannot remove strategy with non-zero balance"
-        );
-        require(
-            p.strategies.contains(_strategyHash),
-            "InvestStrategyRegistry: strategy does not exist"
-        );
-
-        p.strategies.remove(_strategyHash);
-        delete p.balances[_strategyHash];
-        delete p.steps[_strategyHash];
-        delete p.configurations[_strategyHash];
-        delete p.withdrawalBuffers[_strategyHash];
-
-        emit RemoveStrategy(_vault, _strategyHash);
+    ) external onlyStrategyOperator {
+        delete steps[_strategyHash];
     }
+    
+    function addVaultStrategyWithdrawalBuffer(
+        bytes32 _strategyHash, 
+        address _vault, 
+        uint256 _buffer
+    ) external onlyStrategyOperator {
+        vaultStrategyWithdrawalBuffers[_strategyHash][_vault] = _buffer;
+    }
+
+    function deleteVaultStrategyWithdrawalBuffer(
+        bytes32 _strategyHash,
+        address _vault
+    ) external onlyStrategyOperator {
+        delete vaultStrategyWithdrawalBuffers[_strategyHash][_vault];
+    }
+
+    
 
 
 }

@@ -12,30 +12,23 @@ import { DataTypes } from "../../libraries/types/DataTypes.sol";
  * @notice Contains functionality to setting all the strategies for all tokens
  */
 interface IInvestStrategyRegistry {
+   /**
+    * @notice fetches the strategy steps for a given strategy
+    * @param _strategyHash strategyHash of strategy 
+    * @return StrategyStep array of steps
+    */
+   function getStrategySteps(
+        bytes32 _strategyHash
+   ) external view returns (DataTypes.StrategyStep[] memory);
    
    /**
-    * @notice adds a strategy to a vaults portfolio
-    * @param _vault address of vault
-    * @param _strategyHash hash of strategy
-    * @param _steps strategy steps
-    * @param _configuration strategy configuration
-    * @param _withdrawalBuffer buffer for withdrawals
-    */ 
-   function addStrategy(
-        address _vault, 
-        bytes32 _strategyHash, 
-        DataTypes.StrategyStep[] memory _steps, 
-        DataTypes.StrategyConfiguration memory _configuration, 
-        uint256 _withdrawalBuffer
-   ) external;
-
-   /**
-    * @notice removes a strategy from a vaults portfolio
-    * @param _vault addres of vault
-    * @param _strategyHash hash of strategy
+    * @notice returns the withdrawal buffer for a given strategy of a target vault
+    * @param _vault address of the vault
+    * @param _strategyHash the hash of the strategy to check
+    * @return uint256 the buffer 
     */
-   function removeStrategy(
-        address _vault,
-        bytes32 _strategyHash
-   ) external;
+   function getStrategyWithdrawalBuffer(
+       address _vault, 
+       bytes32 _strategyHash
+   ) external view returns (uint256);
 }
