@@ -10,18 +10,18 @@ import { DataTypes } from "./libraries/types/DataTypes.sol";
 
 //  helper contracts
 import { Modifiers } from "./Modifiers.sol";
-import { InvestStrategyRegistryStorage } from "./InvestStrategyRegistryStorage.sol";
+import { StrategyRegistryStorage } from "./StrategyRegistryStorage.sol";
 import { EnumerableSet } from "@openzeppelin/contracts/utils/EnumerableSet.sol";
 
 //  interfaces
-import { IInvestStrategyRegistry } from "./interfaces/opty/IInvestStrategyRegistry.sol";
+import { IStrategyRegistry } from "./interfaces/opty/IStrategyRegistry.sol";
 
 /**
- * @title InvestStrategyRegistry Contract
+ * @title StrategyRegistry Contract
  * @author Opty.fi
  * @dev Contract to persist vault's step invest strategy definition
  */
-contract InvestStrategyRegistry is IInvestStrategyRegistry, Modifiers, InvestStrategyRegistryStorage {
+contract StrategyRegistry is IStrategyRegistry, Modifiers, StrategyRegistryStorage {
     using EnumerableSet for EnumerableSet.Bytes32Set;
     /**
      * @notice Emitted when hash strategy is set
@@ -35,7 +35,7 @@ contract InvestStrategyRegistry is IInvestStrategyRegistry, Modifiers, InvestStr
     constructor(address _registry) public Modifiers(_registry) {}
 
     /**
-     * @inheritdoc IInvestStrategyRegistry
+     * @inheritdoc IStrategyRegistry
      */
     function getStrategySteps(
         bytes32 _strategyHash
@@ -44,7 +44,7 @@ contract InvestStrategyRegistry is IInvestStrategyRegistry, Modifiers, InvestStr
     } 
 
     /**
-     * @inheritdoc IInvestStrategyRegistry
+     * @inheritdoc IStrategyRegistry
      */
     function getStrategyWithdrawalBuffer(
         address _vault, 

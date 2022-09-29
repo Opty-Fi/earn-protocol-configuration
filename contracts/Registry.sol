@@ -34,7 +34,7 @@ contract Registry is IRegistry, ModifiersController {
     function become(RegistryProxy _registryProxy) external {
         require(msg.sender == _registryProxy.governance(), "!governance");
         require(_registryProxy.acceptImplementation() == 0, "!unauthorized");
-        investStrategyRegistry = address(0);
+        strategyRegistry = address(0);
         aprOracle = address(0);
         strategyManager = address(0);
         optyStakingRateBalancer = address(0);
@@ -91,9 +91,9 @@ contract Registry is IRegistry, ModifiersController {
     /**
      * @inheritdoc IRegistry
      */
-    function setInvestStrategyRegistry(address _investStrategyRegistry) external override onlyOperator {
-        require(IContractRegistry(_investStrategyRegistry).registryContract() == address(this), "!registryContract");
-        investStrategyRegistry = _investStrategyRegistry;
+    function setStrategyRegistry(address _strategyRegistry) external override onlyOperator {
+        require(IContractRegistry(_strategyRegistry).registryContract() == address(this), "!registryContract");
+        strategyRegistry = _strategyRegistry;
     }
 
     /**
@@ -511,8 +511,8 @@ contract Registry is IRegistry, ModifiersController {
     /**
      * @inheritdoc IRegistry
      */
-    function getInvestStrategyRegistry() public view override returns (address) {
-        return investStrategyRegistry;
+    function getStrategyRegistry() public view override returns (address) {
+        return strategyRegistry;
     }
 
     function _approveToken(address _token) internal {
