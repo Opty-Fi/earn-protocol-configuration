@@ -8,6 +8,4 @@ import { DataTypes } from "./libraries/types/DataTypes.sol";
 contract StrategyRegistryStorage {
         /** @dev strategy => strategy metadata */
         mapping(bytes32 => DataTypes.StrategyStep[]) internal steps;
-        /** @dev strategy hash => vault => withdrawal buffer */
-        mapping(bytes32 => mapping(address => uint256)) internal vaultStrategyWithdrawalBuffers;
 }

@@ -41,16 +41,6 @@ contract StrategyRegistry is IStrategyRegistry, Modifiers, StrategyRegistryStora
         bytes32 _strategyHash
     ) external view override returns (DataTypes.StrategyStep[] memory) {
         return steps[_strategyHash]; 
-    } 
-
-    /**
-     * @inheritdoc IStrategyRegistry
-     */
-    function getStrategyWithdrawalBuffer(
-        address _vault, 
-        bytes32 _strategyHash
-    ) external view override returns (uint256) {
-        return vaultStrategyWithdrawalBuffers[_strategyHash][_vault];
     }
 
     function addStrategySteps(
@@ -70,23 +60,4 @@ contract StrategyRegistry is IStrategyRegistry, Modifiers, StrategyRegistryStora
     ) external onlyStrategyOperator {
         delete steps[_strategyHash];
     }
-    
-    function addVaultStrategyWithdrawalBuffer(
-        bytes32 _strategyHash, 
-        address _vault, 
-        uint256 _buffer
-    ) external onlyStrategyOperator {
-        vaultStrategyWithdrawalBuffers[_strategyHash][_vault] = _buffer;
-    }
-
-    function deleteVaultStrategyWithdrawalBuffer(
-        bytes32 _strategyHash,
-        address _vault
-    ) external onlyStrategyOperator {
-        delete vaultStrategyWithdrawalBuffers[_strategyHash][_vault];
-    }
-
-    
-
-
 }

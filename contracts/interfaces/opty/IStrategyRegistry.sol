@@ -20,15 +20,4 @@ interface IStrategyRegistry {
    function getStrategySteps(
         bytes32 _strategyHash
    ) external view returns (DataTypes.StrategyStep[] memory);
-   
-   /**
-    * @notice returns the withdrawal buffer for a given strategy of a target vault
-    * @param _vault address of the vault
-    * @param _strategyHash the hash of the strategy to check
-    * @return uint256 the buffer 
-    */
-   function getStrategyWithdrawalBuffer(
-       address _vault, 
-       bytes32 _strategyHash
-   ) external view returns (uint256);
 }
