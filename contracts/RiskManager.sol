@@ -14,6 +14,7 @@ import { RiskManagerProxy } from "./RiskManagerProxy.sol";
 
 //  interfaces
 import { IStrategyProvider } from "./interfaces/opty/IStrategyProvider.sol";
+import { IStrategyRegistry } from "./interfaces/opty/IStrategyRegistry.sol";
 import { IRiskManager } from "./interfaces/opty/IRiskManager.sol";
 import { Constants } from "./utils/Constants.sol";
 
@@ -114,5 +115,15 @@ contract RiskManager is IRiskManager, RiskManagerStorage, Modifiers {
         }
 
         return false;
+    }
+
+    function isValidStrategy(bytes32 _strategyHash, uint256 _riskProfileCode) external override {
+        require(
+            !_isInValidStrategy(
+                IStrategyRegistry(registryContract.getStrategyRegistry()).getStrategySteps(_strategyHash),
+                registryContract.getRiskProfile(_riskProfileCode)
+            ),
+            "Strategy invalid"
+        );
     }
 }
