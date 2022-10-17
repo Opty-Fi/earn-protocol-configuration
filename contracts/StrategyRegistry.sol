@@ -37,27 +37,23 @@ contract StrategyRegistry is IStrategyRegistry, Modifiers, StrategyRegistryStora
     /**
      * @inheritdoc IStrategyRegistry
      */
-    function getStrategySteps(
-        bytes32 _strategyHash
-    ) external view override returns (DataTypes.StrategyStep[] memory) {
-        return steps[_strategyHash]; 
+    function getStrategySteps(bytes32 _strategyHash) external view override returns (DataTypes.StrategyStep[] memory) {
+        return steps[_strategyHash];
     }
 
-    function addStrategySteps(
-        bytes32 _strategyHash, 
-        DataTypes.StrategyStep[] memory _steps
-    ) external onlyStrategyOperator {
+    function addStrategySteps(bytes32 _strategyHash, DataTypes.StrategyStep[] memory _steps)
+        external
+        onlyStrategyOperator
+    {
         DataTypes.StrategyStep[] storage steps_ = steps[_strategyHash];
         uint256 stepLength = _steps.length;
 
-        for(uint i; i < stepLength; i++) {
+        for (uint256 i; i < stepLength; i++) {
             steps_.push(_steps[i]);
         }
     }
 
-    function deleteStrategySteps(
-        bytes32 _strategyHash
-    ) external onlyStrategyOperator {
+    function deleteStrategySteps(bytes32 _strategyHash) external onlyStrategyOperator {
         delete steps[_strategyHash];
     }
 }

@@ -12,12 +12,10 @@ import { DataTypes } from "../../libraries/types/DataTypes.sol";
  * @notice Contains functionality to setting all the strategies for all tokens
  */
 interface IStrategyRegistry {
-   /**
-    * @notice fetches the strategy steps for a given strategy
-    * @param _strategyHash strategyHash of strategy 
-    * @return StrategyStep array of steps
-    */
-   function getStrategySteps(
-        bytes32 _strategyHash
-   ) external view returns (DataTypes.StrategyStep[] memory);
+    /**
+     * @notice fetches the strategy steps for a given strategy
+     * @param _strategyHash strategyHash of strategy
+     * @return StrategyStep array of steps
+     */
+    function getStrategySteps(bytes32 _strategyHash) external view returns (DataTypes.StrategyStep[] memory);
 }
