@@ -5,7 +5,7 @@ import { Signer, Contract } from "ethers";
 import { smock } from "@defi-wonderland/smock";
 import { MOCK_CONTRACTS } from "../helpers/type";
 import { TypedStrategies, TypedTokens } from "../helpers/data";
-import { generateTokenHash, executeFunc, deploySmockContract, deployContract } from "../helpers/helpers";
+import { generateTokenHashV2, executeFunc, deploySmockContract, deployContract } from "../helpers/helpers";
 import { TESTING_DEPLOYMENT_ONCE } from "../helpers/constants/utils";
 import { ESSENTIAL_CONTRACTS } from "../helpers/constants/essential-contracts-name";
 import { TESTING_CONTRACTS } from "../helpers/constants/test-contracts-name";
@@ -51,7 +51,7 @@ describe(scenario.title, () => {
 
   describe("Standalone Scenarios", () => {
     const usedToken = TypedTokens["USDT"];
-    const tokenHash = generateTokenHash([usedToken], NETWORKS_ID.MAINNET);
+    const tokenHash = generateTokenHashV2([usedToken], NETWORKS_ID.MAINNET);
     for (let i = 0; i < scenario.standaloneStories.length; i++) {
       const story = scenario.standaloneStories[i];
       it(story.description, async () => {
@@ -148,7 +148,7 @@ describe(scenario.title, () => {
     });
     for (let i = 0; i < TypedStrategies.length; i++) {
       const strategy = TypedStrategies[i];
-      const tokenHash = generateTokenHash([TypedTokens[strategy.token.toUpperCase()]], NETWORKS_ID.MAINNET);
+      const tokenHash = generateTokenHashV2([TypedTokens[strategy.token.toUpperCase()]], NETWORKS_ID.MAINNET);
 
       const defaultStrategy = TypedStrategies.filter(
         item => item.token === strategy.token && item.strategyName !== strategy.strategyName,

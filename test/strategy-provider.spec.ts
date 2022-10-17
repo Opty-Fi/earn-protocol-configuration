@@ -3,7 +3,7 @@ import hre from "hardhat";
 import { Contract } from "ethers";
 import { solidity } from "ethereum-waffle";
 import { CONTRACTS } from "../helpers/type";
-import { deployContract, generateTokenHash } from "../helpers/helpers";
+import { deployContract, generateTokenHashV2 } from "../helpers/helpers";
 import { TESTING_DEPLOYMENT_ONCE } from "../helpers/constants/utils";
 import { ESSENTIAL_CONTRACTS } from "../helpers/constants/essential-contracts-name";
 import { TESTING_CONTRACTS } from "../helpers/constants/test-contracts-name";
@@ -34,8 +34,8 @@ describe(scenario.title, () => {
   let vaultRewardTokenHash: string;
   const usedToken = TypedTokens["DAI"];
   const nonApprovedToken = TypedTokens["USDC"];
-  const usedTokenHash = generateTokenHash([usedToken], NETWORKS_ID.MAINNET);
-  const nonApprovedTokenHash = generateTokenHash([nonApprovedToken], NETWORKS_ID.MAINNET);
+  const usedTokenHash = generateTokenHashV2([usedToken], NETWORKS_ID.MAINNET);
+  const nonApprovedTokenHash = generateTokenHashV2([nonApprovedToken], NETWORKS_ID.MAINNET);
   const usedStrategy = TypedStrategies.filter(strategy => strategy.token == "DAI")[0].strategy;
   const secondStrategy = TypedStrategies.filter(strategy => strategy.token == "DAI")[1].strategy;
 
@@ -80,7 +80,7 @@ describe(scenario.title, () => {
       );
 
       const COMP_TOKEN = TypedTokens["COMP"];
-      vaultRewardTokenHash = generateTokenHash([DUMMY_VAULT_EMPTY_CONTRACT.address, COMP_TOKEN], NETWORKS_ID.MAINNET);
+      vaultRewardTokenHash = generateTokenHashV2([DUMMY_VAULT_EMPTY_CONTRACT.address, COMP_TOKEN], NETWORKS_ID.MAINNET);
       await approveAndMapTokenHashToTokens(
         signers["owner"],
         registry,
@@ -113,7 +113,7 @@ describe(scenario.title, () => {
             expect(
               await contracts[action.contract][action.action](
                 riskProfile.code,
-                generateTokenHash([usedToken], NETWORKS_ID.MAINNET),
+                generateTokenHashV2([usedToken], NETWORKS_ID.MAINNET),
               ),
             ).to.be.eqls(isEmpty ? [] : strategy.map(item => [item.contract, item.outputToken, item.isBorrow]));
 
