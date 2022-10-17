@@ -34,10 +34,6 @@ contract Registry is IRegistry, ModifiersController {
     function become(RegistryProxy _registryProxy) external {
         require(msg.sender == _registryProxy.governance(), "!governance");
         require(_registryProxy.acceptImplementation() == 0, "!unauthorized");
-        strategyRegistry = address(0);
-        aprOracle = address(0);
-        strategyManager = address(0);
-        optyStakingRateBalancer = address(0);
     }
 
     /**
