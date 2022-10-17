@@ -7,8 +7,7 @@ import { TypedStrategies, TypedTokens } from "../helpers/data";
 import { TESTING_DEPLOYMENT_ONCE } from "../helpers/constants/utils";
 import { ESSENTIAL_CONTRACTS } from "../helpers/constants/essential-contracts-name";
 import scenario from "./scenarios/strategy-registry.spec.json";
-import { deployContract, deploySmockContract, generateTokenHashV2, generateStrategyHashV2 } from "../helpers/helpers";
-import { NETWORKS_CHAIN_ID_TO_HEX } from "../helper-hardhat-config";
+import { deployContract, deploySmockContract, generateStrategyHashV2 } from "../helpers/helpers";
 
 chai.use(solidity);
 
