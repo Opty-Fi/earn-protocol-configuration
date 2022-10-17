@@ -11,7 +11,6 @@ import { DataTypes } from "./libraries/types/DataTypes.sol";
 //  helper contracts
 import { Modifiers } from "./Modifiers.sol";
 import { StrategyRegistryStorage } from "./StrategyRegistryStorage.sol";
-import { EnumerableSet } from "@openzeppelin/contracts/utils/EnumerableSet.sol";
 
 //  interfaces
 import { IStrategyRegistry } from "./interfaces/opty/IStrategyRegistry.sol";
@@ -19,18 +18,9 @@ import { IStrategyRegistry } from "./interfaces/opty/IStrategyRegistry.sol";
 /**
  * @title StrategyRegistry Contract
  * @author Opty.fi
- * @dev Contract to persist vault's step invest strategy definition
+ * @dev Contract to persist vault's strategy definition
  */
 contract StrategyRegistry is IStrategyRegistry, Modifiers, StrategyRegistryStorage {
-    using EnumerableSet for EnumerableSet.Bytes32Set;
-    /**
-     * @notice Emitted when hash strategy is set
-     * @param tokensHash Hash of token/list of tokens for which strategy is set
-     * @param strategyHash Hash of strategy steps which is set for the above tokensHash
-     * @param caller Address of user who has called the respective function to trigger this event
-     */
-    event LogSetVaultInvestStrategy(bytes32 indexed tokensHash, bytes32 indexed strategyHash, address indexed caller);
-
     /* solhint-disable no-empty-blocks */
     constructor(address _registry) public Modifiers(_registry) {}
 
@@ -41,19 +31,73 @@ contract StrategyRegistry is IStrategyRegistry, Modifiers, StrategyRegistryStora
         return steps[_strategyHash];
     }
 
-    function addStrategySteps(bytes32 _strategyHash, DataTypes.StrategyStep[] memory _steps)
-        external
-        onlyStrategyOperator
-    {
-        DataTypes.StrategyStep[] storage steps_ = steps[_strategyHash];
-        uint256 stepLength = _steps.length;
+    /**
+     * @notice set strategy hash to strategy steps mapping
+     * @dev this function can be only called by operator
+     * @param _strategyHash keccak256 hash of the strategy steps
+     * @param _steps strategy steps containing pool, outputToken, isBorrow
+     */
+    function addStrategy(bytes32 _strategyHash, DataTypes.StrategyStep[] memory _steps) external onlyOperator {
+        _addStrategy(_strategyHash, _steps);
+    }
 
-        for (uint256 i; i < stepLength; i++) {
-            steps_.push(_steps[i]);
+    /**
+     * @notice set multiple strategy hash to strategy steps mapping
+     * @dev this function can be only called by operator
+     * @param _strategyHashes list of keccak256 hash of the strategy steps
+     * @param _steps strategy steps containing pool, outputToken, isBorrow
+     */
+    function addStrategies(bytes32[] memory _strategyHashes, DataTypes.StrategyStep[][] memory _steps)
+        external
+        onlyOperator
+    {
+        uint256 _strategyHashLen = _strategyHashes.length;
+        require(_strategyHashLen == _steps.length, "");
+        for (uint256 _i; _i < _strategyHashLen; _i++) {
+            _addStrategy(_strategyHashes[_i], _steps[_i]);
         }
     }
 
-    function deleteStrategySteps(bytes32 _strategyHash) external onlyStrategyOperator {
+    /**
+     * @notice delete a strategy
+     * @dev this function can be only called by operator
+     * @param _strategyHash keccak256 hash of the strategy steps
+     */
+    function deleteStrategy(bytes32 _strategyHash) external onlyOperator {
+        _deleteStrategy(_strategyHash);
+    }
+
+    /**
+     * @notice delete multiple strategies
+     * @dev this function can be only called by operator
+     * @param _strategyHashes list of keccak256 hash of the strategy steps
+     */
+    function deleteStrategies(bytes32[] memory _strategyHashes) external onlyOperator {
+        uint256 _strategyHashLen = _strategyHashes.length;
+        for (uint256 _i; _i < _strategyHashLen; _i++) {
+            _deleteStrategy(_strategyHashes[_i]);
+        }
+    }
+
+    /**
+     * @dev internal function add new strategy
+     * @param _strategyHash keccak256 hash of the strategy steps
+     * @param _steps strategy steps containing pool, outputToken, isBorrow
+     */
+    function _addStrategy(bytes32 _strategyHash, DataTypes.StrategyStep[] memory _steps) internal {
+        DataTypes.StrategyStep[] storage steps_ = steps[_strategyHash];
+        uint256 _stepLength = _steps.length;
+
+        for (uint256 _i; _i < _stepLength; _i++) {
+            steps_.push(_steps[_i]);
+        }
+    }
+
+    /**
+     * @dev internal function to delete new strategy
+     * @param _strategyHash keccak256 hash of the strategy steps
+     */
+    function _deleteStrategy(bytes32 _strategyHash) internal {
         delete steps[_strategyHash];
     }
 }

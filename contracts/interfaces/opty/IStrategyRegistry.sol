@@ -9,7 +9,7 @@ import { DataTypes } from "../../libraries/types/DataTypes.sol";
 /**
  * @title IStrategyRegistry
  * @author Opty.fi
- * @notice Contains functionality to setting all the strategies for all tokens
+ * @notice interface to persist vault's strategy definition
  */
 interface IStrategyRegistry {
     /**
