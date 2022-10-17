@@ -66,13 +66,23 @@ export function isAddress(address: string): boolean {
   return utils.isAddress(address);
 }
 
-//  function to generate the token/list of tokens's hash
-export function generateTokenHash(addresses: string[], chainId: string): string {
-  return getSoliditySHA3Hash(["address[]", "string"], [addresses, chainId]);
-}
-
 export async function deploySmockContract(smock: any, contractName: any, args: any[]): Promise<MockContract<Contract>> {
   const factory = await smock.mock(contractName);
   const contract = await factory.deploy(...args);
   return contract;
+}
+
+export function generateTokenHashV2(addresses: string[], chainId: string): string {
+  return getSoliditySHA3Hash(["address[]", "string"], [addresses, chainId]);
+}
+
+export function generateStrategyHashV2(strategy: STRATEGY_DATA[], tokensHash: string): string {
+  const strategyStepsHash: string[] = [];
+  for (let index = 0; index < strategy.length; index++) {
+    strategyStepsHash[index] = getSoliditySHA3Hash(
+      ["address", "address", "bool"],
+      [strategy[index].contract, strategy[index].outputToken, strategy[index].isBorrow],
+    );
+  }
+  return getSoliditySHA3Hash(["bytes32", "bytes32[]"], [tokensHash, strategyStepsHash]);
 }

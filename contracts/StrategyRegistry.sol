@@ -32,7 +32,7 @@ contract StrategyRegistry is IStrategyRegistry, Modifiers, StrategyRegistryStora
     }
 
     /**
-     * @notice set strategy hash to strategy steps mapping
+     * @notice adds new strategy
      * @dev this function can be only called by operator
      * @param _strategyHash keccak256 hash of the strategy steps
      * @param _steps strategy steps containing pool, outputToken, isBorrow
@@ -52,7 +52,7 @@ contract StrategyRegistry is IStrategyRegistry, Modifiers, StrategyRegistryStora
         onlyOperator
     {
         uint256 _strategyHashLen = _strategyHashes.length;
-        require(_strategyHashLen == _steps.length, "");
+        require(_strategyHashLen == _steps.length, "!length mismatch");
         for (uint256 _i; _i < _strategyHashLen; _i++) {
             _addStrategy(_strategyHashes[_i], _steps[_i]);
         }
@@ -86,8 +86,8 @@ contract StrategyRegistry is IStrategyRegistry, Modifiers, StrategyRegistryStora
      */
     function _addStrategy(bytes32 _strategyHash, DataTypes.StrategyStep[] memory _steps) internal {
         DataTypes.StrategyStep[] storage steps_ = steps[_strategyHash];
+        require(steps_.length == 0, "!isNewStrategy");
         uint256 _stepLength = _steps.length;
-
         for (uint256 _i; _i < _stepLength; _i++) {
             steps_.push(_steps[_i]);
         }

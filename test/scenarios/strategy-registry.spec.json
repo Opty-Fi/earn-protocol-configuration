@@ -1,19 +1,19 @@
 {
-  "title": "InvestStrategyRegistry",
-  "description": "Test cases for InvestStrategyRegistry contract",
+  "title": "StrategyRegistry",
+  "description": "Test cases for StrategyRegistry contract",
   "stories": [
     {
-      "description": "Operator should be able to set one strategy only one time for one tokensHash",
+      "description": "Operator should be able to add strategy",
       "setActions": [
         {
-          "action": "setStrategy(bytes32,(address,address,bool)[])",
+          "action": "addStrategy(bytes32,(address,address,bool)[])",
           "args": {},
           "executer": "owner",
           "expect": "success",
           "message": ""
         },
         {
-          "action": "setStrategy(bytes32,(address,address,bool)[])",
+          "action": "addStrategy(bytes32,(address,address,bool)[])",
           "args": {},
           "executer": "owner",
           "expect": "fail",
@@ -22,17 +22,24 @@
       ],
       "getActions": [
         {
-          "action": "getStrategy(bytes32)",
+          "action": "getStrategySteps(bytes32)",
           "args": {},
           "expectedValue": {}
         }
       ]
     },
     {
-      "description": "Non-Operator shouldn't be able to set strategy",
+      "description": "Non-Operator shouldn't be able to delete strategy",
       "setActions": [
         {
-          "action": "setStrategy(bytes32,(address,address,bool)[])",
+          "action": "deleteStrategy(bytes32)",
+          "args": {},
+          "executer": "user1",
+          "expect": "fail",
+          "message": "caller is not the operator"
+        },
+        {
+          "action": "deleteStrategies(bytes32[])",
           "args": {},
           "executer": "user1",
           "expect": "fail",
@@ -42,16 +49,81 @@
       "getActions": []
     },
     {
-      "description": "Operator cannot set multiple strategies which not correspond to the number of token input",
+      "description": "Non-Operator shouldn't be able to add strategy",
       "setActions": [
         {
-          "action": "setStrategy(bytes32[],(address,address,bool)[][])",
+          "action": "addStrategy(bytes32,(address,address,bool)[])",
+          "args": {},
+          "executer": "user1",
+          "expect": "fail",
+          "message": "caller is not the operator"
+        },
+        {
+          "action": "addStrategies(bytes32[],(address,address,bool)[][])",
+          "args": {},
+          "executer": "user1",
+          "expect": "fail",
+          "message": "caller is not the operator"
+        }
+      ],
+      "getActions": []
+    },
+    {
+      "description": "Operator cannot set multiple strategies where length mismatch",
+      "setActions": [
+        {
+          "action": "addStrategies(bytes32[],(address,address,bool)[][])",
           "args": {
             "mismatchLength": true
           },
           "executer": "owner",
           "expect": "fail",
-          "message": "!index mismatch"
+          "message": "length mismatch"
+        }
+      ],
+      "getActions": []
+    },
+    {
+      "description": "Operator can delete a strategy",
+      "setActions": [
+        {
+          "action": "deleteStrategy(bytes32)",
+          "args": {},
+          "executer": "owner",
+          "expect": "success",
+          "message": ""
+        }
+      ],
+      "getActions": []
+    },
+    {
+      "description": "Operator can set multiple strategies",
+      "setActions": [
+        {
+          "action": "addStrategies(bytes32[],(address,address,bool)[][])",
+          "args": {},
+          "executer": "owner",
+          "expect": "success",
+          "message": ""
+        }
+      ],
+      "getActions": [
+        {
+          "action": "getStrategySteps(bytes32)",
+          "args": {},
+          "expectedValue": {}
+        }
+      ]
+    },
+    {
+      "description": "Operator can delete multiple strategies",
+      "setActions": [
+        {
+          "action": "deleteStrategies(bytes32[])",
+          "args": {},
+          "executer": "owner",
+          "expect": "success",
+          "message": ""
         }
       ],
       "getActions": []
