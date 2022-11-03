@@ -9,7 +9,7 @@ import { SafeMath } from "@openzeppelin/contracts/math/SafeMath.sol";
 import { DataTypes } from "./libraries/types/DataTypes.sol";
 
 //  helper contracts
-import { ModifiersController } from "./ModifiersController.sol";
+import { ModifiersControllerExt } from "./ModifiersControllerExt.sol";
 import { RegistryProxy } from "./RegistryProxy.sol";
 
 //  interfaces
@@ -23,7 +23,7 @@ import { Constants } from "./utils/Constants.sol";
  * @author Opty.fi
  * @dev Contract to persit status of tokens,lpTokens,lp/cp and Vaults
  */
-contract Registry is IRegistry, ModifiersController {
+contract Registry is IRegistry, ModifiersControllerExt {
     using Address for address;
     using SafeMath for uint256;
 
@@ -34,10 +34,6 @@ contract Registry is IRegistry, ModifiersController {
     function become(RegistryProxy _registryProxy) external {
         require(msg.sender == _registryProxy.governance(), "!governance");
         require(_registryProxy.acceptImplementation() == 0, "!unauthorized");
-        investStrategyRegistry = address(0);
-        aprOracle = address(0);
-        strategyManager = address(0);
-        optyStakingRateBalancer = address(0);
     }
 
     /**
@@ -193,49 +189,71 @@ contract Registry is IRegistry, ModifiersController {
     /**
      * @inheritdoc IRegistry
      */
-    function approveCreditPool(address[] memory _pools) external override onlyOperator {
+    function approveSwapPool(address[] memory _pools) external override onlyOperator {
         for (uint256 _i; _i < _pools.length; _i++) {
-            _approveCreditPool(_pools[_i]);
+            _approveSwapPool(_pools[_i]);
         }
     }
 
     /**
      * @inheritdoc IRegistry
      */
-    function approveCreditPool(address _pool) external override onlyOperator {
-        _approveCreditPool(_pool);
+    function approveSwapPool(address _pool) external override onlyOperator {
+        _approveSwapPool(_pool);
     }
 
     /**
      * @inheritdoc IRegistry
      */
-    function revokeCreditPool(address[] memory _pools) external override onlyOperator {
+    function revokeSwapPool(address[] memory _pools) external override onlyOperator {
         for (uint256 _i; _i < _pools.length; _i++) {
-            _revokeCreditPool(_pools[_i]);
+            _revokeSwapPool(_pools[_i]);
         }
     }
 
     /**
      * @inheritdoc IRegistry
      */
-    function revokeCreditPool(address _pool) external override onlyOperator {
-        _revokeCreditPool(_pool);
+    function revokeSwapPool(address _pool) external override onlyOperator {
+        _revokeSwapPool(_pool);
     }
 
     /**
      * @inheritdoc IRegistry
      */
-    function rateCreditPool(DataTypes.PoolRate[] memory _poolRates) external override onlyRiskOperator {
+    function rateSwapPool(DataTypes.PoolRate[] memory _poolRates) external override onlyRiskOperator {
         for (uint256 _i; _i < _poolRates.length; _i++) {
-            _rateCreditPool(_poolRates[_i].pool, _poolRates[_i].rate);
+            _rateSwapPool(_poolRates[_i].pool, _poolRates[_i].rate);
         }
     }
 
     /**
      * @inheritdoc IRegistry
      */
-    function rateCreditPool(address _pool, uint8 _rate) external override onlyRiskOperator {
-        _rateCreditPool(_pool, _rate);
+    function rateSwapPool(address _pool, uint8 _rate) external override onlyRiskOperator {
+        _rateSwapPool(_pool, _rate);
+    }
+
+    /**
+     * @inheritdoc IRegistry
+     */
+    function approveSwapPoolAndMapToAdapter(DataTypes.PoolAdapter[] memory _poolAdapters)
+        external
+        override
+        onlyOperator
+    {
+        for (uint256 _i; _i < _poolAdapters.length; _i++) {
+            _approveSwapPool(_poolAdapters[_i].pool);
+            _setSwapPoolToAdapter(_poolAdapters[_i].pool, _poolAdapters[_i].adapter);
+        }
+    }
+
+    /**
+     * @inheritdoc IRegistry
+     */
+    function approveSwapPoolAndMapToAdapter(address _pool, address _adapter) external override onlyOperator {
+        _approveSwapPool(_pool);
+        _setSwapPoolToAdapter(_pool, _adapter);
     }
 
     /**
@@ -254,6 +272,24 @@ contract Registry is IRegistry, ModifiersController {
     function setLiquidityPoolToAdapter(address _pool, address _adapter) external override onlyOperator {
         require(liquidityPools[_pool].isLiquidityPool, "!liquidityPools");
         _setLiquidityPoolToAdapter(_pool, _adapter);
+    }
+
+    /**
+     * @inheritdoc IRegistry
+     */
+    function setSwapPoolToAdapter(DataTypes.PoolAdapter[] memory _poolAdapters) external override onlyOperator {
+        for (uint256 _i; _i < _poolAdapters.length; _i++) {
+            require(swapPools[_poolAdapters[_i].pool].isLiquidityPool, "!liquidityPools");
+            _setSwapPoolToAdapter(_poolAdapters[_i].pool, _poolAdapters[_i].adapter);
+        }
+    }
+
+    /**
+     * @inheritdoc IRegistry
+     */
+    function setSwapPoolToAdapter(address _pool, address _adapter) external override onlyOperator {
+        require(liquidityPools[_pool].isLiquidityPool, "!liquidityPools");
+        _setSwapPoolToAdapter(_pool, _adapter);
     }
 
     /**
@@ -526,26 +562,32 @@ contract Registry is IRegistry, ModifiersController {
         emit LogRateLiquidityPool(_pool, liquidityPools[_pool].rating, msg.sender);
     }
 
-    function _approveCreditPool(address _pool) internal {
-        creditPools[_pool].isLiquidityPool = true;
-        emit LogCreditPool(_pool, creditPools[_pool].isLiquidityPool, msg.sender);
+    function _approveSwapPool(address _pool) internal {
+        swapPools[_pool].isLiquidityPool = true;
+        emit LogSwapPool(_pool, swapPools[_pool].isLiquidityPool, msg.sender);
     }
 
-    function _revokeCreditPool(address _pool) internal {
-        creditPools[_pool].isLiquidityPool = false;
-        emit LogCreditPool(_pool, creditPools[_pool].isLiquidityPool, msg.sender);
+    function _revokeSwapPool(address _pool) internal {
+        swapPools[_pool].isLiquidityPool = false;
+        emit LogSwapPool(_pool, swapPools[_pool].isLiquidityPool, msg.sender);
     }
 
-    function _rateCreditPool(address _pool, uint8 _rate) internal {
-        require(creditPools[_pool].isLiquidityPool, "!creditPools");
-        creditPools[_pool].rating = _rate;
-        emit LogRateCreditPool(_pool, creditPools[_pool].rating, msg.sender);
+    function _rateSwapPool(address _pool, uint8 _rate) internal {
+        require(swapPools[_pool].isLiquidityPool, "!creditPools");
+        swapPools[_pool].rating = _rate;
+        emit LogRateSwapPool(_pool, swapPools[_pool].rating, msg.sender);
     }
 
     function _setLiquidityPoolToAdapter(address _pool, address _adapter) internal {
         require(IContractRegistry(_adapter).registryContract() == address(this), "!registryContract");
         liquidityPoolToAdapter[_pool] = _adapter;
         emit LogLiquidityPoolToAdapter(_pool, _adapter, msg.sender);
+    }
+
+    function _setSwapPoolToAdapter(address _pool, address _adapter) internal {
+        require(IContractRegistry(_adapter).registryContract() == address(this), "!registryContract");
+        swapPoolToAdapter[_pool] = _adapter;
+        emit LogSwapPoolToAdapter(_pool, _adapter, msg.sender);
     }
 
     function _setTokensHashToTokens(bytes32 _tokensHash, address[] memory _tokens) internal {

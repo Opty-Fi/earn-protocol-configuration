@@ -130,9 +130,9 @@ contract RegistryStorage is RegistryAdminStorage {
     mapping(address => DataTypes.LiquidityPool) public liquidityPools;
 
     /**
-     * @notice creaditPool address mapped to its struct having `pool`, `outputToken`, `isBorrow`
+     * @notice swap pool address mapped to its struct having `pool`, `outputToken`, `isBorrow`
      */
-    mapping(address => DataTypes.LiquidityPool) public creditPools;
+    mapping(address => DataTypes.LiquidityPool) public swapPools;
 
     /**
      * @notice liquidityPool address mapped to its adapter
@@ -231,12 +231,12 @@ contract RegistryStorage is RegistryAdminStorage {
     event LogLiquidityPool(address indexed pool, bool indexed enabled, address indexed caller);
 
     /**
-     * @notice Emitted when pool is approved or revoked as credit pool
-     * @param pool Credit Pool's address which is approved or revoked
-     * @param enabled Credit pool is approved (true) or revoked (false)
+     * @notice Emitted when pool is approved or revoked as swap pool
+     * @param pool Swap Pool's address which is approved or revoked
+     * @param enabled Swap pool is approved (true) or revoked (false)
      * @param caller Address of user who has called the respective function to trigger this event
      */
-    event LogCreditPool(address indexed pool, bool indexed enabled, address indexed caller);
+    event LogSwapPool(address indexed pool, bool indexed enabled, address indexed caller);
 
     /**
      * @notice Emitted when liquidity pool is rated
@@ -247,12 +247,12 @@ contract RegistryStorage is RegistryAdminStorage {
     event LogRateLiquidityPool(address indexed pool, uint8 indexed rate, address indexed caller);
 
     /**
-     * @notice Emitted when credit pool is rated
-     * @param pool Credit Pool's address which is rated
-     * @param rate Rating of Credit Pool set
+     * @notice Emitted when swap pool is rated
+     * @param pool Swap Pool's address which is rated
+     * @param rate Rating of Swap Pool set
      * @param caller Address of user who has called the respective function to trigger this event
      */
-    event LogRateCreditPool(address indexed pool, uint8 indexed rate, address indexed caller);
+    event LogRateSwapPool(address indexed pool, uint8 indexed rate, address indexed caller);
 
     /**
      * @notice Emitted when liquidity pool pool is assigned to adapter
@@ -362,4 +362,19 @@ contract RegistryStorage is RegistryAdminStorage {
      * @param caller Address of user who has called the respective function to trigger this event
      */
     event LogRPPoolRatings(uint256 indexed index, uint8 indexed lowerLimit, uint8 indexed upperLimit, address caller);
+}
+
+contract RegistryStorageV1 is RegistryStorage {
+    /**
+     * @notice swapPool address mapped to its adapter
+     */
+    mapping(address => address) public swapPoolToAdapter;
+
+    /**
+     * @notice Emitted when  swap pool is assigned to adapter
+     * @param pool Swap Pool's address which is mapped to the adapter
+     * @param adapter Address of the respective OptyFi's defi-adapter contract which is mapped to the Liquidity Pool
+     * @param caller Address of user who has called the respective function to trigger this event
+     */
+    event LogSwapPoolToAdapter(address indexed pool, address indexed adapter, address indexed caller);
 }

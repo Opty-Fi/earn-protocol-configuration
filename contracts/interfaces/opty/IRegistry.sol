@@ -126,41 +126,41 @@ interface IRegistry {
     function approveLiquidityPoolAndMapToAdapter(address _pool, address _adapter) external;
 
     /**
-     * @notice Approves multiple credit pools in one transaction
-     * @param _pools List of pools for approval to be considered as creditPool
+     * @notice Approves multiple swap pools in one transaction
+     * @param _pools List of pools for approval to be considered as swapPool
      */
-    function approveCreditPool(address[] memory _pools) external;
+    function approveSwapPool(address[] memory _pools) external;
 
     /**
-     * @notice Approves the credit pool
-     * @param _pool credit pool address to be approved
+     * @notice Approves the swap pool
+     * @param _pool swap pool address to be approved
      */
-    function approveCreditPool(address _pool) external;
+    function approveSwapPool(address _pool) external;
 
     /**
-     * @notice Revokes multiple credit pools in one transaction
-     * @param _pools List of pools for revoking from being used as creditPool
+     * @notice Revokes multiple swap pools in one transaction
+     * @param _pools List of pools for revoking from being used as swapPool
      */
-    function revokeCreditPool(address[] memory _pools) external;
+    function revokeSwapPool(address[] memory _pools) external;
 
     /**
-     * @notice Revokes the credit pool
-     * @param _pool pool for revoking from being used as creditPool
+     * @notice Revokes the swap pool
+     * @param _pool pool for revoking from being used as swapPool
      */
-    function revokeCreditPool(address _pool) external;
+    function revokeSwapPool(address _pool) external;
 
     /**
-     * @notice Sets the multiple pool rates and credit pools provided
-     * @param _poolRates List of pool rates ([_pool, _rate]) to set for creditPool
+     * @notice Sets the multiple pool rates and swap pools provided
+     * @param _poolRates List of pool rates ([_pool, _rate]) to set for swapPool
      */
-    function rateCreditPool(DataTypes.PoolRate[] memory _poolRates) external;
+    function rateSwapPool(DataTypes.PoolRate[] memory _poolRates) external;
 
     /**
-     * @notice Sets the pool rate for the credit pool provided
-     * @param _pool creditPool to map with its rating
-     * @param _rate rate for the creaditPool provided
+     * @notice Sets the pool rate for the swap pool provided
+     * @param _pool swapPool to map with its rating
+     * @param _rate rate for the swapPool provided
      */
-    function rateCreditPool(address _pool, uint8 _rate) external;
+    function rateSwapPool(address _pool, uint8 _rate) external;
 
     /**
      * @notice Maps multiple liquidity pools to their protocol adapters
@@ -174,6 +174,32 @@ interface IRegistry {
      * @param _adapter adapter for the liquidityPool provided
      */
     function setLiquidityPoolToAdapter(address _pool, address _adapter) external;
+
+    /**
+     * @notice Maps multiple swap pools to their protocol adapters
+     * @param _poolAdapters List of [pool, adapter] pairs to set
+     */
+    function setSwapPoolToAdapter(DataTypes.PoolAdapter[] memory _poolAdapters) external;
+
+    /**
+     * @notice Maps swap pool to its protocol adapter
+     * @param _pool swapPool to map with its adapter
+     * @param _adapter adapter for the swapPool provided
+     */
+    function setSwapPoolToAdapter(address _pool, address _adapter) external;
+
+    /**
+     * @notice Approve and map the multiple swap pools to their adapter
+     * @param _poolAdapters List of [pool, adapter] pairs to set
+     */
+    function approveSwapPoolAndMapToAdapter(DataTypes.PoolAdapter[] memory _poolAdapters) external;
+
+    /**
+     * @notice Approve and map the swap pool to the adapter
+     * @param _pool the address of liquidity pool
+     * @param _adapter the address of adapter
+     */
+    function approveSwapPoolAndMapToAdapter(address _pool, address _adapter) external;
 
     /**
      * @notice Maps multiple token pairs to their keccak256 hash
