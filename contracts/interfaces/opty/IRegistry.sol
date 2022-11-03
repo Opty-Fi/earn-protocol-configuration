@@ -126,6 +126,19 @@ interface IRegistry {
     function approveLiquidityPoolAndMapToAdapter(address _pool, address _adapter) external;
 
     /**
+     * @notice Maps multiple liquidity pools to their protocol adapters
+     * @param _poolAdapters List of [pool, adapter] pairs to set
+     */
+    function setLiquidityPoolToAdapter(DataTypes.PoolAdapter[] memory _poolAdapters) external;
+
+    /**
+     * @notice Maps liquidity pool to its protocol adapter
+     * @param _pool liquidityPool to map with its adapter
+     * @param _adapter adapter for the liquidityPool provided
+     */
+    function setLiquidityPoolToAdapter(address _pool, address _adapter) external;
+
+    /**
      * @notice Approves multiple swap pools in one transaction
      * @param _pools List of pools for approval to be considered as swapPool
      */
@@ -161,19 +174,6 @@ interface IRegistry {
      * @param _rate rate for the swapPool provided
      */
     function rateSwapPool(address _pool, uint8 _rate) external;
-
-    /**
-     * @notice Maps multiple liquidity pools to their protocol adapters
-     * @param _poolAdapters List of [pool, adapter] pairs to set
-     */
-    function setLiquidityPoolToAdapter(DataTypes.PoolAdapter[] memory _poolAdapters) external;
-
-    /**
-     * @notice Maps liquidity pool to its protocol adapter
-     * @param _pool liquidityPool to map with its adapter
-     * @param _adapter adapter for the liquidityPool provided
-     */
-    function setLiquidityPoolToAdapter(address _pool, address _adapter) external;
 
     /**
      * @notice Maps multiple swap pools to their protocol adapters
