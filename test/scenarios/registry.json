@@ -1301,6 +1301,330 @@
       "cleanActions": []
     },
     {
+      "description": "Operator should be able to set swap pool to adapter",
+      "setActions": [
+        {
+          "action": "approveSwapPool(address)",
+          "args": {
+            "lqs": "0x5d3a536E4D6DbD6114cc1Ead35777bAB948E3643"
+          },
+          "executor": "operator",
+          "expect": "success",
+          "message": ""
+        },
+        {
+          "action": "setSwapPoolToAdapter(address,address)",
+          "args": {
+            "lqs": {
+              "liquidityPool": "0x5d3a536E4D6DbD6114cc1Ead35777bAB948E3643",
+              "adapterName": "CompoundAdapter"
+            }
+          },
+          "executor": "operator",
+          "expect": "success",
+          "message": ""
+        }
+      ],
+      "getActions": [
+        {
+          "action": "swapPoolToAdapter(address)",
+          "args": {
+            "address": "0x5d3a536E4D6DbD6114cc1Ead35777bAB948E3643"
+          },
+          "expectedMultiValues": {},
+          "expectedValue": "CompoundAdapter"
+        }
+      ],
+      "cleanActions": [
+        {
+          "action": "revokeSwapPool(address)",
+          "args": {
+            "lqs": "0x5d3a536E4D6DbD6114cc1Ead35777bAB948E3643"
+          },
+          "executor": "operator",
+          "expect": "success",
+          "message": ""
+        }
+      ]
+    },
+    {
+      "description": "Non-Operator shouldn't be able to set swap pool to adapter",
+      "setActions": [
+        {
+          "action": "setSwapPoolToAdapter(address,address)",
+          "args": {
+            "lqs": {
+              "liquidityPool": "0x5d3a536E4D6DbD6114cc1Ead35777bAB948E3643",
+              "adapterName": "CompoundAdapter"
+            }
+          },
+          "executor": "user0",
+          "expect": "fail",
+          "message": "caller is not the operator"
+        }
+      ],
+      "getActions": [],
+      "cleanActions": []
+    },
+    {
+      "description": "Operator shouldn't be able to set swap pool to adapter with wrong registry contract",
+      "setActions": [
+        {
+          "action": "approveSwapPool(address)",
+          "args": {
+            "lqs": "0x5d3a536E4D6DbD6114cc1Ead35777bAB948E3643"
+          },
+          "executor": "operator",
+          "expect": "success",
+          "message": ""
+        },
+        {
+          "action": "setSwapPoolToAdapter(address,address)",
+          "args": {
+            "lqs": {
+              "liquidityPool": "0x5d3a536E4D6DbD6114cc1Ead35777bAB948E3643",
+              "adapterName": "dummyContract"
+            }
+          },
+          "executor": "operator",
+          "expect": "fail",
+          "message": "!registryContract"
+        }
+      ],
+      "getActions": [],
+      "cleanActions": [
+        {
+          "action": "revokeSwapPool(address)",
+          "args": {
+            "lqs": "0x5d3a536E4D6DbD6114cc1Ead35777bAB948E3643"
+          },
+          "executor": "operator",
+          "expect": "success",
+          "message": ""
+        }
+      ]
+    },
+    {
+      "description": "Operator should be able to set multiple swap pools to adapters",
+      "setActions": [
+        {
+          "action": "approveSwapPool(address[])",
+          "args": {
+            "lqs": ["0x5d3a536E4D6DbD6114cc1Ead35777bAB948E3643", "0x24a42fD28C976A61Df5D00D0599C34c4f90748c8"]
+          },
+          "executor": "operator",
+          "expect": "success",
+          "message": ""
+        },
+        {
+          "action": "setSwapPoolToAdapter((address,address)[])",
+          "args": {
+            "lqs": [
+              {
+                "liquidityPool": "0x5d3a536E4D6DbD6114cc1Ead35777bAB948E3643",
+                "adapterName": "CompoundAdapter"
+              },
+              {
+                "liquidityPool": "0x24a42fD28C976A61Df5D00D0599C34c4f90748c8",
+                "adapterName": "AaveV1Adapter"
+              }
+            ]
+          },
+          "executor": "operator",
+          "expect": "success",
+          "message": ""
+        }
+      ],
+      "getActions": [
+        {
+          "action": "swapPoolToAdapter(address)",
+          "args": {
+            "address": "0x5d3a536E4D6DbD6114cc1Ead35777bAB948E3643"
+          },
+          "expectedMultiValues": {},
+          "expectedValue": "CompoundAdapter"
+        },
+        {
+          "action": "swapPoolToAdapter(address)",
+          "args": {
+            "address": "0x24a42fD28C976A61Df5D00D0599C34c4f90748c8"
+          },
+          "expectedMultiValues": {},
+          "expectedValue": "AaveV1Adapter"
+        }
+      ],
+      "cleanActions": [
+        {
+          "action": "revokeSwapPool(address[])",
+          "args": {
+            "lqs": ["0x5d3a536E4D6DbD6114cc1Ead35777bAB948E3643", "0x24a42fD28C976A61Df5D00D0599C34c4f90748c8"]
+          },
+          "executor": "operator",
+          "expect": "success",
+          "message": ""
+        }
+      ]
+    },
+    {
+      "description": "Operator shouldn't be able to set mutiple non-approved swap pools to adapters",
+      "setActions": [
+        {
+          "action": "setSwapPoolToAdapter((address,address)[])",
+          "args": {
+            "lqs": [
+              {
+                "liquidityPool": "0x5d3a536E4D6DbD6114cc1Ead35777bAB948E3643",
+                "adapterName": "CompoundAdapter"
+              },
+              {
+                "liquidityPool": "0x24a42fD28C976A61Df5D00D0599C34c4f90748c8",
+                "adapterName": "AaveV1Adapter"
+              }
+            ]
+          },
+          "executor": "operator",
+          "expect": "fail",
+          "message": "!swapPools"
+        }
+      ],
+      "getActions": [],
+      "cleanActions": []
+    },
+    {
+      "description": "Non-Operator shouldn't be able to set multiple swap pools to adapters",
+      "setActions": [
+        {
+          "action": "setSwapPoolToAdapter((address,address)[])",
+          "args": {
+            "lqs": [
+              {
+                "liquidityPool": "0x5d3a536E4D6DbD6114cc1Ead35777bAB948E3643",
+                "adapterName": "CompoundAdapter"
+              },
+              {
+                "liquidityPool": "0x24a42fD28C976A61Df5D00D0599C34c4f90748c8",
+                "adapterName": "AaveV1Adapter"
+              }
+            ]
+          },
+          "executor": "user1",
+          "expect": "fail",
+          "message": "caller is not the operator"
+        }
+      ],
+      "getActions": [],
+      "cleanActions": []
+    },
+    {
+      "description": "Operator should be able to approve and set swap pool to adapter",
+      "setActions": [
+        {
+          "action": "approveSwapPoolAndMapToAdapter(address,address)",
+          "args": {
+            "lqs": {
+              "liquidityPool": "0x5d3a536E4D6DbD6114cc1Ead35777bAB948E3643",
+              "adapterName": "CompoundAdapter"
+            }
+          },
+          "executor": "operator",
+          "expect": "success",
+          "message": ""
+        }
+      ],
+      "getActions": [
+        {
+          "action": "swapPoolToAdapter(address)",
+          "args": {
+            "address": "0x5d3a536E4D6DbD6114cc1Ead35777bAB948E3643"
+          },
+          "expectedMultiValues": {},
+          "expectedValue": "CompoundAdapter"
+        }
+      ],
+      "cleanActions": [
+        {
+          "action": "revokeSwapPool(address)",
+          "args": {
+            "lqs": "0x5d3a536E4D6DbD6114cc1Ead35777bAB948E3643"
+          },
+          "executor": "operator",
+          "expect": "success",
+          "message": ""
+        }
+      ]
+    },
+    {
+      "description": "Non-Operator shouldn't be able to approve and set swap pool to adapter",
+      "setActions": [
+        {
+          "action": "approveSwapPoolAndMapToAdapter(address,address)",
+          "args": {
+            "lqs": {
+              "liquidityPool": "0x5d3a536E4D6DbD6114cc1Ead35777bAB948E3643",
+              "adapterName": "CompoundAdapter"
+            }
+          },
+          "executor": "user0",
+          "expect": "fail",
+          "message": "caller is not the operator"
+        }
+      ],
+      "getActions": [],
+      "cleanActions": []
+    },
+    {
+      "description": "Operator should be able to approve and set multiple swap pools to adapters",
+      "setActions": [
+        {
+          "action": "approveSwapPoolAndMapToAdapter((address,address)[])",
+          "args": {
+            "lqs": [
+              {
+                "liquidityPool": "0x5d3a536E4D6DbD6114cc1Ead35777bAB948E3643",
+                "adapterName": "CompoundAdapter"
+              },
+              {
+                "liquidityPool": "0x24a42fD28C976A61Df5D00D0599C34c4f90748c8",
+                "adapterName": "AaveV1Adapter"
+              }
+            ]
+          },
+          "executor": "operator",
+          "expect": "success",
+          "message": ""
+        }
+      ],
+      "getActions": [
+        {
+          "action": "swapPoolToAdapter(address)",
+          "args": {
+            "address": "0x5d3a536E4D6DbD6114cc1Ead35777bAB948E3643"
+          },
+          "expectedMultiValues": {},
+          "expectedValue": "CompoundAdapter"
+        },
+        {
+          "action": "swapPoolToAdapter(address)",
+          "args": {
+            "address": "0x24a42fD28C976A61Df5D00D0599C34c4f90748c8"
+          },
+          "expectedMultiValues": {},
+          "expectedValue": "AaveV1Adapter"
+        }
+      ],
+      "cleanActions": [
+        {
+          "action": "revokeSwapPool(address[])",
+          "args": {
+            "lqs": ["0x5d3a536E4D6DbD6114cc1Ead35777bAB948E3643", "0x24a42fD28C976A61Df5D00D0599C34c4f90748c8"]
+          },
+          "executor": "operator",
+          "expect": "success",
+          "message": ""
+        }
+      ]
+    },
+    {
       "description": "Operator should be able to set liquidity pool to adapter",
       "setActions": [
         {

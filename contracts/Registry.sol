@@ -279,7 +279,7 @@ contract Registry is IRegistry, ModifiersControllerExt {
      */
     function setSwapPoolToAdapter(DataTypes.PoolAdapter[] memory _poolAdapters) external override onlyOperator {
         for (uint256 _i; _i < _poolAdapters.length; _i++) {
-            require(swapPools[_poolAdapters[_i].pool].isLiquidityPool, "!liquidityPools");
+            require(swapPools[_poolAdapters[_i].pool].isLiquidityPool, "!swapPools");
             _setSwapPoolToAdapter(_poolAdapters[_i].pool, _poolAdapters[_i].adapter);
         }
     }
@@ -288,7 +288,7 @@ contract Registry is IRegistry, ModifiersControllerExt {
      * @inheritdoc IRegistry
      */
     function setSwapPoolToAdapter(address _pool, address _adapter) external override onlyOperator {
-        require(liquidityPools[_pool].isLiquidityPool, "!liquidityPools");
+        require(swapPools[_pool].isLiquidityPool, "!swapPools");
         _setSwapPoolToAdapter(_pool, _adapter);
     }
 
