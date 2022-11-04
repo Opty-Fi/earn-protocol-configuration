@@ -30,18 +30,7 @@ export async function deployRiskManager(
 
   let riskManager = await deployContract(hre, riskManagerContractName, isDeployedOnce, owner, [registry]);
 
-  const riskManagerProxy = await deployContract(
-    hre,
-    ESSENTIAL_CONTRACTS_DATA.RISK_MANAGER_PROXY,
-    isDeployedOnce,
-    owner,
-    [registry],
-  );
-
-  await executeFunc(riskManagerProxy, owner, "setPendingImplementation(address)", [riskManager.address]);
-  await executeFunc(riskManager, owner, "become(address)", [riskManagerProxy.address]);
-
-  riskManager = await hre.ethers.getContractAt(riskManagerContractName, riskManagerProxy.address, owner);
+  riskManager = await hre.ethers.getContractAt(riskManagerContractName, riskManager.address, owner);
 
   return riskManager;
 }

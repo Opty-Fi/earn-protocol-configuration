@@ -65,29 +65,6 @@ describe(scenario.title, () => {
               await registry[action.action]([usedToken]);
               break;
             }
-            case "become(address)": {
-              const newRiskManager = await deployContract(
-                hre,
-                TESTING_CONTRACTS.TEST_RISK_MANAGER_NEW_IMPLEMENTATION,
-                TESTING_DEPLOYMENT_ONCE,
-                owner,
-                [registry.address],
-              );
-
-              const riskManagerProxy = await hre.ethers.getContractAt(
-                ESSENTIAL_CONTRACTS.RISK_MANAGER_PROXY,
-                riskManager.address,
-              );
-
-              await executeFunc(riskManagerProxy, owner, "setPendingImplementation(address)", [newRiskManager.address]);
-              await executeFunc(newRiskManager, owner, "become(address)", [riskManagerProxy.address]);
-
-              riskManager = await hre.ethers.getContractAt(
-                TESTING_CONTRACTS.TEST_RISK_MANAGER_NEW_IMPLEMENTATION,
-                riskManagerProxy.address,
-              );
-              break;
-            }
           }
         }
         for (let i = 0; i < story.getActions.length; i++) {
@@ -102,15 +79,6 @@ describe(scenario.title, () => {
               await expect(riskManager[action.action](riskProfileCode, tokenHash)).to.be.revertedWith(
                 action.expectedValue.toString(),
               );
-              break;
-            }
-          }
-        }
-        for (let i = 0; i < story.cleanActions.length; i++) {
-          const action = story.cleanActions[i];
-          switch (action.action) {
-            case "deployRiskManager()": {
-              riskManager = await deployRiskManager(hre, owner, TESTING_DEPLOYMENT_ONCE, registry.address);
               break;
             }
           }
