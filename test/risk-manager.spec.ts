@@ -42,7 +42,6 @@ describe(scenario.title, () => {
       RISK_PROFILES[1].code,
       RISK_PROFILES[1].name,
       RISK_PROFILES[1].symbol,
-      RISK_PROFILES[1].canBorrow,
       RISK_PROFILES[1].poolRating,
     );
     //Initialize data for tokensHashIndexes

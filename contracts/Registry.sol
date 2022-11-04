@@ -347,21 +347,13 @@ contract Registry is IRegistry, ModifiersControllerExt {
     /**
      * @inheritdoc IRegistry
      */
-    function updateRiskProfileBorrow(uint256 _riskProfileCode, bool _canBorrow) external override onlyRiskOperator {
-        _updateRiskProfileBorrow(_riskProfileCode, _canBorrow);
-    }
-
-    /**
-     * @inheritdoc IRegistry
-     */
     function addRiskProfile(
         uint256 _riskProfileCode,
         string memory _name,
         string memory _symbol,
-        bool _canBorrow,
         DataTypes.PoolRatingsRange memory _poolRatingRange
     ) external override onlyRiskOperator {
-        _addRiskProfile(_riskProfileCode, _name, _symbol, _canBorrow, _poolRatingRange);
+        _addRiskProfile(_riskProfileCode, _name, _symbol, _poolRatingRange);
     }
 
     /**
@@ -371,17 +363,15 @@ contract Registry is IRegistry, ModifiersControllerExt {
         uint256[] memory _riskProfileCodes,
         string[] memory _names,
         string[] memory _symbols,
-        bool[] memory _canBorrow,
         DataTypes.PoolRatingsRange[] memory _poolRatingRanges
     ) external override onlyRiskOperator {
         require(_riskProfileCodes.length > 0, "!length>0");
         require(_riskProfileCodes.length == _poolRatingRanges.length, "!RP_PoolRatingsLength");
-        require(_riskProfileCodes.length == _canBorrow.length, "!RP_canBorrowLength");
         require(_riskProfileCodes.length == _names.length, "!RP_namesLength");
         require(_riskProfileCodes.length == _symbols.length, "!RP_symbolsLength");
 
         for (uint256 _i; _i < _riskProfileCodes.length; _i++) {
-            _addRiskProfile(_riskProfileCodes[_i], _names[_i], _symbols[_i], _canBorrow[_i], _poolRatingRanges[_i]);
+            _addRiskProfile(_riskProfileCodes[_i], _names[_i], _symbols[_i], _poolRatingRanges[_i]);
         }
     }
 
@@ -573,7 +563,7 @@ contract Registry is IRegistry, ModifiersControllerExt {
     }
 
     function _rateSwapPool(address _pool, uint8 _rate) internal {
-        require(swapPools[_pool].isLiquidityPool, "!creditPools");
+        require(swapPools[_pool].isLiquidityPool, "!swapPools");
         swapPools[_pool].rating = _rate;
         emit LogRateSwapPool(_pool, swapPools[_pool].rating, msg.sender);
     }
@@ -602,7 +592,6 @@ contract Registry is IRegistry, ModifiersControllerExt {
         uint256 _riskProfileCode,
         string memory _name,
         string memory _symbol,
-        bool _canBorrow,
         DataTypes.PoolRatingsRange memory _poolRatingRange
     ) internal {
         require(!riskProfiles[_riskProfileCode].exists, "RP_already_exists");
@@ -611,7 +600,6 @@ contract Registry is IRegistry, ModifiersControllerExt {
         riskProfilesArray.push(_riskProfileCode);
         riskProfiles[_riskProfileCode].name = _name;
         riskProfiles[_riskProfileCode].symbol = _symbol;
-        riskProfiles[_riskProfileCode].canBorrow = _canBorrow;
         riskProfiles[_riskProfileCode].poolRatingsRange.lowerLimit = _poolRatingRange.lowerLimit;
         riskProfiles[_riskProfileCode].poolRatingsRange.upperLimit = _poolRatingRange.upperLimit;
         riskProfiles[_riskProfileCode].index = riskProfilesArray.length - 1;
@@ -620,24 +608,13 @@ contract Registry is IRegistry, ModifiersControllerExt {
         emit LogRiskProfile(
             riskProfiles[_riskProfileCode].index,
             riskProfiles[_riskProfileCode].exists,
-            riskProfiles[_riskProfileCode].canBorrow,
+            false,
             msg.sender
         );
         emit LogRPPoolRatings(
             riskProfiles[_riskProfileCode].index,
             riskProfiles[_riskProfileCode].poolRatingsRange.lowerLimit,
             riskProfiles[_riskProfileCode].poolRatingsRange.upperLimit,
-            msg.sender
-        );
-    }
-
-    function _updateRiskProfileBorrow(uint256 _riskProfileCode, bool _canBorrow) internal {
-        require(riskProfiles[_riskProfileCode].exists, "!Rp_Exists");
-        riskProfiles[_riskProfileCode].canBorrow = _canBorrow;
-        emit LogRiskProfile(
-            riskProfiles[_riskProfileCode].index,
-            riskProfiles[_riskProfileCode].exists,
-            riskProfiles[_riskProfileCode].canBorrow,
             msg.sender
         );
     }
@@ -661,12 +638,7 @@ contract Registry is IRegistry, ModifiersControllerExt {
         uint256 _riskProfileCode = riskProfilesArray[_index];
         require(riskProfiles[_riskProfileCode].exists, "!Rp_Exists");
         riskProfiles[_riskProfileCode].exists = false;
-        emit LogRiskProfile(
-            _index,
-            riskProfiles[_riskProfileCode].exists,
-            riskProfiles[_riskProfileCode].canBorrow,
-            msg.sender
-        );
+        emit LogRiskProfile(_index, riskProfiles[_riskProfileCode].exists, false, msg.sender);
     }
 
     /**

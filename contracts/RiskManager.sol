@@ -104,10 +104,6 @@ contract RiskManager is IRiskManager, RiskManagerStorage, Modifiers {
                     !(_liquidityPool.rating >= _riskProfileStruct.poolRatingsRange.lowerLimit &&
                         _liquidityPool.rating <= _riskProfileStruct.poolRatingsRange.upperLimit);
 
-            _isStrategyInvalid = !_riskProfileStruct.canBorrow && !_isStrategyInvalid
-                ? _strategySteps[_i].isBorrow
-                : _isStrategyInvalid;
-
             if (_isStrategyInvalid) {
                 return _isStrategyInvalid;
             }

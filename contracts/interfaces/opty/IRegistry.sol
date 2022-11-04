@@ -232,14 +232,12 @@ interface IRegistry {
      * @param _riskProfileCode code of riskProfile
      * @param _name name of riskProfile
      * @param _symbol symbol of riskProfile
-     * @param _canBorrow A boolean value indicating whether the riskProfile allows borrow step
      * @param _poolRatingRange pool rating range ([lowerLimit, upperLimit]) supported by given risk profile
      */
     function addRiskProfile(
         uint256 _riskProfileCode,
         string memory _name,
         string memory _symbol,
-        bool _canBorrow,
         DataTypes.PoolRatingsRange memory _poolRatingRange
     ) external;
 
@@ -249,24 +247,14 @@ interface IRegistry {
      * @param _riskProfileCodes codes of riskProfiles
      * @param _names names of riskProfiles
      * @param _symbols symbols of riskProfiles
-     * @param _canBorrow List of boolean values indicating whether the riskProfile allows borrow step
      * @param _poolRatingRanges List of pool rating range supported by given list of risk profiles
      */
     function addRiskProfile(
         uint256[] memory _riskProfileCodes,
         string[] memory _names,
         string[] memory _symbols,
-        bool[] memory _canBorrow,
         DataTypes.PoolRatingsRange[] memory _poolRatingRanges
     ) external;
-
-    /**
-     * @notice Change the borrow permission for existing risk profile
-     * @param _riskProfileCode Risk profile code (Eg: 1,2, and so on where 0 is reserved for 'no strategy')
-     * to update with strategy steps
-     * @param _canBorrow A boolean value indicating whether the riskProfile allows borrow step
-     */
-    function updateRiskProfileBorrow(uint256 _riskProfileCode, bool _canBorrow) external;
 
     /**
      * @notice Update the pool ratings for existing risk profile

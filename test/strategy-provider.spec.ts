@@ -61,7 +61,6 @@ describe(scenario.title, () => {
         riskProfile.code,
         riskProfile.name,
         riskProfile.symbol,
-        riskProfile.canBorrow,
         riskProfile.poolRating,
       );
 

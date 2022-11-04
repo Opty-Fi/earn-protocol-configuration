@@ -33,7 +33,6 @@ export type RISK_PROFILE_DATA = {
   code: number;
   name: string;
   symbol: string;
-  canBorrow: boolean;
   poolRating: number[];
 }[];
 
