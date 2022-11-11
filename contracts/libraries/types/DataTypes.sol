@@ -50,7 +50,7 @@ library DataTypes {
     /**
      * @notice Container for Strategy used by Vault contract
      * @param index Index at which strategy is stored
-     * @param strategySteps StrategySteps consisting pool, outputToken and isBorrow
+     * @param strategySteps StrategySteps consisting pool, outputToken and isSwap
      */
     struct Strategy {
         uint256 index;

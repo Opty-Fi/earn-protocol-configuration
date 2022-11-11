@@ -526,6 +526,20 @@ contract Registry is IRegistry, ModifiersControllerExt {
         return liquidityPoolToAdapter[_pool];
     }
 
+    /**
+     * @inheritdoc IRegistry
+     */
+    function getSwapPool(address _pool) public view override returns (DataTypes.LiquidityPool memory) {
+        return swapPools[_pool];
+    }
+
+    /**
+     * @inheritdoc IRegistry
+     */
+    function getSwapPoolToAdapter(address _pool) public view override returns (address) {
+        return swapPoolToAdapter[_pool];
+    }
+
     function _approveToken(address _token) internal {
         tokens[_token] = true;
         emit LogToken(_token, tokens[_token], msg.sender);

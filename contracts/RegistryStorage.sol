@@ -125,12 +125,12 @@ contract RegistryStorage is RegistryAdminStorage {
     mapping(bytes32 => DataTypes.Token) public tokensHashToTokens;
 
     /**
-     * @notice liquidityPool address mapped to its struct having `pool`, `outputToken`, `isBorrow`
+     * @notice liquidityPool address mapped to its struct having `pool`, `outputToken`, `isSwap`
      */
     mapping(address => DataTypes.LiquidityPool) public liquidityPools;
 
     /**
-     * @notice swap pool address mapped to its struct having `pool`, `outputToken`, `isBorrow`
+     * @notice swap pool address mapped to its struct having `pool`, `outputToken`, `isSwap`
      */
     mapping(address => DataTypes.LiquidityPool) public swapPools;
 

@@ -170,13 +170,13 @@ export async function setBestStrategy(
     await strategyProvider.setBestDefaultStrategy(
       riskProfileCode,
       tokenHash,
-      strategy.map(item => [item.contract, item.outputToken, item.isBorrow]),
+      strategy.map(item => [item.contract, item.outputToken, item.isSwap]),
     );
   } else {
     await strategyProvider.setBestStrategy(
       riskProfileCode,
       tokenHash,
-      strategy.map(item => [item.contract, item.outputToken, item.isBorrow]),
+      strategy.map(item => [item.contract, item.outputToken, item.isSwap]),
     );
   }
 }

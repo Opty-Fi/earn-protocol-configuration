@@ -46,7 +46,7 @@ export type STRATEGY_DATA = {
   contract: string;
   outputTokenSymbol?: string;
   outputToken: string;
-  isBorrow: boolean;
+  isSwap: boolean;
 };
 
 export type DEFI_POOLS_DATA = {

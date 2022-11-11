@@ -376,6 +376,20 @@ interface IRegistry {
     function getLiquidityPool(address _pool) external view returns (DataTypes.LiquidityPool memory _liquidityPool);
 
     /**
+     * @notice Get the adapter address mapped to the swap _pool provided
+     * @param _pool Swap Pool (like USDC-ETH etc.) address
+     * @return _adapter Returns the adapter address mapped to the swap _pool provided
+     */
+    function getSwapPoolToAdapter(address _pool) external view returns (address _adapter);
+
+    /**
+     * @notice Get the rating and Is pool a swap pool for the _pool provided
+     * @param _pool Swap Pool (like USDC-ETH etc.) address
+     * @return _swapPool Returns the rating and Is pool a swap pool for the _pool provided
+     */
+    function getSwapPool(address _pool) external view returns (DataTypes.LiquidityPool memory _swapPool);
+
+    /**
      * @notice Get the adapter address mapped to the _pool provided
      * @param _pool Liquidity Pool (like cDAI etc.) address
      * @return _adapter Returns the adapter address mapped to the _pool provided

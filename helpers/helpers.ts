@@ -55,7 +55,7 @@ export function generateStrategyStep(strategy: STRATEGY_DATA[]): [string, string
     const tempArr: [string, string, boolean] = [
       strategy[index].contract,
       strategy[index].outputToken,
-      strategy[index].isBorrow,
+      strategy[index].isSwap,
     ];
     strategySteps.push(tempArr);
   }
