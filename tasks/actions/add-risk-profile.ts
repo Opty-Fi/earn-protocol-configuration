@@ -41,10 +41,7 @@ task(TASKS.ACTION_TASKS.ADD_RISK_PROFILE.NAME, TASKS.ACTION_TASKS.ADD_RISK_PROFI
 
     try {
       const registryContract = await hre.ethers.getContractAt(ESSENTIAL_CONTRACTS.REGISTRY, registry);
-      await addRiskProfile(registryContract, owner, riskprofilecode, name, symbol, [
-        lowestrating,
-        highestrating,
-      ]);
+      await addRiskProfile(registryContract, owner, riskprofilecode, name, symbol, [lowestrating, highestrating]);
       console.log("Finished adding risk profile : ", name);
     } catch (error) {
       console.error(`${TASKS.ACTION_TASKS.ADD_RISK_PROFILE.NAME}: `, error);
