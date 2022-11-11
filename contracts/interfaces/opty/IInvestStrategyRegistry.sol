@@ -15,7 +15,7 @@ interface IInvestStrategyRegistry {
     /**
      * @dev Assign strategy in form of _strategySteps to the _tokensHash
      * @param  _tokensHash Hash of underlying token address/addresses
-     * @param _strategySteps Strategy steps containing [pool, outputToken, isBorrow]
+     * @param _strategySteps Strategy steps containing [pool, outputToken, isSwap]
      * @return Returns true indicating successful operation.
      */
     function setStrategy(bytes32 _tokensHash, DataTypes.StrategyStep[] memory _strategySteps) external returns (bool);
@@ -23,7 +23,7 @@ interface IInvestStrategyRegistry {
     /**
      * @dev Assign multiple strategies in form of _strategySteps to the _tokensHash
      * @param  _tokensHash List of Hashes of underlying token address/addresses
-     * @param _strategySteps List of Strategy steps containing [pool, outputToken, isBorrow]
+     * @param _strategySteps List of Strategy steps containing [pool, outputToken, isSwap]
      * @return Returns true indicating successful operation.
      */
     function setStrategy(bytes32 _tokensHash, DataTypes.StrategyStep[][] memory _strategySteps) external returns (bool);
@@ -31,7 +31,7 @@ interface IInvestStrategyRegistry {
     /**
      * @dev Assign multiple strategies in form of _strategySteps to multiple tokens in form of _tokensHash
      * @param  _tokensHash List of Hashes of underlying token address/addresses
-     * @param _strategySteps List of Strategy steps containing [pool, outputToken, isBorrow]
+     * @param _strategySteps List of Strategy steps containing [pool, outputToken, isSwap]
      * @return Returns true indicating successful operation.
      */
     function setStrategy(bytes32[] memory _tokensHash, DataTypes.StrategyStep[][] memory _strategySteps)

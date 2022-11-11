@@ -9,8 +9,6 @@ import { DataTypes } from "./libraries/types/DataTypes.sol";
 
 //  helper contracts
 import { Modifiers } from "./Modifiers.sol";
-import { RiskManagerStorage } from "./RiskManagerStorage.sol";
-import { RiskManagerProxy } from "./RiskManagerProxy.sol";
 
 //  interfaces
 import { IStrategyProvider } from "./interfaces/opty/IStrategyProvider.sol";
@@ -22,19 +20,11 @@ import { Constants } from "./utils/Constants.sol";
  * @author Opty.fi
  * @dev Contract contains functionality for getting the best invest and vaultRewardToken strategy
  */
-contract RiskManager is IRiskManager, RiskManagerStorage, Modifiers {
+contract RiskManager is IRiskManager, Modifiers {
     using Address for address;
 
     /* solhint-disable no-empty-blocks */
     constructor(address _registry) public Modifiers(_registry) {}
-
-    /**
-     * @dev Set RiskManagerProxy to act as RiskManager
-     * @param _riskManagerProxy RiskManagerProxy contract address to act as RiskManager
-     */
-    function become(RiskManagerProxy _riskManagerProxy) external onlyGovernance {
-        require(_riskManagerProxy.acceptImplementation() == 0, "!unauthorized");
-    }
 
     /**
      * @inheritdoc IRiskManager
@@ -98,21 +88,18 @@ contract RiskManager is IRiskManager, RiskManagerStorage, Modifiers {
         DataTypes.RiskProfile memory _riskProfileStruct
     ) internal view returns (bool) {
         for (uint256 _i = 0; _i < _strategySteps.length; _i++) {
-            DataTypes.LiquidityPool memory _liquidityPool = registryContract.getLiquidityPool(_strategySteps[_i].pool);
+            DataTypes.LiquidityPool memory _pool =
+                _strategySteps[_i].isSwap
+                    ? registryContract.getSwapPool(_strategySteps[_i].pool)
+                    : registryContract.getLiquidityPool(_strategySteps[_i].pool);
             bool _isStrategyInvalid =
-                !_liquidityPool.isLiquidityPool ||
-                    !(_liquidityPool.rating >= _riskProfileStruct.poolRatingsRange.lowerLimit &&
-                        _liquidityPool.rating <= _riskProfileStruct.poolRatingsRange.upperLimit);
-
-            _isStrategyInvalid = !_riskProfileStruct.canBorrow && !_isStrategyInvalid
-                ? _strategySteps[_i].isBorrow
-                : _isStrategyInvalid;
-
+                !_pool.isLiquidityPool ||
+                    !(_pool.rating >= _riskProfileStruct.poolRatingsRange.lowerLimit &&
+                        _pool.rating <= _riskProfileStruct.poolRatingsRange.upperLimit);
             if (_isStrategyInvalid) {
                 return _isStrategyInvalid;
             }
         }
-
         return false;
     }
 }

@@ -3,30 +3,26 @@ import { RISK_PROFILE_DATA } from "../type";
 export const RISK_PROFILES: RISK_PROFILE_DATA = [
   {
     code: 0,
-    name: "RP0",
-    symbol: "RP0",
-    canBorrow: false,
+    name: "Save",
+    symbol: "Save",
     poolRating: [0, 5],
   },
   {
     code: 1,
-    name: "Basic",
-    symbol: "bas",
-    canBorrow: false,
+    name: "Earn",
+    symbol: "Earn",
     poolRating: [0, 10],
   },
   {
     code: 2,
-    name: "Intermediate",
-    symbol: "int",
-    canBorrow: true,
+    name: "Invest",
+    symbol: "Invst",
     poolRating: [0, 20],
   },
   {
     code: 3,
-    name: "Advanced",
-    symbol: "adv",
-    canBorrow: true,
+    name: "Degen",
+    symbol: "Dgen",
     poolRating: [0, 30],
   },
 ];

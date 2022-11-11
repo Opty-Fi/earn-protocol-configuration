@@ -33,7 +33,6 @@ export type RISK_PROFILE_DATA = {
   code: number;
   name: string;
   symbol: string;
-  canBorrow: boolean;
   poolRating: number[];
 }[];
 
@@ -47,7 +46,7 @@ export type STRATEGY_DATA = {
   contract: string;
   outputTokenSymbol?: string;
   outputToken: string;
-  isBorrow: boolean;
+  isSwap: boolean;
 };
 
 export type DEFI_POOLS_DATA = {

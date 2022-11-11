@@ -61,7 +61,6 @@ describe(scenario.title, () => {
         riskProfile.code,
         riskProfile.name,
         riskProfile.symbol,
-        riskProfile.canBorrow,
         riskProfile.poolRating,
       );
 
@@ -115,7 +114,7 @@ describe(scenario.title, () => {
                 riskProfile.code,
                 generateTokenHash([usedToken], NETWORKS_ID.MAINNET),
               ),
-            ).to.be.eqls(isEmpty ? [] : strategy.map(item => [item.contract, item.outputToken, item.isBorrow]));
+            ).to.be.eqls(isEmpty ? [] : strategy.map(item => [item.contract, item.outputToken, item.isSwap]));
 
             break;
           }
@@ -183,14 +182,14 @@ describe(scenario.title, () => {
               [action.action](
                 riskProfileCode,
                 usedTokenHash,
-                isEmpty ? [] : strategy.map(item => [item.contract, item.outputToken, item.isBorrow]),
+                isEmpty ? [] : strategy.map(item => [item.contract, item.outputToken, item.isSwap]),
               );
           } else {
             await expect(
               contracts[action.contract].connect(signers[action.executor])[action.action](
                 riskProfileCode,
                 isNonApprovedToken ? nonApprovedTokenHash : usedTokenHash,
-                strategy.map(item => [item.contract, item.outputToken, item.isBorrow]),
+                strategy.map(item => [item.contract, item.outputToken, item.isSwap]),
               ),
             ).to.be.revertedWith(action.message);
           }

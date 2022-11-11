@@ -37,15 +37,15 @@
         },
         {
           "contract": "registry",
-          "action": "approveLiquidityPool(address[])",
+          "action": "approvePool",
           "args": {},
           "expect": "success",
           "message": ""
         },
         {
           "contract": "registry",
-          "action": "rateLiquidityPool((address,uint8)[])",
-          "args": { "score": [2, 2, 2] },
+          "action": "ratePool",
+          "args": { "score": 2 },
           "expect": "success",
           "message": ""
         },
@@ -68,7 +68,7 @@
       "cleanActions": [
         {
           "contract": "registry",
-          "action": "revokeLiquidityPool(address[])"
+          "action": "revokePool"
         }
       ]
     },
@@ -85,7 +85,7 @@
         {
           "contract": "strategyProvider",
           "action": "setBestDefaultStrategy(uint256,bytes32,(address,address,bool)[])",
-          "args": { "score": [2, 2, 2] },
+          "args": { "score": 2 },
           "expect": "success",
           "message": ""
         }
@@ -101,7 +101,7 @@
       "cleanActions": [
         {
           "contract": "registry",
-          "action": "revokeLiquidityPool(address[])"
+          "action": "revokePool"
         }
       ]
     },
@@ -119,15 +119,15 @@
         },
         {
           "contract": "registry",
-          "action": "approveLiquidityPool(address[])",
+          "action": "approvePool",
           "args": {},
           "expect": "success",
           "message": ""
         },
         {
           "contract": "registry",
-          "action": "rateLiquidityPool((address,uint8)[])",
-          "args": { "score": [1, 1, 1] },
+          "action": "ratePool",
+          "args": { "score": 1 },
           "expect": "success",
           "message": ""
         },
@@ -141,7 +141,7 @@
         {
           "contract": "strategyProvider",
           "action": "setBestDefaultStrategy(uint256,bytes32,(address,address,bool)[])",
-          "args": { "score": [5, 5, 5] },
+          "args": { "score": 5 },
           "expect": "success",
           "message": ""
         }
@@ -157,7 +157,7 @@
       "cleanActions": [
         {
           "contract": "registry",
-          "action": "revokeLiquidityPool(address[])"
+          "action": "revokePool"
         },
         {
           "contract": "strategyProvider",
@@ -171,34 +171,6 @@
     }
   ],
   "standaloneStories": [
-    {
-      "description": "[Upgradability] Should be able to use functions and variables in new contracts and maintains old variable states",
-      "setActions": [
-        {
-          "contract": "riskManager",
-          "action": "become(address)",
-          "args": {},
-          "executor": "owner",
-          "expect": "success",
-          "message": ""
-        }
-      ],
-      "getActions": [
-        {
-          "contract": "riskManager",
-          "action": "isNewContract()",
-          "args": {},
-          "expectedValue": true,
-          "expectedMultiValues": {}
-        }
-      ],
-      "cleanActions": [
-        {
-          "contract": "riskManager",
-          "action": "deployRiskManager()"
-        }
-      ]
-    },
     {
       "description": "GetBestStrategy should revert with non-exist underlyingTokenHash",
       "setActions": [],
