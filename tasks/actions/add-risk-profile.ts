@@ -10,10 +10,9 @@ task(TASKS.ACTION_TASKS.ADD_RISK_PROFILE.NAME, TASKS.ACTION_TASKS.ADD_RISK_PROFI
   .addParam("riskprofilecode", "the code of risk profile", 0, types.int)
   .addParam("name", "the name of risk profile", "", types.string)
   .addParam("symbol", "the symbol of risk profile", "", types.string)
-  .addParam("canborrow", "whether risk profile can borrow or not", false, types.boolean)
   .addParam("lowestrating", "the lowest rating", 0, types.int)
   .addParam("highestrating", "the highest rating", 0, types.int)
-  .setAction(async ({ riskprofilecode, name, symbol, canborrow, lowestrating, highestrating, registry }, hre) => {
+  .setAction(async ({ riskprofilecode, name, symbol, lowestrating, highestrating, registry }, hre) => {
     const [owner] = await hre.ethers.getSigners();
 
     if (registry === "") {
@@ -42,10 +41,7 @@ task(TASKS.ACTION_TASKS.ADD_RISK_PROFILE.NAME, TASKS.ACTION_TASKS.ADD_RISK_PROFI
 
     try {
       const registryContract = await hre.ethers.getContractAt(ESSENTIAL_CONTRACTS.REGISTRY, registry);
-      await addRiskProfile(registryContract, owner, riskprofilecode, name, symbol, canborrow, [
-        lowestrating,
-        highestrating,
-      ]);
+      await addRiskProfile(registryContract, owner, riskprofilecode, name, symbol, [lowestrating, highestrating]);
       console.log("Finished adding risk profile : ", name);
     } catch (error) {
       console.error(`${TASKS.ACTION_TASKS.ADD_RISK_PROFILE.NAME}: `, error);

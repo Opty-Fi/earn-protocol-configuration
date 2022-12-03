@@ -31,12 +31,12 @@ library DataTypes {
      * @notice Container for Strategy Steps used by Strategy
      * @param pool Liquidity Pool address
      * @param outputToken Output token of the liquidity pool
-     * @param isBorrow If borrow is allowed or not for the liquidity pool
+     * @param isSwap true if the underlying token is to be swapped to output token
      */
     struct StrategyStep {
         address pool;
         address outputToken;
-        bool isBorrow;
+        bool isSwap;
     }
 
     /**
@@ -52,7 +52,7 @@ library DataTypes {
     /**
      * @notice Container for Strategy used by Vault contract
      * @param index Index at which strategy is stored
-     * @param strategySteps StrategySteps consisting pool, outputToken and isBorrow
+     * @param strategySteps StrategySteps consisting pool, outputToken and isSwap
      */
     struct Strategy {
         uint256 index;
@@ -112,13 +112,13 @@ library DataTypes {
     /**
      * @notice Container for containing risk Profile's configuration
      * @param index Index at which risk profile is stored
-     * @param canBorrow True if borrow is allowed for the risk profile
+     * @param var0 boolean placeholder
      * @param poolRatingsRange Container for having limit range for the pools
      * @param exists if risk profile exists or not
      */
     struct RiskProfile {
         uint256 index;
-        bool canBorrow;
+        bool var0;
         PoolRatingsRange poolRatingsRange;
         bool exists;
         string name;

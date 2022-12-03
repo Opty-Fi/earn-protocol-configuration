@@ -126,43 +126,6 @@ interface IRegistry {
     function approveLiquidityPoolAndMapToAdapter(address _pool, address _adapter) external;
 
     /**
-     * @notice Approves multiple credit pools in one transaction
-     * @param _pools List of pools for approval to be considered as creditPool
-     */
-    function approveCreditPool(address[] memory _pools) external;
-
-    /**
-     * @notice Approves the credit pool
-     * @param _pool credit pool address to be approved
-     */
-    function approveCreditPool(address _pool) external;
-
-    /**
-     * @notice Revokes multiple credit pools in one transaction
-     * @param _pools List of pools for revoking from being used as creditPool
-     */
-    function revokeCreditPool(address[] memory _pools) external;
-
-    /**
-     * @notice Revokes the credit pool
-     * @param _pool pool for revoking from being used as creditPool
-     */
-    function revokeCreditPool(address _pool) external;
-
-    /**
-     * @notice Sets the multiple pool rates and credit pools provided
-     * @param _poolRates List of pool rates ([_pool, _rate]) to set for creditPool
-     */
-    function rateCreditPool(DataTypes.PoolRate[] memory _poolRates) external;
-
-    /**
-     * @notice Sets the pool rate for the credit pool provided
-     * @param _pool creditPool to map with its rating
-     * @param _rate rate for the creaditPool provided
-     */
-    function rateCreditPool(address _pool, uint8 _rate) external;
-
-    /**
      * @notice Maps multiple liquidity pools to their protocol adapters
      * @param _poolAdapters List of [pool, adapter] pairs to set
      */
@@ -174,6 +137,69 @@ interface IRegistry {
      * @param _adapter adapter for the liquidityPool provided
      */
     function setLiquidityPoolToAdapter(address _pool, address _adapter) external;
+
+    /**
+     * @notice Approves multiple swap pools in one transaction
+     * @param _pools List of pools for approval to be considered as swapPool
+     */
+    function approveSwapPool(address[] memory _pools) external;
+
+    /**
+     * @notice Approves the swap pool
+     * @param _pool swap pool address to be approved
+     */
+    function approveSwapPool(address _pool) external;
+
+    /**
+     * @notice Revokes multiple swap pools in one transaction
+     * @param _pools List of pools for revoking from being used as swapPool
+     */
+    function revokeSwapPool(address[] memory _pools) external;
+
+    /**
+     * @notice Revokes the swap pool
+     * @param _pool pool for revoking from being used as swapPool
+     */
+    function revokeSwapPool(address _pool) external;
+
+    /**
+     * @notice Sets the multiple pool rates and swap pools provided
+     * @param _poolRates List of pool rates ([_pool, _rate]) to set for swapPool
+     */
+    function rateSwapPool(DataTypes.PoolRate[] memory _poolRates) external;
+
+    /**
+     * @notice Sets the pool rate for the swap pool provided
+     * @param _pool swapPool to map with its rating
+     * @param _rate rate for the swapPool provided
+     */
+    function rateSwapPool(address _pool, uint8 _rate) external;
+
+    /**
+     * @notice Maps multiple swap pools to their protocol adapters
+     * @param _poolAdapters List of [pool, adapter] pairs to set
+     */
+    function setSwapPoolToAdapter(DataTypes.PoolAdapter[] memory _poolAdapters) external;
+
+    /**
+     * @notice Maps swap pool to its protocol adapter
+     * @param _pool swapPool to map with its adapter
+     * @param _adapter adapter for the swapPool provided
+     */
+    function setSwapPoolToAdapter(address _pool, address _adapter) external;
+
+    /**
+     * @notice Approve and map the multiple swap pools to their adapter
+     * @param _poolAdapters List of [pool, adapter] pairs to set
+     */
+    function approveSwapPoolAndMapToAdapter(DataTypes.PoolAdapter[] memory _poolAdapters) external;
+
+    /**
+     * @notice Approve and map the swap pool to the adapter
+     * @param _pool the address of liquidity pool
+     * @param _adapter the address of adapter
+     */
+    function approveSwapPoolAndMapToAdapter(address _pool, address _adapter) external;
 
     /**
      * @notice Maps multiple token pairs to their keccak256 hash
@@ -212,14 +238,12 @@ interface IRegistry {
      * @param _riskProfileCode code of riskProfile
      * @param _name name of riskProfile
      * @param _symbol symbol of riskProfile
-     * @param _canBorrow A boolean value indicating whether the riskProfile allows borrow step
      * @param _poolRatingRange pool rating range ([lowerLimit, upperLimit]) supported by given risk profile
      */
     function addRiskProfile(
         uint256 _riskProfileCode,
         string memory _name,
         string memory _symbol,
-        bool _canBorrow,
         DataTypes.PoolRatingsRange memory _poolRatingRange
     ) external;
 
@@ -229,24 +253,14 @@ interface IRegistry {
      * @param _riskProfileCodes codes of riskProfiles
      * @param _names names of riskProfiles
      * @param _symbols symbols of riskProfiles
-     * @param _canBorrow List of boolean values indicating whether the riskProfile allows borrow step
      * @param _poolRatingRanges List of pool rating range supported by given list of risk profiles
      */
     function addRiskProfile(
         uint256[] memory _riskProfileCodes,
         string[] memory _names,
         string[] memory _symbols,
-        bool[] memory _canBorrow,
         DataTypes.PoolRatingsRange[] memory _poolRatingRanges
     ) external;
-
-    /**
-     * @notice Change the borrow permission for existing risk profile
-     * @param _riskProfileCode Risk profile code (Eg: 1,2, and so on where 0 is reserved for 'no strategy')
-     * to update with strategy steps
-     * @param _canBorrow A boolean value indicating whether the riskProfile allows borrow step
-     */
-    function updateRiskProfileBorrow(uint256 _riskProfileCode, bool _canBorrow) external;
 
     /**
      * @notice Update the pool ratings for existing risk profile
@@ -366,6 +380,20 @@ interface IRegistry {
      * @return _liquidityPool Returns the rating and Is pool a liquidity pool for the _pool provided
      */
     function getLiquidityPool(address _pool) external view returns (DataTypes.LiquidityPool memory _liquidityPool);
+
+    /**
+     * @notice Get the adapter address mapped to the swap _pool provided
+     * @param _pool Swap Pool (like USDC-ETH etc.) address
+     * @return _adapter Returns the adapter address mapped to the swap _pool provided
+     */
+    function getSwapPoolToAdapter(address _pool) external view returns (address _adapter);
+
+    /**
+     * @notice Get the rating and Is pool a swap pool for the _pool provided
+     * @param _pool Swap Pool (like USDC-ETH etc.) address
+     * @return _swapPool Returns the rating and Is pool a swap pool for the _pool provided
+     */
+    function getSwapPool(address _pool) external view returns (DataTypes.LiquidityPool memory _swapPool);
 
     /**
      * @notice Get the adapter address mapped to the _pool provided

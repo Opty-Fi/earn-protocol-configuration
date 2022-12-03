@@ -107,7 +107,6 @@ Usage: add risk profile in Registry contract
 Options:
 --registry            required <address> the address of registry
 --riskprofilecode     required <number>  the code of risk profile
---canborrow           required <boolean> whether risk profile can borrow or not
 --lowestrating        required <number>     the lowest rating
 --highestrating       required <number>     the highest rating
 --network             optional <string>  name of the network provider (default: hardhat)
@@ -120,7 +119,6 @@ Options:
   --network localhost \
   --registry 0x0000000000000000000000000000000000000000 \
   --riskprofilecode 1 \
-  --canborrow true \
   --lowestrating 0 \
   --highestrating 10
 ```

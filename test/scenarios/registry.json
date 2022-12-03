@@ -1003,10 +1003,10 @@
       "cleanActions": []
     },
     {
-      "description": "Operator should be able to approve a credit pool",
+      "description": "Operator should be able to approve a swap pool",
       "setActions": [
         {
-          "action": "approveCreditPool(address)",
+          "action": "approveSwapPool(address)",
           "args": {
             "lqs": "0x5d3a536E4D6DbD6114cc1Ead35777bAB948E3643"
           },
@@ -1017,7 +1017,7 @@
       ],
       "getActions": [
         {
-          "action": "creditPools(address)",
+          "action": "swapPools(address)",
           "args": {
             "address": "0x5d3a536E4D6DbD6114cc1Ead35777bAB948E3643"
           },
@@ -1027,7 +1027,7 @@
       ],
       "cleanActions": [
         {
-          "action": "revokeCreditPool(address)",
+          "action": "revokeSwapPool(address)",
           "args": {
             "lqs": "0x5d3a536E4D6DbD6114cc1Ead35777bAB948E3643"
           },
@@ -1038,10 +1038,10 @@
       ]
     },
     {
-      "description": "Operator should be able to approve a list of credit pools",
+      "description": "Operator should be able to approve a list of swap pools",
       "setActions": [
         {
-          "action": "approveCreditPool(address[])",
+          "action": "approveSwapPool(address[])",
           "args": {
             "lqs": ["0x5d3a536E4D6DbD6114cc1Ead35777bAB948E3643", "0x24a42fD28C976A61Df5D00D0599C34c4f90748c8"]
           },
@@ -1052,7 +1052,7 @@
       ],
       "getActions": [
         {
-          "action": "creditPools(address)",
+          "action": "swapPools(address)",
           "args": {
             "address": "0x5d3a536E4D6DbD6114cc1Ead35777bAB948E3643"
           },
@@ -1060,7 +1060,7 @@
           "expectedMultiValues": {}
         },
         {
-          "action": "creditPools(address)",
+          "action": "swapPools(address)",
           "args": {
             "address": "0x24a42fD28C976A61Df5D00D0599C34c4f90748c8"
           },
@@ -1070,7 +1070,7 @@
       ],
       "cleanActions": [
         {
-          "action": "revokeCreditPool(address[])",
+          "action": "revokeSwapPool(address[])",
           "args": {
             "lqs": ["0x5d3a536E4D6DbD6114cc1Ead35777bAB948E3643", "0x24a42fD28C976A61Df5D00D0599C34c4f90748c8"]
           },
@@ -1081,10 +1081,10 @@
       ]
     },
     {
-      "description": "Non-Operator shouldn't be able to approve a credit pool",
+      "description": "Non-Operator shouldn't be able to approve a swap pool",
       "setActions": [
         {
-          "action": "approveCreditPool(address)",
+          "action": "approveSwapPool(address)",
           "args": {
             "lqs": "0x5d3a536E4D6DbD6114cc1Ead35777bAB948E3643"
           },
@@ -1097,10 +1097,10 @@
       "cleanActions": []
     },
     {
-      "description": "Non-Operator shouldn't be able to approve a list of credit pools",
+      "description": "Non-Operator shouldn't be able to approve a list of swap pools",
       "setActions": [
         {
-          "action": "approveCreditPool(address[])",
+          "action": "approveSwapPool(address[])",
           "args": {
             "lqs": ["0x5d3a536E4D6DbD6114cc1Ead35777bAB948E3643", "0x24a42fD28C976A61Df5D00D0599C34c4f90748c8"]
           },
@@ -1113,10 +1113,10 @@
       "cleanActions": []
     },
     {
-      "description": "RiskOperator should be able to rate a credit pool",
+      "description": "RiskOperator should be able to rate a swap pool",
       "setActions": [
         {
-          "action": "approveCreditPool(address)",
+          "action": "approveSwapPool(address)",
           "args": {
             "lqs": "0x5d3a536E4D6DbD6114cc1Ead35777bAB948E3643"
           },
@@ -1125,7 +1125,7 @@
           "message": ""
         },
         {
-          "action": "rateCreditPool(address,uint8)",
+          "action": "rateSwapPool(address,uint8)",
           "args": {
             "lqRate": ["0x5d3a536E4D6DbD6114cc1Ead35777bAB948E3643", 2]
           },
@@ -1136,7 +1136,7 @@
       ],
       "getActions": [
         {
-          "action": "creditPools(address)",
+          "action": "swapPools(address)",
           "args": {
             "address": "0x5d3a536E4D6DbD6114cc1Ead35777bAB948E3643"
           },
@@ -1146,7 +1146,7 @@
       ],
       "cleanActions": [
         {
-          "action": "rateCreditPool(address,uint8)",
+          "action": "rateSwapPool(address,uint8)",
           "args": {
             "lqRate": ["0x5d3a536E4D6DbD6114cc1Ead35777bAB948E3643", 0]
           },
@@ -1155,7 +1155,7 @@
           "message": ""
         },
         {
-          "action": "revokeCreditPool(address)",
+          "action": "revokeSwapPool(address)",
           "args": {
             "lqs": "0x5d3a536E4D6DbD6114cc1Ead35777bAB948E3643"
           },
@@ -1166,10 +1166,10 @@
       ]
     },
     {
-      "description": "RiskOperator should be able to rate a list of credit pools",
+      "description": "RiskOperator should be able to rate a list of swap pools",
       "setActions": [
         {
-          "action": "approveCreditPool(address[])",
+          "action": "approveSwapPool(address[])",
           "args": {
             "lqs": ["0x5d3a536E4D6DbD6114cc1Ead35777bAB948E3643", "0x24a42fD28C976A61Df5D00D0599C34c4f90748c8"]
           },
@@ -1178,7 +1178,7 @@
           "message": ""
         },
         {
-          "action": "rateCreditPool((address,uint8)[])",
+          "action": "rateSwapPool((address,uint8)[])",
           "args": {
             "lqRate": [
               ["0x5d3a536E4D6DbD6114cc1Ead35777bAB948E3643", 2],
@@ -1192,7 +1192,7 @@
       ],
       "getActions": [
         {
-          "action": "creditPools(address)",
+          "action": "swapPools(address)",
           "args": {
             "address": "0x5d3a536E4D6DbD6114cc1Ead35777bAB948E3643"
           },
@@ -1200,7 +1200,7 @@
           "expectedMultiValues": {}
         },
         {
-          "action": "creditPools(address)",
+          "action": "swapPools(address)",
           "args": {
             "address": "0x24a42fD28C976A61Df5D00D0599C34c4f90748c8"
           },
@@ -1210,7 +1210,7 @@
       ],
       "cleanActions": [
         {
-          "action": "rateCreditPool((address,uint8)[])",
+          "action": "rateSwapPool((address,uint8)[])",
           "args": {
             "lqRate": [
               ["0x5d3a536E4D6DbD6114cc1Ead35777bAB948E3643", 0],
@@ -1222,7 +1222,7 @@
           "message": ""
         },
         {
-          "action": "revokeCreditPool(address[])",
+          "action": "revokeSwapPool(address[])",
           "args": {
             "lqs": ["0x5d3a536E4D6DbD6114cc1Ead35777bAB948E3643", "0x24a42fD28C976A61Df5D00D0599C34c4f90748c8"]
           },
@@ -1233,10 +1233,10 @@
       ]
     },
     {
-      "description": "Non-RiskOperator shouldn't be able to rate a credit pool",
+      "description": "Non-RiskOperator shouldn't be able to rate a swap pool",
       "setActions": [
         {
-          "action": "rateCreditPool(address,uint8)",
+          "action": "rateSwapPool(address,uint8)",
           "args": {
             "lqRate": ["0x5d3a536E4D6DbD6114cc1Ead35777bAB948E3643", 2]
           },
@@ -1249,10 +1249,10 @@
       "cleanActions": []
     },
     {
-      "description": "Non-RiskOperator shouldn't be able to rate a list of credit pools",
+      "description": "Non-RiskOperator shouldn't be able to rate a list of swap pools",
       "setActions": [
         {
-          "action": "rateCreditPool((address,uint8)[])",
+          "action": "rateSwapPool((address,uint8)[])",
           "args": {
             "lqRate": [
               ["0x5d3a536E4D6DbD6114cc1Ead35777bAB948E3643", 2],
@@ -1268,26 +1268,26 @@
       "cleanActions": []
     },
     {
-      "description": "RiskOperator shouldn't be able to rate non-approved liquidity pools",
+      "description": "RiskOperator shouldn't be able to rate non-approved swap pools",
       "setActions": [
         {
-          "action": "rateCreditPool((address,uint8)[])",
+          "action": "rateSwapPool((address,uint8)[])",
           "args": {
             "lqRate": [["0x5d3a536E4D6DbD6114cc1Ead35777bAB948E3643", 2]]
           },
           "executor": "riskOperator",
           "expect": "fail",
-          "message": "!creditPools"
+          "message": "!swapPools"
         }
       ],
       "getActions": [],
       "cleanActions": []
     },
     {
-      "description": "Operator should be able to revoke a credit pool",
+      "description": "Operator should be able to revoke a swap pool",
       "setActions": [
         {
-          "action": "approveCreditPool(address)",
+          "action": "approveSwapPool(address)",
           "args": {
             "lqs": "0x5d3a536E4D6DbD6114cc1Ead35777bAB948E3643"
           },
@@ -1296,7 +1296,7 @@
           "message": ""
         },
         {
-          "action": "revokeCreditPool(address)",
+          "action": "revokeSwapPool(address)",
           "args": {
             "lqs": "0x5d3a536E4D6DbD6114cc1Ead35777bAB948E3643"
           },
@@ -1307,7 +1307,7 @@
       ],
       "getActions": [
         {
-          "action": "creditPools(address)",
+          "action": "swapPools(address)",
           "args": {
             "address": "0x5d3a536E4D6DbD6114cc1Ead35777bAB948E3643"
           },
@@ -1318,10 +1318,10 @@
       "cleanActions": []
     },
     {
-      "description": "Operator should be able to revoke a list of credit pools",
+      "description": "Operator should be able to revoke a list of swap pools",
       "setActions": [
         {
-          "action": "approveCreditPool(address[])",
+          "action": "approveSwapPool(address[])",
           "args": {
             "lqs": ["0x5d3a536E4D6DbD6114cc1Ead35777bAB948E3643", "0x24a42fD28C976A61Df5D00D0599C34c4f90748c8"]
           },
@@ -1330,7 +1330,7 @@
           "message": ""
         },
         {
-          "action": "revokeCreditPool(address[])",
+          "action": "revokeSwapPool(address[])",
           "args": {
             "lqs": ["0x5d3a536E4D6DbD6114cc1Ead35777bAB948E3643", "0x24a42fD28C976A61Df5D00D0599C34c4f90748c8"]
           },
@@ -1341,7 +1341,7 @@
       ],
       "getActions": [
         {
-          "action": "creditPools(address)",
+          "action": "swapPools(address)",
           "args": {
             "address": "0x5d3a536E4D6DbD6114cc1Ead35777bAB948E3643"
           },
@@ -1349,7 +1349,7 @@
           "expectedMultiValues": {}
         },
         {
-          "action": "creditPools(address)",
+          "action": "swapPools(address)",
           "args": {
             "address": "0x24a42fD28C976A61Df5D00D0599C34c4f90748c8"
           },
@@ -1358,6 +1358,330 @@
         }
       ],
       "cleanActions": []
+    },
+    {
+      "description": "Operator should be able to set swap pool to adapter",
+      "setActions": [
+        {
+          "action": "approveSwapPool(address)",
+          "args": {
+            "lqs": "0x5d3a536E4D6DbD6114cc1Ead35777bAB948E3643"
+          },
+          "executor": "operator",
+          "expect": "success",
+          "message": ""
+        },
+        {
+          "action": "setSwapPoolToAdapter(address,address)",
+          "args": {
+            "lqs": {
+              "liquidityPool": "0x5d3a536E4D6DbD6114cc1Ead35777bAB948E3643",
+              "adapterName": "CompoundAdapter"
+            }
+          },
+          "executor": "operator",
+          "expect": "success",
+          "message": ""
+        }
+      ],
+      "getActions": [
+        {
+          "action": "swapPoolToAdapter(address)",
+          "args": {
+            "address": "0x5d3a536E4D6DbD6114cc1Ead35777bAB948E3643"
+          },
+          "expectedMultiValues": {},
+          "expectedValue": "CompoundAdapter"
+        }
+      ],
+      "cleanActions": [
+        {
+          "action": "revokeSwapPool(address)",
+          "args": {
+            "lqs": "0x5d3a536E4D6DbD6114cc1Ead35777bAB948E3643"
+          },
+          "executor": "operator",
+          "expect": "success",
+          "message": ""
+        }
+      ]
+    },
+    {
+      "description": "Non-Operator shouldn't be able to set swap pool to adapter",
+      "setActions": [
+        {
+          "action": "setSwapPoolToAdapter(address,address)",
+          "args": {
+            "lqs": {
+              "liquidityPool": "0x5d3a536E4D6DbD6114cc1Ead35777bAB948E3643",
+              "adapterName": "CompoundAdapter"
+            }
+          },
+          "executor": "user0",
+          "expect": "fail",
+          "message": "caller is not the operator"
+        }
+      ],
+      "getActions": [],
+      "cleanActions": []
+    },
+    {
+      "description": "Operator shouldn't be able to set swap pool to adapter with wrong registry contract",
+      "setActions": [
+        {
+          "action": "approveSwapPool(address)",
+          "args": {
+            "lqs": "0x5d3a536E4D6DbD6114cc1Ead35777bAB948E3643"
+          },
+          "executor": "operator",
+          "expect": "success",
+          "message": ""
+        },
+        {
+          "action": "setSwapPoolToAdapter(address,address)",
+          "args": {
+            "lqs": {
+              "liquidityPool": "0x5d3a536E4D6DbD6114cc1Ead35777bAB948E3643",
+              "adapterName": "dummyContract"
+            }
+          },
+          "executor": "operator",
+          "expect": "fail",
+          "message": "!registryContract"
+        }
+      ],
+      "getActions": [],
+      "cleanActions": [
+        {
+          "action": "revokeSwapPool(address)",
+          "args": {
+            "lqs": "0x5d3a536E4D6DbD6114cc1Ead35777bAB948E3643"
+          },
+          "executor": "operator",
+          "expect": "success",
+          "message": ""
+        }
+      ]
+    },
+    {
+      "description": "Operator should be able to set multiple swap pools to adapters",
+      "setActions": [
+        {
+          "action": "approveSwapPool(address[])",
+          "args": {
+            "lqs": ["0x5d3a536E4D6DbD6114cc1Ead35777bAB948E3643", "0x24a42fD28C976A61Df5D00D0599C34c4f90748c8"]
+          },
+          "executor": "operator",
+          "expect": "success",
+          "message": ""
+        },
+        {
+          "action": "setSwapPoolToAdapter((address,address)[])",
+          "args": {
+            "lqs": [
+              {
+                "liquidityPool": "0x5d3a536E4D6DbD6114cc1Ead35777bAB948E3643",
+                "adapterName": "CompoundAdapter"
+              },
+              {
+                "liquidityPool": "0x24a42fD28C976A61Df5D00D0599C34c4f90748c8",
+                "adapterName": "AaveV1Adapter"
+              }
+            ]
+          },
+          "executor": "operator",
+          "expect": "success",
+          "message": ""
+        }
+      ],
+      "getActions": [
+        {
+          "action": "swapPoolToAdapter(address)",
+          "args": {
+            "address": "0x5d3a536E4D6DbD6114cc1Ead35777bAB948E3643"
+          },
+          "expectedMultiValues": {},
+          "expectedValue": "CompoundAdapter"
+        },
+        {
+          "action": "swapPoolToAdapter(address)",
+          "args": {
+            "address": "0x24a42fD28C976A61Df5D00D0599C34c4f90748c8"
+          },
+          "expectedMultiValues": {},
+          "expectedValue": "AaveV1Adapter"
+        }
+      ],
+      "cleanActions": [
+        {
+          "action": "revokeSwapPool(address[])",
+          "args": {
+            "lqs": ["0x5d3a536E4D6DbD6114cc1Ead35777bAB948E3643", "0x24a42fD28C976A61Df5D00D0599C34c4f90748c8"]
+          },
+          "executor": "operator",
+          "expect": "success",
+          "message": ""
+        }
+      ]
+    },
+    {
+      "description": "Operator shouldn't be able to set mutiple non-approved swap pools to adapters",
+      "setActions": [
+        {
+          "action": "setSwapPoolToAdapter((address,address)[])",
+          "args": {
+            "lqs": [
+              {
+                "liquidityPool": "0x5d3a536E4D6DbD6114cc1Ead35777bAB948E3643",
+                "adapterName": "CompoundAdapter"
+              },
+              {
+                "liquidityPool": "0x24a42fD28C976A61Df5D00D0599C34c4f90748c8",
+                "adapterName": "AaveV1Adapter"
+              }
+            ]
+          },
+          "executor": "operator",
+          "expect": "fail",
+          "message": "!swapPools"
+        }
+      ],
+      "getActions": [],
+      "cleanActions": []
+    },
+    {
+      "description": "Non-Operator shouldn't be able to set multiple swap pools to adapters",
+      "setActions": [
+        {
+          "action": "setSwapPoolToAdapter((address,address)[])",
+          "args": {
+            "lqs": [
+              {
+                "liquidityPool": "0x5d3a536E4D6DbD6114cc1Ead35777bAB948E3643",
+                "adapterName": "CompoundAdapter"
+              },
+              {
+                "liquidityPool": "0x24a42fD28C976A61Df5D00D0599C34c4f90748c8",
+                "adapterName": "AaveV1Adapter"
+              }
+            ]
+          },
+          "executor": "user1",
+          "expect": "fail",
+          "message": "caller is not the operator"
+        }
+      ],
+      "getActions": [],
+      "cleanActions": []
+    },
+    {
+      "description": "Operator should be able to approve and set swap pool to adapter",
+      "setActions": [
+        {
+          "action": "approveSwapPoolAndMapToAdapter(address,address)",
+          "args": {
+            "lqs": {
+              "liquidityPool": "0x5d3a536E4D6DbD6114cc1Ead35777bAB948E3643",
+              "adapterName": "CompoundAdapter"
+            }
+          },
+          "executor": "operator",
+          "expect": "success",
+          "message": ""
+        }
+      ],
+      "getActions": [
+        {
+          "action": "swapPoolToAdapter(address)",
+          "args": {
+            "address": "0x5d3a536E4D6DbD6114cc1Ead35777bAB948E3643"
+          },
+          "expectedMultiValues": {},
+          "expectedValue": "CompoundAdapter"
+        }
+      ],
+      "cleanActions": [
+        {
+          "action": "revokeSwapPool(address)",
+          "args": {
+            "lqs": "0x5d3a536E4D6DbD6114cc1Ead35777bAB948E3643"
+          },
+          "executor": "operator",
+          "expect": "success",
+          "message": ""
+        }
+      ]
+    },
+    {
+      "description": "Non-Operator shouldn't be able to approve and set swap pool to adapter",
+      "setActions": [
+        {
+          "action": "approveSwapPoolAndMapToAdapter(address,address)",
+          "args": {
+            "lqs": {
+              "liquidityPool": "0x5d3a536E4D6DbD6114cc1Ead35777bAB948E3643",
+              "adapterName": "CompoundAdapter"
+            }
+          },
+          "executor": "user0",
+          "expect": "fail",
+          "message": "caller is not the operator"
+        }
+      ],
+      "getActions": [],
+      "cleanActions": []
+    },
+    {
+      "description": "Operator should be able to approve and set multiple swap pools to adapters",
+      "setActions": [
+        {
+          "action": "approveSwapPoolAndMapToAdapter((address,address)[])",
+          "args": {
+            "lqs": [
+              {
+                "liquidityPool": "0x5d3a536E4D6DbD6114cc1Ead35777bAB948E3643",
+                "adapterName": "CompoundAdapter"
+              },
+              {
+                "liquidityPool": "0x24a42fD28C976A61Df5D00D0599C34c4f90748c8",
+                "adapterName": "AaveV1Adapter"
+              }
+            ]
+          },
+          "executor": "operator",
+          "expect": "success",
+          "message": ""
+        }
+      ],
+      "getActions": [
+        {
+          "action": "swapPoolToAdapter(address)",
+          "args": {
+            "address": "0x5d3a536E4D6DbD6114cc1Ead35777bAB948E3643"
+          },
+          "expectedMultiValues": {},
+          "expectedValue": "CompoundAdapter"
+        },
+        {
+          "action": "swapPoolToAdapter(address)",
+          "args": {
+            "address": "0x24a42fD28C976A61Df5D00D0599C34c4f90748c8"
+          },
+          "expectedMultiValues": {},
+          "expectedValue": "AaveV1Adapter"
+        }
+      ],
+      "cleanActions": [
+        {
+          "action": "revokeSwapPool(address[])",
+          "args": {
+            "lqs": ["0x5d3a536E4D6DbD6114cc1Ead35777bAB948E3643", "0x24a42fD28C976A61Df5D00D0599C34c4f90748c8"]
+          },
+          "executor": "operator",
+          "expect": "success",
+          "message": ""
+        }
+      ]
     },
     {
       "description": "Operator should be able to set liquidity pool to adapter",
@@ -2050,10 +2374,9 @@
       "description": "RiskOperator should be able to add a Risk Profile",
       "setActions": [
         {
-          "action": "addRiskProfile(uint256,string,string,bool,(uint8,uint8))",
+          "action": "addRiskProfile(uint256,string,string,(uint8,uint8))",
           "args": {
             "riskProfileCode": "1",
-            "canBorrow": false,
             "poolRatingRange": [0, 10]
           },
           "executor": "riskOperator",
@@ -2068,7 +2391,6 @@
             "riskProfileCode": "1"
           },
           "expectedMultiValues": {
-            "canBorrow": false,
             "lowerLimit": 0,
             "upperLimit": 10,
             "exists": true
@@ -2082,10 +2404,9 @@
       "description": "RiskOperator shouldn't be able to add a Risk Profile with an empty symbol",
       "setActions": [
         {
-          "action": "addRiskProfile(uint256,string,string,bool,(uint8,uint8))",
+          "action": "addRiskProfile(uint256,string,string,(uint8,uint8))",
           "args": {
             "riskProfileCode": "emptySymbol",
-            "canBorrow": false,
             "poolRatingRange": [0, 10]
           },
           "executor": "riskOperator",
@@ -2100,10 +2421,9 @@
       "description": "RiskOperator shouldn't be able to add a Risk Profile with an empty name",
       "setActions": [
         {
-          "action": "addRiskProfile(uint256,string,string,bool,(uint8,uint8))",
+          "action": "addRiskProfile(uint256,string,string,(uint8,uint8))",
           "args": {
             "riskProfileCode": "emptyName",
-            "canBorrow": false,
             "poolRatingRange": [0, 10]
           },
           "executor": "riskOperator",
@@ -2118,10 +2438,9 @@
       "description": "RiskOperator shouldn't be able to add the existing Risk Profile",
       "setActions": [
         {
-          "action": "addRiskProfile(uint256,string,string,bool,(uint8,uint8))",
+          "action": "addRiskProfile(uint256,string,string,(uint8,uint8))",
           "args": {
             "riskProfileCode": "2",
-            "canBorrow": false,
             "poolRatingRange": [0, 10]
           },
           "executor": "riskOperator",
@@ -2129,10 +2448,9 @@
           "message": ""
         },
         {
-          "action": "addRiskProfile(uint256,string,string,bool,(uint8,uint8))",
+          "action": "addRiskProfile(uint256,string,string,(uint8,uint8))",
           "args": {
             "riskProfileCode": "2",
-            "canBorrow": false,
             "poolRatingRange": [0, 10]
           },
           "executor": "riskOperator",
@@ -2147,102 +2465,14 @@
       "description": "Non-RiskOperator shouldn't be able to add a Risk Profile",
       "setActions": [
         {
-          "action": "addRiskProfile(uint256,string,string,bool,(uint8,uint8))",
+          "action": "addRiskProfile(uint256,string,string,(uint8,uint8))",
           "args": {
             "riskProfileCode": "1",
-            "canBorrow": false,
             "poolRatingRange": [0, 10]
           },
           "executor": "user1",
           "expect": "fail",
           "message": "caller is not the risk operator"
-        }
-      ],
-      "getActions": [],
-      "cleanActions": []
-    },
-    {
-      "description": "RiskOperator should be able to update borrow for Risk Profile",
-      "setActions": [
-        {
-          "action": "addRiskProfile(uint256,string,string,bool,(uint8,uint8))",
-          "args": {
-            "riskProfileCode": "3",
-            "canBorrow": false,
-            "poolRatingRange": [0, 10]
-          },
-          "executor": "riskOperator",
-          "expect": "success",
-          "message": ""
-        },
-        {
-          "action": "updateRiskProfileBorrow(uint256,bool)",
-          "args": {
-            "riskProfileCode": "3",
-            "canBorrow": true
-          },
-          "executor": "riskOperator",
-          "expect": "success",
-          "message": ""
-        }
-      ],
-      "getActions": [
-        {
-          "action": "getRiskProfile(uint256)",
-          "args": {
-            "riskProfileCode": "3"
-          },
-          "expectedMultiValues": {
-            "canBorrow": true,
-            "lowerLimit": 0,
-            "upperLimit": 10,
-            "exists": true
-          },
-          "expectedValue": ""
-        }
-      ],
-      "cleanActions": []
-    },
-    {
-      "description": "Non-RiskOperator shouldn't be able to update borrow for Risk Profile",
-      "setActions": [
-        {
-          "action": "addRiskProfile(uint256,string,string,bool,(uint8,uint8))",
-          "args": {
-            "riskProfileCode": "4",
-            "canBorrow": false,
-            "poolRatingRange": [0, 10]
-          },
-          "executor": "riskOperator",
-          "expect": "success",
-          "message": ""
-        },
-        {
-          "action": "updateRiskProfileBorrow(uint256,bool)",
-          "args": {
-            "riskProfileCode": "4",
-            "canBorrow": true
-          },
-          "executor": "user1",
-          "expect": "fail",
-          "message": "caller is not the risk operator"
-        }
-      ],
-      "getActions": [],
-      "cleanActions": []
-    },
-    {
-      "description": "RiskOperator shouldn't be able to update borrow for non-existing Risk Profile",
-      "setActions": [
-        {
-          "action": "updateRiskProfileBorrow(uint256,bool)",
-          "args": {
-            "riskProfileCode": "10000",
-            "canBorrow": true
-          },
-          "executor": "riskOperator",
-          "expect": "fail",
-          "message": "!Rp_Exists"
         }
       ],
       "getActions": [],
@@ -2252,10 +2482,9 @@
       "description": "RiskOperator should be able to update pool ratings for Risk Profile",
       "setActions": [
         {
-          "action": "addRiskProfile(uint256,string,string,bool,(uint8,uint8))",
+          "action": "addRiskProfile(uint256,string,string,(uint8,uint8))",
           "args": {
             "riskProfileCode": "5",
-            "canBorrow": false,
             "poolRatingRange": [0, 10]
           },
           "executor": "riskOperator",
@@ -2280,7 +2509,6 @@
             "riskProfileCode": "5"
           },
           "expectedMultiValues": {
-            "canBorrow": false,
             "lowerLimit": 0,
             "upperLimit": 20,
             "exists": true
@@ -2294,10 +2522,9 @@
       "description": "Non-RiskOperator shouldn't be able to update pool ratings for Risk Profile",
       "setActions": [
         {
-          "action": "addRiskProfile(uint256,string,string,bool,(uint8,uint8))",
+          "action": "addRiskProfile(uint256,string,string,(uint8,uint8))",
           "args": {
             "riskProfileCode": "6",
-            "canBorrow": false,
             "poolRatingRange": [0, 10]
           },
           "executor": "riskOperator",
@@ -2339,10 +2566,9 @@
       "description": "RiskOperator should be able to remove the Risk Profile",
       "setActions": [
         {
-          "action": "addRiskProfile(uint256,string,string,bool,(uint8,uint8))",
+          "action": "addRiskProfile(uint256,string,string,(uint8,uint8))",
           "args": {
             "riskProfileCode": "7",
-            "canBorrow": false,
             "poolRatingRange": [0, 10]
           },
           "executor": "riskOperator",
@@ -2366,7 +2592,6 @@
             "riskProfileCode": "7"
           },
           "expectedMultiValues": {
-            "canBorrow": false,
             "lowerLimit": null,
             "upperLimit": null,
             "exists": false
@@ -2396,10 +2621,9 @@
       "description": "Non-RiskOperator should be able to remove the Risk Profile",
       "setActions": [
         {
-          "action": "addRiskProfile(uint256,string,string,bool,(uint8,uint8))",
+          "action": "addRiskProfile(uint256,string,string,(uint8,uint8))",
           "args": {
             "riskProfileCode": "8",
-            "canBorrow": false,
             "poolRatingRange": [0, 10]
           },
           "executor": "riskOperator",
@@ -2423,10 +2647,9 @@
       "description": "RiskOperator should be able to set a multiple Risk Profiles",
       "setActions": [
         {
-          "action": "addRiskProfile(uint256[],string[],string[],bool[],(uint8,uint8)[])",
+          "action": "addRiskProfile(uint256[],string[],string[],(uint8,uint8)[])",
           "args": {
             "riskProfileCode": ["9", "10", "11"],
-            "canBorrow": [false, true, true],
             "poolRatingsRange": [
               [0, 20],
               [0, 40],
@@ -2445,7 +2668,6 @@
             "riskProfileCode": "9"
           },
           "expectedMultiValues": {
-            "canBorrow": false,
             "lowerLimit": 0,
             "upperLimit": 20,
             "exists": true
@@ -2458,7 +2680,6 @@
             "riskProfileCode": "10"
           },
           "expectedMultiValues": {
-            "canBorrow": true,
             "lowerLimit": 0,
             "upperLimit": 40,
             "exists": true
@@ -2471,7 +2692,6 @@
             "riskProfileCode": "11"
           },
           "expectedMultiValues": {
-            "canBorrow": true,
             "lowerLimit": 0,
             "upperLimit": 60,
             "exists": true
@@ -2485,10 +2705,9 @@
       "description": "Non-RiskOperator shouldn't be able to set a multiple Risk Profiles",
       "setActions": [
         {
-          "action": "addRiskProfile(uint256[],string[],string[],bool[],(uint8,uint8)[])",
+          "action": "addRiskProfile(uint256[],string[],string[],(uint8,uint8)[])",
           "args": {
             "riskProfileCode": ["1", "2", "3"],
-            "canBorrow": [false, true, true],
             "poolRatingsRange": [
               [0, 20],
               [0, 40],
@@ -2516,10 +2735,9 @@
           "message": ""
         },
         {
-          "action": "addRiskProfile(uint256[],string[],string[],bool[],(uint8,uint8)[])",
+          "action": "addRiskProfile(uint256[],string[],string[],(uint8,uint8)[])",
           "args": {
             "riskProfileCode": ["1", "2", "3"],
-            "canBorrow": [false, true, true],
             "poolRatingsRange": [
               [0, 20],
               [0, 40],

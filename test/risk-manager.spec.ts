@@ -5,10 +5,9 @@ import { Signer, Contract } from "ethers";
 import { smock } from "@defi-wonderland/smock";
 import { MOCK_CONTRACTS } from "../helpers/type";
 import { TypedStrategies, TypedTokens } from "../helpers/data";
-import { generateTokenHashV2, executeFunc, deploySmockContract, deployContract } from "../helpers/helpers";
+import { generateTokenHash, executeFunc, deploySmockContract } from "../helpers/helpers";
 import { TESTING_DEPLOYMENT_ONCE } from "../helpers/constants/utils";
 import { ESSENTIAL_CONTRACTS } from "../helpers/constants/essential-contracts-name";
-import { TESTING_CONTRACTS } from "../helpers/constants/test-contracts-name";
 import { deployRegistry, deployRiskManager } from "../helpers/contracts-deployments";
 import { approveAndMapTokenHashToToken, addRiskProfile } from "../helpers/contracts-actions";
 import scenario from "./scenarios/risk-manager.json";
@@ -19,7 +18,7 @@ chai.use(solidity);
 type ARGUMENTS = {
   canBorrow?: boolean;
   poolRatingRange?: number[];
-  score?: number[];
+  score?: number;
   defaultStrategyState?: number;
   riskProfileCode?: string;
 };
@@ -42,7 +41,6 @@ describe(scenario.title, () => {
       RISK_PROFILES[1].code,
       RISK_PROFILES[1].name,
       RISK_PROFILES[1].symbol,
-      RISK_PROFILES[1].canBorrow,
       RISK_PROFILES[1].poolRating,
     );
     //Initialize data for tokensHashIndexes
@@ -51,7 +49,7 @@ describe(scenario.title, () => {
 
   describe("Standalone Scenarios", () => {
     const usedToken = TypedTokens["USDT"];
-    const tokenHash = generateTokenHashV2([usedToken], NETWORKS_ID.MAINNET);
+    const tokenHash = generateTokenHash([usedToken], NETWORKS_ID.MAINNET);
     for (let i = 0; i < scenario.standaloneStories.length; i++) {
       const story = scenario.standaloneStories[i];
       it(story.description, async () => {
@@ -64,29 +62,6 @@ describe(scenario.title, () => {
             }
             case "revokeToken(address[])": {
               await registry[action.action]([usedToken]);
-              break;
-            }
-            case "become(address)": {
-              const newRiskManager = await deployContract(
-                hre,
-                TESTING_CONTRACTS.TEST_RISK_MANAGER_NEW_IMPLEMENTATION,
-                TESTING_DEPLOYMENT_ONCE,
-                owner,
-                [registry.address],
-              );
-
-              const riskManagerProxy = await hre.ethers.getContractAt(
-                ESSENTIAL_CONTRACTS.RISK_MANAGER_PROXY,
-                riskManager.address,
-              );
-
-              await executeFunc(riskManagerProxy, owner, "setPendingImplementation(address)", [newRiskManager.address]);
-              await executeFunc(newRiskManager, owner, "become(address)", [riskManagerProxy.address]);
-
-              riskManager = await hre.ethers.getContractAt(
-                TESTING_CONTRACTS.TEST_RISK_MANAGER_NEW_IMPLEMENTATION,
-                riskManagerProxy.address,
-              );
               break;
             }
           }
@@ -103,15 +78,6 @@ describe(scenario.title, () => {
               await expect(riskManager[action.action](riskProfileCode, tokenHash)).to.be.revertedWith(
                 action.expectedValue.toString(),
               );
-              break;
-            }
-          }
-        }
-        for (let i = 0; i < story.cleanActions.length; i++) {
-          const action = story.cleanActions[i];
-          switch (action.action) {
-            case "deployRiskManager()": {
-              riskManager = await deployRiskManager(hre, owner, TESTING_DEPLOYMENT_ONCE, registry.address);
               break;
             }
           }
@@ -148,7 +114,7 @@ describe(scenario.title, () => {
     });
     for (let i = 0; i < TypedStrategies.length; i++) {
       const strategy = TypedStrategies[i];
-      const tokenHash = generateTokenHashV2([TypedTokens[strategy.token.toUpperCase()]], NETWORKS_ID.MAINNET);
+      const tokenHash = generateTokenHash([TypedTokens[strategy.token.toUpperCase()]], NETWORKS_ID.MAINNET);
 
       const defaultStrategy = TypedStrategies.filter(
         item => item.token === strategy.token && item.strategyName !== strategy.strategyName,
@@ -156,24 +122,29 @@ describe(scenario.title, () => {
       if (!defaultStrategy) {
         continue;
       }
-      const returnedStrategy = strategy.strategy.map(item => [item.contract, item.outputToken, item.isBorrow]);
-      const returnedDefaultStrategy = defaultStrategy.strategy.map(item => [
-        item.contract,
-        item.outputToken,
-        item.isBorrow,
-      ]);
+      const returnedStrategy = strategy.strategy.map(item => ({
+        pool: item.contract,
+        outputToken: item.outputToken,
+        isSwap: item.isSwap,
+      }));
+      const returnedDefaultStrategy = defaultStrategy.strategy.map(item => ({
+        pool: item.contract,
+        outputToken: item.outputToken,
+        isSwap: item.isSwap,
+      }));
 
       let isCheckDefault = false;
       describe(strategy.strategyName, () => {
         for (let i = 0; i < scenario.stories.length; i++) {
           const story = scenario.stories[i];
-          const usedLps: string[] = [];
+          const usedLiquidityPools: string[] = [];
+          const usedSwapPools: string[] = [];
           it(`${story.description}`, async () => {
             for (let i = 0; i < story.setActions.length; i++) {
               const action = story.setActions[i];
               switch (action.action) {
                 case "updateRPPoolRatings(uint256,(uint8,uint8))": {
-                  const { poolRatingRange }: ARGUMENTS = action.args;
+                  const { poolRatingRange } = <ARGUMENTS>action.args;
                   if (riskProfileCode && poolRatingRange) {
                     const value = await registry.getRiskProfile(riskProfileCode);
                     const riskProfileIndex = value.index;
@@ -184,30 +155,70 @@ describe(scenario.title, () => {
                   assert.isDefined(poolRatingRange, `args is wrong in ${action.action} testcase`);
                   break;
                 }
-                case "approveLiquidityPool(address[])": {
-                  const lpTokens = strategy.strategy.map(strategy => strategy.contract);
+                case "approvePool": {
+                  const liquidityPools = strategy.strategy
+                    .filter(strategy => !strategy.isSwap)
+                    .map(strategy => strategy.contract);
+                  const swapPools = strategy.strategy
+                    .filter(strategy => strategy.isSwap)
+                    .map(strategy => strategy.contract);
                   if (action.expect === "success") {
-                    await registry[action.action](lpTokens);
+                    if (liquidityPools.length > 0) {
+                      await registry["approveLiquidityPool(address[])"](liquidityPools);
+                    }
+                    if (swapPools.length > 0) {
+                      await registry["approveSwapPool(address[])"](swapPools);
+                    }
                   } else {
-                    await expect(contracts[action.contract][action.action](lpTokens)).to.be.revertedWith(
-                      action.message,
-                    );
-                  }
-
-                  usedLps.push(...lpTokens);
-                  break;
-                }
-                case "rateLiquidityPool((address,uint8)[])": {
-                  const { score }: ARGUMENTS = action.args;
-                  if (score) {
-                    const lpTokens = strategy.strategy.map(strategy => strategy.contract);
-                    const pools = lpTokens.map((lp, i) => [lp, score[i]]);
-                    if (action.expect === "success") {
-                      await registry[action.action](pools);
-                    } else {
-                      await expect(await contracts[action.contract][action.action](pools)).to.be.revertedWith(
+                    if (liquidityPools.length > 0) {
+                      await expect(registry["approveLiquidityPool(address[])"](liquidityPools)).to.be.revertedWith(
                         action.message,
                       );
+                    }
+                    if (swapPools.length > 0) {
+                      await expect(registry["approveSwapPool(address[])"](swapPools)).to.be.revertedWith(
+                        action.message,
+                      );
+                    }
+                  }
+
+                  if (liquidityPools.length > 0) {
+                    usedLiquidityPools.push(...(liquidityPools as string[]));
+                  }
+                  if (swapPools.length > 0) {
+                    usedSwapPools.push(...(swapPools as string[]));
+                  }
+                  break;
+                }
+                case "ratePool": {
+                  const { score } = <ARGUMENTS>action.args;
+                  if (score) {
+                    const liquidityPools = strategy.strategy
+                      .filter(strategy => !strategy.isSwap)
+                      .map(strategy => strategy.contract);
+                    const swapPools = strategy.strategy
+                      .filter(strategy => strategy.isSwap)
+                      .map(strategy => strategy.contract);
+                    const liquidityPoolWithRatings = liquidityPools.map(lp => [lp, score]);
+                    const swapPoolWithRatings = swapPools.map(lp => [lp, score]);
+                    if (action.expect === "success") {
+                      if (liquidityPoolWithRatings.length > 0) {
+                        await registry["rateLiquidityPool((address,uint8)[])"](liquidityPoolWithRatings);
+                      }
+                      if (swapPoolWithRatings.length > 0) {
+                        await registry["rateSwapPool((address,uint8)[])"](swapPoolWithRatings);
+                      }
+                    } else {
+                      if (liquidityPoolWithRatings.length > 0) {
+                        await expect(
+                          registry["rateLiquidityPool((address,uint8)[])"](liquidityPoolWithRatings),
+                        ).to.be.revertedWith(action.message);
+                      }
+                      if (swapPoolWithRatings.length > 0) {
+                        await expect(
+                          registry["rateSwapPool((address,uint8)[])"](swapPoolWithRatings),
+                        ).to.be.revertedWith(action.message);
+                      }
                     }
                   }
                   assert.isDefined(score, `args is wrong in ${action.action} testcase`);
@@ -218,18 +229,29 @@ describe(scenario.title, () => {
                   break;
                 }
                 case "setBestDefaultStrategy(uint256,bytes32,(address,address,bool)[])": {
-                  const { score }: ARGUMENTS = action.args;
-                  const scoredPools: [string, number][] = [];
+                  const { score } = <ARGUMENTS>action.args;
+                  const scoredLiquidityPools: [string, number][] = [];
+                  const scoredSwapPools: [string, number][] = [];
                   if (score) {
                     for (let i = 0; i < defaultStrategy.strategy.length; i++) {
                       const strategy = defaultStrategy.strategy[i];
-                      if (!usedLps.includes(strategy.contract)) {
-                        await registry["approveLiquidityPool(address)"](strategy.contract);
-                        usedLps.push(strategy.contract);
+                      if (!strategy.isSwap) {
+                        if (!usedLiquidityPools.includes(strategy.contract)) {
+                          await registry["approveLiquidityPool(address)"](strategy.contract);
+                          usedLiquidityPools.push(strategy.contract);
+                        }
+                        scoredLiquidityPools.push([strategy.contract, score]);
+                        await registry["rateLiquidityPool((address,uint8)[])"](scoredLiquidityPools);
                       }
-                      scoredPools.push([strategy.contract, score[i]]);
+                      if (strategy.isSwap) {
+                        if (!usedSwapPools.includes(strategy.contract)) {
+                          await registry["approveSwapPool(address)"](strategy.contract);
+                          usedSwapPools.push(strategy.contract);
+                        }
+                        scoredSwapPools.push([strategy.contract, score]);
+                        await registry["rateSwapPool((address,uint8)[])"](scoredSwapPools);
+                      }
                     }
-                    await registry["rateLiquidityPool((address,uint8)[])"](scoredPools);
                   }
                   contracts[action.contract].getRpToTokenToDefaultStrategy.returns(returnedDefaultStrategy);
                   isCheckDefault = true;
@@ -242,12 +264,16 @@ describe(scenario.title, () => {
               const action = story.getActions[i];
               switch (action.action) {
                 case "getBestStrategy(uint256,bytes32)": {
-                  expect(await riskManager[action.action](riskProfileCode, tokenHash)).to.eql(
+                  const steps =
                     action.expectedValue !== ""
                       ? action.expectedValue
                       : isCheckDefault
                       ? returnedDefaultStrategy
-                      : returnedStrategy,
+                      : returnedStrategy;
+                  expect(await riskManager[action.action](riskProfileCode, tokenHash)).to.deep.eq(
+                    (steps as { pool: string; outputToken: string; isSwap: boolean }[]).map(item =>
+                      Object.values(item),
+                    ),
                   );
                   break;
                 }
@@ -256,9 +282,12 @@ describe(scenario.title, () => {
             for (let i = 0; i < story.cleanActions.length; i++) {
               const action = story.cleanActions[i];
               switch (action.action) {
-                case "revokeLiquidityPool(address[])": {
-                  if (usedLps.length > 0) {
-                    await registry[action.action](usedLps);
+                case "revokePool": {
+                  if (usedLiquidityPools.length > 0) {
+                    await registry["revokeLiquidityPool(address[])"](usedLiquidityPools);
+                  }
+                  if (usedSwapPools.length > 0) {
+                    await registry["revokeSwapPool(address[])"](usedSwapPools);
                   }
                   break;
                 }

@@ -55,7 +55,7 @@ export function generateStrategyStep(strategy: STRATEGY_DATA[]): [string, string
     const tempArr: [string, string, boolean] = [
       strategy[index].contract,
       strategy[index].outputToken,
-      strategy[index].isBorrow,
+      strategy[index].isSwap,
     ];
     strategySteps.push(tempArr);
   }
@@ -72,7 +72,8 @@ export async function deploySmockContract(smock: any, contractName: any, args: a
   return contract;
 }
 
-export function generateTokenHashV2(addresses: string[], chainId: string): string {
+//  function to generate the token/list of tokens's hash
+export function generateTokenHash(addresses: string[], chainId: string): string {
   return getSoliditySHA3Hash(["address[]", "string"], [addresses, chainId]);
 }
 
@@ -81,7 +82,7 @@ export function generateStrategyHashV2(strategy: STRATEGY_DATA[], tokensHash: st
   for (let index = 0; index < strategy.length; index++) {
     strategyStepsHash[index] = getSoliditySHA3Hash(
       ["address", "address", "bool"],
-      [strategy[index].contract, strategy[index].outputToken, strategy[index].isBorrow],
+      [strategy[index].contract, strategy[index].outputToken, strategy[index].isSwap],
     );
   }
   return getSoliditySHA3Hash(["bytes32", "bytes32[]"], [tokensHash, strategyStepsHash]);
