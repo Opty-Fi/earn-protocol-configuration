@@ -1,7 +1,7 @@
 import chai, { expect, assert } from "chai";
 import { solidity } from "ethereum-waffle";
 import hre from "hardhat";
-import { Contract, Signer } from "ethers";
+import { BigNumber, Contract, ethers, Signer } from "ethers";
 import { smock } from "@defi-wonderland/smock";
 import { TypedStrategies, TypedTokens } from "../helpers/data";
 import { TESTING_DEPLOYMENT_ONCE } from "../helpers/constants/utils";
@@ -23,15 +23,11 @@ describe(scenario.title, async () => {
     .strategy;
   const usedStrategy_2 = TypedStrategies.filter(strategy => strategy.strategyName === "DAI-deposit-AAVE-aDAI")[0]
     .strategy;
-  const convertedStrategies = usedStrategy.map(strategy => [
-    strategy.contract,
-    strategy.outputToken,
-    strategy.isBorrow,
-  ]);
+  const convertedStrategies = usedStrategy.map(strategy => [strategy.contract, strategy.outputToken, strategy.isSwap]);
   const convertedStrategies_2 = usedStrategy_2.map(strategy => [
     strategy.contract,
     strategy.outputToken,
-    strategy.isBorrow,
+    strategy.isSwap,
   ]);
   const usedToken = TypedTokens["DAI"];
   let usedStrategyHash: string;
@@ -64,17 +60,35 @@ describe(scenario.title, async () => {
       for (let i = 0; i < story.setActions.length; i++) {
         const action = story.setActions[i];
         switch (action.action) {
-          case "addStrategy(bytes32,(address,address,bool)[])": {
+          case "addStrategy(bytes32,(address,address,bool)[],((bytes32[],bytes[],uint256),(bytes32[],bytes[],uint256),(bytes32[],bytes[],uint256),(bytes32[],bytes[],uint256),(bytes32[],bytes[],uint256),(bytes32[],bytes[],uint256),(bytes32[],bytes[],uint256),(bytes32[],bytes[],uint256)))": {
             if (action.expect === "success") {
               const tx = await strategyRegistryContract
                 .connect(users[action.executer])
-                [action.action](usedStrategyHash, convertedStrategies);
+                [action.action](usedStrategyHash, convertedStrategies, [
+                  [[ethers.utils.formatBytes32String("abc")], ["0xabcd1234"], 0],
+                  [[ethers.utils.formatBytes32String("abc")], ["0xabcd1234"], 0],
+                  [[ethers.utils.formatBytes32String("abc")], ["0xabcd1234"], 0],
+                  [[ethers.utils.formatBytes32String("abc")], ["0xabcd1234"], 0],
+                  [[ethers.utils.formatBytes32String("abc")], ["0xabcd1234"], 0],
+                  [[ethers.utils.formatBytes32String("abc")], ["0xabcd1234"], 0],
+                  [[ethers.utils.formatBytes32String("abc")], ["0xabcd1234"], 0],
+                  [[ethers.utils.formatBytes32String("abc")], ["0xabcd1234"], 0],
+                ]);
               await tx.wait(1);
             } else {
               await expect(
                 strategyRegistryContract
                   .connect(users[action.executer])
-                  [action.action](usedStrategyHash, convertedStrategies),
+                  [action.action](usedStrategyHash, convertedStrategies, [
+                    [[ethers.utils.formatBytes32String("abc")], ["0xabcd1234"], 0],
+                    [[ethers.utils.formatBytes32String("abc")], ["0xabcd1234"], 0],
+                    [[ethers.utils.formatBytes32String("abc")], ["0xabcd1234"], 0],
+                    [[ethers.utils.formatBytes32String("abc")], ["0xabcd1234"], 0],
+                    [[ethers.utils.formatBytes32String("abc")], ["0xabcd1234"], 0],
+                    [[ethers.utils.formatBytes32String("abc")], ["0xabcd1234"], 0],
+                    [[ethers.utils.formatBytes32String("abc")], ["0xabcd1234"], 0],
+                    [[ethers.utils.formatBytes32String("abc")], ["0xabcd1234"], 0],
+                  ]),
               ).to.be.revertedWith(action.message);
             }
             break;
@@ -134,12 +148,81 @@ describe(scenario.title, async () => {
       for (let i = 0; i < story.getActions.length; i++) {
         const action = story.getActions[i];
         switch (action.action) {
-          case "getStrategy(bytes32)": {
-            const { _index, _strategySteps } = await strategyRegistryContract[action.action](usedStrategyHash);
-            expect(_index).to.be.equal(0);
-            expect(_strategySteps[0][0]).to.be.equal(usedStrategy[0].contract);
-            expect(_strategySteps[0][1]).to.be.equal(usedStrategy[0].outputToken);
-            expect(_strategySteps[0][2]).to.be.equal(usedStrategy[0].isBorrow);
+          case "getStrategySteps(bytes32)": {
+            const actualSteps = await strategyRegistryContract[action.action](usedStrategyHash);
+            expect(actualSteps).to.deep.eq(convertedStrategies);
+            break;
+          }
+          case "getOraValueUTPlan(bytes32)": {
+            const actualOraValueUTPlan = await strategyRegistryContract[action.action](usedStrategyHash);
+            expect(actualOraValueUTPlan).to.deep.eq([
+              [ethers.utils.formatBytes32String("abc")],
+              ["0xabcd1234"],
+              BigNumber.from(0),
+            ]);
+            break;
+          }
+          case "getOraValueLPPlan(bytes32)": {
+            const actualOraValueLPPlan = await strategyRegistryContract[action.action](usedStrategyHash);
+            expect(actualOraValueLPPlan).to.deep.eq([
+              [ethers.utils.formatBytes32String("abc")],
+              ["0xabcd1234"],
+              BigNumber.from(0),
+            ]);
+            break;
+          }
+          case "getLastStepBalanceLPPlan(bytes32)": {
+            const actualLastStepBalanceLPPlan = await strategyRegistryContract[action.action](usedStrategyHash);
+            expect(actualLastStepBalanceLPPlan).to.deep.eq([
+              [ethers.utils.formatBytes32String("abc")],
+              ["0xabcd1234"],
+              BigNumber.from(0),
+            ]);
+            break;
+          }
+          case "getDepositSomeToStrategyPlan(bytes32)": {
+            const actualDepositSomeToStrategyPlan = await strategyRegistryContract[action.action](usedStrategyHash);
+            expect(actualDepositSomeToStrategyPlan).to.deep.eq([
+              [ethers.utils.formatBytes32String("abc")],
+              ["0xabcd1234"],
+              BigNumber.from(0),
+            ]);
+            break;
+          }
+          case "getDepositAllToStrategyPlan(bytes32)": {
+            const actualDepositAllToStrategyPlan = await strategyRegistryContract[action.action](usedStrategyHash);
+            expect(actualDepositAllToStrategyPlan).to.deep.eq([
+              [ethers.utils.formatBytes32String("abc")],
+              ["0xabcd1234"],
+              BigNumber.from(0),
+            ]);
+            break;
+          }
+          case "getWithdrawSomeFromStrategyPlan(bytes32)": {
+            const actualWithdrawSomeFromStrategyPlan = await strategyRegistryContract[action.action](usedStrategyHash);
+            expect(actualWithdrawSomeFromStrategyPlan).to.deep.eq([
+              [ethers.utils.formatBytes32String("abc")],
+              ["0xabcd1234"],
+              BigNumber.from(0),
+            ]);
+            break;
+          }
+          case "getWithdrawAllFromStrategyPlan(bytes32)": {
+            const actualWithdrawAllFromStrategyPlan = await strategyRegistryContract[action.action](usedStrategyHash);
+            expect(actualWithdrawAllFromStrategyPlan).to.deep.eq([
+              [ethers.utils.formatBytes32String("abc")],
+              ["0xabcd1234"],
+              BigNumber.from(0),
+            ]);
+            break;
+          }
+          case "getClaimRewardsPlan(bytes32)": {
+            const actualClaimRewardsPlan = await strategyRegistryContract[action.action](usedStrategyHash);
+            expect(actualClaimRewardsPlan).to.deep.eq([
+              [ethers.utils.formatBytes32String("abc")],
+              ["0xabcd1234"],
+              BigNumber.from(0),
+            ]);
             break;
           }
           default:

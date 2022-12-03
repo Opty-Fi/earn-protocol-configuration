@@ -267,4 +267,21 @@ library DataTypes {
         uint256 internalTransactionIndex;
         uint256 internalTransactionCount;
     }
+
+    struct StrategyPlanInput {
+        bytes32[] commands;
+        bytes[] state;
+        uint256 outputIndex;
+    }
+
+    struct StrategyPlan {
+        StrategyPlanInput oraValueUTPlan;
+        StrategyPlanInput oraValueLPPlan;
+        StrategyPlanInput lastStepBalanceLPPlan;
+        StrategyPlanInput depositSomeToStrategyPlan;
+        StrategyPlanInput depositAllToStrategyPlan;
+        StrategyPlanInput withdrawSomeFromStrategyPlan;
+        StrategyPlanInput withdrawAllFromStrategyPlan;
+        StrategyPlanInput claimRewardsPlan;
+    }
 }
