@@ -2,7 +2,7 @@ import { Contract, Signer } from "ethers";
 import { getAddress } from "ethers/lib/utils";
 import { expect } from "chai";
 import { STRATEGY_DATA } from "./type";
-import { executeFunc, generateTokenHashV2, isAddress } from "./helpers";
+import { executeFunc, generateTokenHash, isAddress } from "./helpers";
 import { RISK_PROFILES } from "./constants/contracts-data";
 
 export async function approveLiquidityPoolAndMapAdapter(
@@ -81,14 +81,14 @@ export async function approveAndMapTokenHashToToken(
           .withArgs(getAddress(tokenAddress), true, await owner.getAddress());
       }
       if (!(await isSetTokenHash(registryContract, [tokenAddress], chainId))) {
-        const tokenHash = generateTokenHashV2([tokenAddress], chainId);
+        const tokenHash = generateTokenHash([tokenAddress], chainId);
         await executeFunc(registryContract, owner, "setTokensHashToTokens(bytes32,address[])", [
           tokenHash,
           [tokenAddress],
         ]);
       }
     } else {
-      const tokenHash = generateTokenHashV2([tokenAddress], chainId);
+      const tokenHash = generateTokenHash([tokenAddress], chainId);
       await executeFunc(registryContract, owner, "approveTokenAndMapToTokensHash(bytes32,address[])", [
         tokenHash,
         [tokenAddress],
@@ -129,23 +129,23 @@ export async function approveAndMapTokenHashToTokens(
         await executeFunc(registryContract, owner, "approveToken(address[])", [approveTokenLists]);
       }
       if (setTokenHashLists.length > 0) {
-        const tokens = setTokenHashLists.map(addr => [generateTokenHashV2([addr], chainId), [addr]]);
+        const tokens = setTokenHashLists.map(addr => [generateTokenHash([addr], chainId), [addr]]);
         await executeFunc(registryContract, owner, "setTokensHashToTokens((bytes32,address[])[])", [tokens]);
       } else {
         if (!(await isSetTokenHash(registryContract, tokenAddresses, chainId))) {
           await executeFunc(registryContract, owner, "setTokensHashToTokens((bytes32,address[])[])", [
-            [[generateTokenHashV2(tokenAddresses, chainId), tokenAddresses]],
+            [[generateTokenHash(tokenAddresses, chainId), tokenAddresses]],
           ]);
         }
       }
     } else {
       if (setTokenHashLists.length > 0) {
-        const tokens = setTokenHashLists.map(addr => [generateTokenHashV2([addr], chainId), [addr]]);
+        const tokens = setTokenHashLists.map(addr => [generateTokenHash([addr], chainId), [addr]]);
         await executeFunc(registryContract, owner, "approveTokenAndMapToTokensHash((bytes32,address[])[])", [tokens]);
       } else {
         if (!(await isSetTokenHash(registryContract, tokenAddresses, chainId))) {
           await executeFunc(registryContract, owner, "approveTokenAndMapToTokensHash((bytes32,address[])[])", [
-            [[generateTokenHashV2(tokenAddresses, chainId), tokenAddresses]],
+            [[generateTokenHash(tokenAddresses, chainId), tokenAddresses]],
           ]);
         }
       }
@@ -164,7 +164,7 @@ export async function setBestStrategy(
   isDefault: boolean,
   chainId: string,
 ): Promise<void> {
-  const tokenHash = generateTokenHashV2([tokenAddress], chainId);
+  const tokenHash = generateTokenHash([tokenAddress], chainId);
 
   if (isDefault) {
     await strategyProvider.setBestDefaultStrategy(
@@ -197,7 +197,7 @@ export async function isSetTokenHash(
   tokenAddresses: string[],
   chainId: string,
 ): Promise<boolean> {
-  const tokensHash = generateTokenHashV2(tokenAddresses, chainId);
+  const tokensHash = generateTokenHash(tokenAddresses, chainId);
   const tokenAddressesInContract = await registryContract.getTokensHashToTokenList(tokensHash);
   if (tokenAddressesInContract.length === 0) {
     return false;
