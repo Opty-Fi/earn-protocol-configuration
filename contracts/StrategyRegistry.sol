@@ -148,18 +148,6 @@ contract StrategyRegistry is IStrategyRegistry, Modifiers, StrategyRegistryStora
     /**
      * @inheritdoc IStrategyRegistry
      */
-    function getDepositAllToStrategyPlan(address _vault, bytes32 _strategyHash)
-        external
-        view
-        override
-        returns (DataTypes.StrategyPlanInput memory)
-    {
-        return strategyPlans[_vault][_strategyHash].depositAllToStrategyPlan;
-    }
-
-    /**
-     * @inheritdoc IStrategyRegistry
-     */
     function getWithdrawSomeFromStrategyPlan(address _vault, bytes32 _strategyHash)
         external
         view
@@ -172,18 +160,6 @@ contract StrategyRegistry is IStrategyRegistry, Modifiers, StrategyRegistryStora
     /**
      * @inheritdoc IStrategyRegistry
      */
-    function getWithdrawAllFromStrategyPlan(address _vault, bytes32 _strategyHash)
-        external
-        view
-        override
-        returns (DataTypes.StrategyPlanInput memory)
-    {
-        return strategyPlans[_vault][_strategyHash].withdrawAllFromStrategyPlan;
-    }
-
-    /**
-     * @inheritdoc IStrategyRegistry
-     */
     function getClaimRewardsPlan(address _vault, bytes32 _strategyHash)
         external
         view
@@ -191,6 +167,18 @@ contract StrategyRegistry is IStrategyRegistry, Modifiers, StrategyRegistryStora
         returns (DataTypes.StrategyPlanInput memory)
     {
         return strategyPlans[_vault][_strategyHash].claimRewardsPlan;
+    }
+
+    /**
+     * @inheritdoc IStrategyRegistry
+     */
+    function getHarvestRewardsPlan(address _vault, bytes32 _strategyHash)
+        external
+        view
+        override
+        returns (DataTypes.StrategyPlanInput memory)
+    {
+        return strategyPlans[_vault][_strategyHash].harvestRewardsPlan;
     }
 
     /**

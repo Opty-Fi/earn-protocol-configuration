@@ -294,22 +294,18 @@ library DataTypes {
      *        last step of the strategy
      * @param depositSomeToStrategyPlan core plan for depositing given amount of underlying token amount
      *        to the strategy
-     * @param depositAllToStrategyPlan core plan for depositing whole balance in underling token of the
-     *        vault to the strategy
      * @param withdrawSomeFromStrategyPlan core plan to withdraw given amount of liquidity pool token
      *        from the strategy
-     * @param withdrawAllFromStrategyPlan core plan to withdraw whole balance of liqudity pool token of the
-     *        vault from the stratgy
      * @param claimRewardsPlan core plan to claim pending rewards token from the strategy
+     * @param harvestRewardsPlan core plan to harvest rewards held by vault
      */
     struct StrategyPlan {
         StrategyPlanInput oraValueUTPlan;
         StrategyPlanInput oraValueLPPlan;
         StrategyPlanInput lastStepBalanceLPPlan;
         StrategyPlanInput depositSomeToStrategyPlan;
-        StrategyPlanInput depositAllToStrategyPlan;
         StrategyPlanInput withdrawSomeFromStrategyPlan;
-        StrategyPlanInput withdrawAllFromStrategyPlan;
         StrategyPlanInput claimRewardsPlan;
+        StrategyPlanInput harvestRewardsPlan;
     }
 }
