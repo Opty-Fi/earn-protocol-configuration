@@ -13,6 +13,7 @@ chai.use(solidity);
 
 type ARGUMENTS = {
   mismatchLength?: boolean;
+  testIndividualFunc?: boolean;
 };
 
 describe(scenario.title, async () => {
@@ -23,6 +24,8 @@ describe(scenario.title, async () => {
     .strategy;
   const usedStrategy_2 = TypedStrategies.filter(strategy => strategy.strategyName === "DAI-deposit-AAVE-aDAI")[0]
     .strategy;
+  const usedStrategy_3 = TypedStrategies.filter(strategy => strategy.strategyName === "DAI-deposit-AAVE_V2-aDAI")[0]
+    .strategy;
   const convertedStrategies = usedStrategy.map(strategy => [strategy.contract, strategy.outputToken, strategy.isSwap]);
   const convertedStrategies_2 = usedStrategy_2.map(strategy => [
     strategy.contract,
@@ -32,11 +35,15 @@ describe(scenario.title, async () => {
   const usedToken = TypedTokens["DAI"];
   let usedStrategyHash: string;
   let usedStrategyHash_2: string;
+  let usedStrategyHash_3: string;
+
   let mockVault: Contract;
   before(async () => {
     try {
       usedStrategyHash = generateStrategyHashV2(usedStrategy, usedToken);
       usedStrategyHash_2 = generateStrategyHashV2(usedStrategy_2, usedToken);
+      usedStrategyHash_3 = generateStrategyHashV2(usedStrategy_3, usedToken);
+
       const [owner, user1] = await hre.ethers.getSigners();
       users = { owner, user1 };
       ownerAddress = await owner.getAddress();
@@ -172,6 +179,35 @@ describe(scenario.title, async () => {
             }
             break;
           }
+          case "setOraValueUTPlan(address,bytes32,(bytes32[],bytes[],uint256))":
+          case "setOraValueLPPlan(address,bytes32,(bytes32[],bytes[],uint256))":
+          case "setLastStepBalanceLPPlan(address,bytes32,(bytes32[],bytes[],uint256))":
+          case "setDepositSomeToStrategyPlan(address,bytes32,(bytes32[],bytes[],uint256))":
+          case "setWithdrawSomeFromStrategyPlan(address,bytes32,(bytes32[],bytes[],uint256))":
+          case "setClaimRewardsPlan(address,bytes32,(bytes32[],bytes[],uint256))":
+          case "setHarvestRewardsPlan(address,bytes32,(bytes32[],bytes[],uint256))": {
+            if (action.expect === "success") {
+              const tx = await strategyRegistryContract
+                .connect(users[action.executer])
+                [action.action](mockVault.address, usedStrategyHash_3, [
+                  [ethers.utils.formatBytes32String("abc")],
+                  ["0xabcd1234"],
+                  0,
+                ]);
+              await tx.wait(1);
+            } else {
+              await expect(
+                strategyRegistryContract
+                  .connect(users[action.executer])
+                  [action.action](mockVault.address, usedStrategyHash_3, [
+                    [ethers.utils.formatBytes32String("abc")],
+                    ["0xabcd1234"],
+                    0,
+                  ]),
+              ).to.be.revertedWith(action.message);
+            }
+            break;
+          }
           default:
             break;
         }
@@ -186,9 +222,11 @@ describe(scenario.title, async () => {
             break;
           }
           case "getOraValueUTPlan(address,bytes32)": {
+            const { testIndividualFunc }: ARGUMENTS = action.args;
+
             const actualOraValueUTPlan = await strategyRegistryContract[action.action](
               mockVault.address,
-              usedStrategyHash,
+              testIndividualFunc ? usedStrategyHash_3 : usedStrategyHash,
             );
             expect(actualOraValueUTPlan).to.deep.eq([
               [ethers.utils.formatBytes32String("abc")],
@@ -198,9 +236,11 @@ describe(scenario.title, async () => {
             break;
           }
           case "getOraValueLPPlan(address,bytes32)": {
+            const { testIndividualFunc }: ARGUMENTS = action.args;
+
             const actualOraValueLPPlan = await strategyRegistryContract[action.action](
               mockVault.address,
-              usedStrategyHash,
+              testIndividualFunc ? usedStrategyHash_3 : usedStrategyHash,
             );
             expect(actualOraValueLPPlan).to.deep.eq([
               [ethers.utils.formatBytes32String("abc")],
@@ -210,9 +250,11 @@ describe(scenario.title, async () => {
             break;
           }
           case "getLastStepBalanceLPPlan(address,bytes32)": {
+            const { testIndividualFunc }: ARGUMENTS = action.args;
+
             const actualLastStepBalanceLPPlan = await strategyRegistryContract[action.action](
               mockVault.address,
-              usedStrategyHash,
+              testIndividualFunc ? usedStrategyHash_3 : usedStrategyHash,
             );
             expect(actualLastStepBalanceLPPlan).to.deep.eq([
               [ethers.utils.formatBytes32String("abc")],
@@ -222,9 +264,11 @@ describe(scenario.title, async () => {
             break;
           }
           case "getDepositSomeToStrategyPlan(address,bytes32)": {
+            const { testIndividualFunc }: ARGUMENTS = action.args;
+
             const actualDepositSomeToStrategyPlan = await strategyRegistryContract[action.action](
               mockVault.address,
-              usedStrategyHash,
+              testIndividualFunc ? usedStrategyHash_3 : usedStrategyHash,
             );
             expect(actualDepositSomeToStrategyPlan).to.deep.eq([
               [ethers.utils.formatBytes32String("abc")],
@@ -234,9 +278,11 @@ describe(scenario.title, async () => {
             break;
           }
           case "getWithdrawSomeFromStrategyPlan(address,bytes32)": {
+            const { testIndividualFunc }: ARGUMENTS = action.args;
+
             const actualWithdrawSomeFromStrategyPlan = await strategyRegistryContract[action.action](
               mockVault.address,
-              usedStrategyHash,
+              testIndividualFunc ? usedStrategyHash_3 : usedStrategyHash,
             );
             expect(actualWithdrawSomeFromStrategyPlan).to.deep.eq([
               [ethers.utils.formatBytes32String("abc")],
@@ -246,9 +292,11 @@ describe(scenario.title, async () => {
             break;
           }
           case "getClaimRewardsPlan(address,bytes32)": {
+            const { testIndividualFunc }: ARGUMENTS = action.args;
+
             const actualClaimRewardsPlan = await strategyRegistryContract[action.action](
               mockVault.address,
-              usedStrategyHash,
+              testIndividualFunc ? usedStrategyHash_3 : usedStrategyHash,
             );
             expect(actualClaimRewardsPlan).to.deep.eq([
               [ethers.utils.formatBytes32String("abc")],
@@ -258,9 +306,11 @@ describe(scenario.title, async () => {
             break;
           }
           case "getHarvestRewardsPlan(address,bytes32)": {
+            const { testIndividualFunc }: ARGUMENTS = action.args;
+
             const actualClaimRewardsPlan = await strategyRegistryContract[action.action](
               mockVault.address,
-              usedStrategyHash,
+              testIndividualFunc ? usedStrategyHash_3 : usedStrategyHash,
             );
             expect(actualClaimRewardsPlan).to.deep.eq([
               [ethers.utils.formatBytes32String("abc")],

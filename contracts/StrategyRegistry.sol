@@ -91,6 +91,118 @@ contract StrategyRegistry is IStrategyRegistry, Modifiers, StrategyRegistryStora
     }
 
     /**
+     * @notice set ora value UT plan
+     * @dev all the arguments corresponding to each other in the sequence they are passed.
+     *      this function can be only called by operator
+     * @param _vault  vault addresses
+     * @param _strategyHash keccak256 hash of the strategy steps
+     * @param _strategyPlanInput strategy plan for execution
+     */
+    function setOraValueUTPlan(
+        address _vault,
+        bytes32 _strategyHash,
+        DataTypes.StrategyPlanInput memory _strategyPlanInput
+    ) external onlyOperator {
+        strategyPlans[_vault][_strategyHash].oraValueUTPlan = _strategyPlanInput;
+    }
+
+    /**
+     * @notice set ora value LP plan
+     * @dev all the arguments corresponding to each other in the sequence they are passed.
+     *      this function can be only called by operator
+     * @param _vault  vault addresses
+     * @param _strategyHash keccak256 hash of the strategy steps
+     * @param _strategyPlanInput strategy plan for execution
+     */
+    function setOraValueLPPlan(
+        address _vault,
+        bytes32 _strategyHash,
+        DataTypes.StrategyPlanInput memory _strategyPlanInput
+    ) external onlyOperator {
+        strategyPlans[_vault][_strategyHash].oraValueLPPlan = _strategyPlanInput;
+    }
+
+    /**
+     * @notice set last step balance LP plan
+     * @dev all the arguments corresponding to each other in the sequence they are passed.
+     *      this function can be only called by operator
+     * @param _vault  vault addresses
+     * @param _strategyHash keccak256 hash of the strategy steps
+     * @param _strategyPlanInput strategy plan for execution
+     */
+    function setLastStepBalanceLPPlan(
+        address _vault,
+        bytes32 _strategyHash,
+        DataTypes.StrategyPlanInput memory _strategyPlanInput
+    ) external onlyOperator {
+        strategyPlans[_vault][_strategyHash].lastStepBalanceLPPlan = _strategyPlanInput;
+    }
+
+    /**
+     * @notice set deposit some to strategy plan
+     * @dev all the arguments corresponding to each other in the sequence they are passed.
+     *      this function can be only called by operator
+     * @param _vault  vault addresses
+     * @param _strategyHash keccak256 hash of the strategy steps
+     * @param _strategyPlanInput strategy plan for execution
+     */
+    function setDepositSomeToStrategyPlan(
+        address _vault,
+        bytes32 _strategyHash,
+        DataTypes.StrategyPlanInput memory _strategyPlanInput
+    ) external onlyOperator {
+        strategyPlans[_vault][_strategyHash].depositSomeToStrategyPlan = _strategyPlanInput;
+    }
+
+    /**
+     * @notice set withdraw some from strategy plan
+     * @dev all the arguments corresponding to each other in the sequence they are passed.
+     *      this function can be only called by operator
+     * @param _vault  vault addresses
+     * @param _strategyHash keccak256 hash of the strategy steps
+     * @param _strategyPlanInput strategy plan for execution
+     */
+    function setWithdrawSomeFromStrategyPlan(
+        address _vault,
+        bytes32 _strategyHash,
+        DataTypes.StrategyPlanInput memory _strategyPlanInput
+    ) external onlyOperator {
+        strategyPlans[_vault][_strategyHash].withdrawSomeFromStrategyPlan = _strategyPlanInput;
+    }
+
+    /**
+     * @notice set claim rewards plan
+     * @dev all the arguments corresponding to each other in the sequence they are passed.
+     *      this function can be only called by operator
+     * @param _vault  vault addresses
+     * @param _strategyHash keccak256 hash of the strategy steps
+     * @param _strategyPlanInput strategy plan for execution
+     */
+    function setClaimRewardsPlan(
+        address _vault,
+        bytes32 _strategyHash,
+        DataTypes.StrategyPlanInput memory _strategyPlanInput
+    ) external onlyOperator {
+        strategyPlans[_vault][_strategyHash].claimRewardsPlan = _strategyPlanInput;
+    }
+
+    /**
+     * @notice set harvest rewards plan
+     * @dev all the arguments corresponding to each other in the sequence they are passed.
+     *      this function can be only called by operator
+     * @param _vault  vault addresses
+     * @param _strategyHash keccak256 hash of the strategy steps
+     * @param _strategyPlanInput strategy plan for execution
+     */
+    function setHarvestRewardsPlan(
+        address _vault,
+        bytes32 _strategyHash,
+        DataTypes.StrategyPlanInput memory _strategyPlanInput
+    ) external onlyOperator {
+        strategyPlans[_vault][_strategyHash].harvestRewardsPlan = _strategyPlanInput;
+    }
+
+    /**
      * @inheritdoc IStrategyRegistry
      */
     function getStrategySteps(bytes32 _strategyHash) external view override returns (DataTypes.StrategyStep[] memory) {

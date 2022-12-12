@@ -207,6 +207,188 @@
           "expectedValue": {}
         }
       ]
+    },
+    {
+      "description": "Only Operator can set ora value UT plan",
+      "setActions": [
+        {
+          "action": "setOraValueUTPlan(address,bytes32,(bytes32[],bytes[],uint256))",
+          "args": {},
+          "executer": "user1",
+          "expect": "fail",
+          "message": "caller is not the operator"
+        },
+        {
+          "action": "setOraValueUTPlan(address,bytes32,(bytes32[],bytes[],uint256))",
+          "args": {},
+          "executer": "owner",
+          "expect": "success",
+          "message": ""
+        }
+      ],
+      "getActions": [
+        {
+          "action": "getOraValueUTPlan(address,bytes32)",
+          "args": { "testIndividualFunc": true },
+          "expectedValue": {}
+        }
+      ]
+    },
+    {
+      "description": "Only Operator can set ora value LP plan",
+      "setActions": [
+        {
+          "action": "setOraValueLPPlan(address,bytes32,(bytes32[],bytes[],uint256))",
+          "args": {},
+          "executer": "user1",
+          "expect": "fail",
+          "message": "caller is not the operator"
+        },
+        {
+          "action": "setOraValueLPPlan(address,bytes32,(bytes32[],bytes[],uint256))",
+          "args": {},
+          "executer": "owner",
+          "expect": "success",
+          "message": ""
+        }
+      ],
+      "getActions": [
+        {
+          "action": "getOraValueLPPlan(address,bytes32)",
+          "args": { "testIndividualFunc": true },
+          "expectedValue": {}
+        }
+      ]
+    },
+    {
+      "description": "Only Operator can set last step balance LP plan",
+      "setActions": [
+        {
+          "action": "setLastStepBalanceLPPlan(address,bytes32,(bytes32[],bytes[],uint256))",
+          "args": {},
+          "executer": "user1",
+          "expect": "fail",
+          "message": "caller is not the operator"
+        },
+        {
+          "action": "setLastStepBalanceLPPlan(address,bytes32,(bytes32[],bytes[],uint256))",
+          "args": {},
+          "executer": "owner",
+          "expect": "success",
+          "message": ""
+        }
+      ],
+      "getActions": [
+        {
+          "action": "getLastStepBalanceLPPlan(address,bytes32)",
+          "args": { "testIndividualFunc": true },
+          "expectedValue": {}
+        }
+      ]
+    },
+    {
+      "description": "Only Operator can set deposit some to strategy plan",
+      "setActions": [
+        {
+          "action": "setDepositSomeToStrategyPlan(address,bytes32,(bytes32[],bytes[],uint256))",
+          "args": {},
+          "executer": "user1",
+          "expect": "fail",
+          "message": "caller is not the operator"
+        },
+        {
+          "action": "setDepositSomeToStrategyPlan(address,bytes32,(bytes32[],bytes[],uint256))",
+          "args": {},
+          "executer": "owner",
+          "expect": "success",
+          "message": ""
+        }
+      ],
+      "getActions": [
+        {
+          "action": "getDepositSomeToStrategyPlan(address,bytes32)",
+          "args": { "testIndividualFunc": true },
+          "expectedValue": {}
+        }
+      ]
+    },
+    {
+      "description": "Only Operator can set withdraw some from strategy plan",
+      "setActions": [
+        {
+          "action": "setWithdrawSomeFromStrategyPlan(address,bytes32,(bytes32[],bytes[],uint256))",
+          "args": {},
+          "executer": "user1",
+          "expect": "fail",
+          "message": "caller is not the operator"
+        },
+        {
+          "action": "setWithdrawSomeFromStrategyPlan(address,bytes32,(bytes32[],bytes[],uint256))",
+          "args": {},
+          "executer": "owner",
+          "expect": "success",
+          "message": ""
+        }
+      ],
+      "getActions": [
+        {
+          "action": "getWithdrawSomeFromStrategyPlan(address,bytes32)",
+          "args": { "testIndividualFunc": true },
+          "expectedValue": {}
+        }
+      ]
+    },
+    {
+      "description": "Only Operator can set claim rewards plan",
+      "setActions": [
+        {
+          "action": "setClaimRewardsPlan(address,bytes32,(bytes32[],bytes[],uint256))",
+          "args": {},
+          "executer": "user1",
+          "expect": "fail",
+          "message": "caller is not the operator"
+        },
+        {
+          "action": "setClaimRewardsPlan(address,bytes32,(bytes32[],bytes[],uint256))",
+          "args": {},
+          "executer": "owner",
+          "expect": "success",
+          "message": ""
+        }
+      ],
+      "getActions": [
+        {
+          "action": "getClaimRewardsPlan(address,bytes32)",
+          "args": { "testIndividualFunc": true },
+          "expectedValue": {}
+        }
+      ]
+    },
+    {
+      "description": "Only Operator can set harvest rewards plan",
+      "setActions": [
+        {
+          "action": "setHarvestRewardsPlan(address,bytes32,(bytes32[],bytes[],uint256))",
+          "args": {},
+          "executer": "user1",
+          "expect": "fail",
+          "message": "caller is not the operator"
+        },
+        {
+          "action": "setHarvestRewardsPlan(address,bytes32,(bytes32[],bytes[],uint256))",
+          "args": {},
+          "executer": "owner",
+          "expect": "success",
+          "message": ""
+        }
+      ],
+      "getActions": [
+        {
+          "action": "getHarvestRewardsPlan(address,bytes32)",
+          "args": { "testIndividualFunc": true },
+          "expectedValue": {}
+        }
+      ]
     }
   ]
 }
