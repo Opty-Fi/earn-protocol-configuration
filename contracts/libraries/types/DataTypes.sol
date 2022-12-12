@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.6.12;
 
+import { EnumerableSet } from "@openzeppelin/contracts/utils/EnumerableSet.sol";
+
 library DataTypes {
     /**
      * @notice Container for User Deposit/withdraw operations
@@ -53,7 +55,7 @@ library DataTypes {
      * @param strategySteps StrategySteps consisting pool, outputToken and isSwap
      */
     struct Strategy {
-        uint256 index;
+        // uint256 index;
         StrategyStep[] strategySteps;
     }
 
@@ -264,5 +266,46 @@ library DataTypes {
         uint256 initialStepInputAmount;
         uint256 internalTransactionIndex;
         uint256 internalTransactionCount;
+    }
+
+    /**
+     * @notice Container for Weiroll VM's input and output
+     * @dev Refer : https://github.com/weiroll/weiroll
+     * @param commands list of values that encode single
+     *        operation for the VM to take
+     * @param state list of elements to call a smart contract function
+     *         specified in the command via delegatecall
+     * @param outputIndex index at which the return value of the last command will
+     *        be assigned in bytes encoded format.
+     */
+    struct StrategyPlanInput {
+        bytes32[] commands;
+        bytes[] state;
+        uint256 outputIndex;
+    }
+
+    /**
+     * @notice Container for inputs to core strategy execution
+     * @param oraValueUTPlan core plan for computing market value of investment
+     *        in underlying token of the vault
+     * @param oraValueLPPlan core plan for computing liquidity pool token amount required
+     *        to be redeemed in order to get given amount of underlying token
+     * @param lastStepBalanceLPPlan core plan for returning the liqudity pool token balance of the
+     *        last step of the strategy
+     * @param depositSomeToStrategyPlan core plan for depositing given amount of underlying token amount
+     *        to the strategy
+     * @param withdrawSomeFromStrategyPlan core plan to withdraw given amount of liquidity pool token
+     *        from the strategy
+     * @param claimRewardsPlan core plan to claim pending rewards token from the strategy
+     * @param harvestRewardsPlan core plan to harvest rewards held by vault
+     */
+    struct StrategyPlan {
+        StrategyPlanInput oraValueUTPlan;
+        StrategyPlanInput oraValueLPPlan;
+        StrategyPlanInput lastStepBalanceLPPlan;
+        StrategyPlanInput depositSomeToStrategyPlan;
+        StrategyPlanInput withdrawSomeFromStrategyPlan;
+        StrategyPlanInput claimRewardsPlan;
+        StrategyPlanInput harvestRewardsPlan;
     }
 }

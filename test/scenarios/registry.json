@@ -321,6 +321,65 @@
       "getActions": [],
       "cleanActions": []
     },
+
+    {
+      "description": "Operator should be able to set StrategyRegistry Contract address",
+      "setActions": [
+        {
+          "action": "setStrategyRegistry(address)",
+          "args": {
+            "contractName": "strategyRegistry"
+          },
+          "executor": "operator",
+          "expect": "success",
+          "message": ""
+        }
+      ],
+      "getActions": [
+        {
+          "action": "getStrategyRegistry()",
+          "args": {},
+          "expectedValue": {
+            "contractName": "strategyRegistry"
+          },
+          "expectedMultiValues": {}
+        }
+      ],
+      "cleanActions": []
+    },
+    {
+      "description": "Non-Operator shouldn't be able to set StrategyRegistry Contract address",
+      "setActions": [
+        {
+          "action": "setStrategyRegistry(address)",
+          "args": {
+            "contractName": "strategyRegistry"
+          },
+          "executor": "user0",
+          "expect": "fail",
+          "message": "caller is not the operator"
+        }
+      ],
+      "getActions": [],
+      "cleanActions": []
+    },
+    {
+      "description": "Operator shouldn't be able to set StrategyRegistry Contract address with wrong registry address",
+      "setActions": [
+        {
+          "action": "setStrategyRegistry(address)",
+          "args": {
+            "contractName": "dummyContract"
+          },
+          "executor": "operator",
+          "expect": "fail",
+          "message": "!registryContract"
+        }
+      ],
+      "getActions": [],
+      "cleanActions": []
+    },
+
     {
       "description": "Operator should be able to set HarvestCodeProvider Contract address",
       "setActions": [

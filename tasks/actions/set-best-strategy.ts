@@ -1,5 +1,5 @@
 import { task, types } from "hardhat/config";
-import { isAddress, generateTokenHash } from "../../helpers/helpers";
+import { isAddress, generateTokenHashV2 } from "../../helpers/helpers";
 import { RISK_PROFILES } from "../../helpers/constants/contracts-data";
 import { ESSENTIAL_CONTRACTS } from "../../helpers/constants/essential-contracts-name";
 import TASKS from "../task-names";
@@ -36,7 +36,7 @@ task(TASKS.ACTION_TASKS.SET_BEST_STRATEGY.NAME, TASKS.ACTION_TASKS.SET_BEST_STRA
     console.log(convertedStrategy);
     try {
       const strategyProvider = await hre.ethers.getContractAt(ESSENTIAL_CONTRACTS.STRATEGY_PROVIDER, strategyprovider);
-      const tokensHash = generateTokenHash([token], NETWORKS_ID.MAINNET);
+      const tokensHash = generateTokenHashV2([token], NETWORKS_ID.MAINNET);
       console.log(`Strategy : ${strategy}`);
       if (isdefault) {
         await strategyProvider.setBestDefaultStrategy(riskprofilecode, tokensHash, convertedStrategy);

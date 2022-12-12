@@ -40,4 +40,26 @@ export const NETWORKS_DEFAULT_GAS: iEthereumParamsPerNetwork<number> = {
   [eEthereumNetwork.tenderlyMain]: 0.01 * GWEI,
 };
 
+export const NETWORKS_CHAIN_ID_HEX: iEthereumParamsPerNetwork<string> = {
+  [eEthereumNetwork.kovan]: "0x2a",
+  [eEthereumNetwork.ropsten]: "0x3",
+  [eEthereumNetwork.main]: "0x1",
+  [eEthereumNetwork.coverage]: "0x7a69",
+  [eEthereumNetwork.hardhat]: "0x7a69",
+  [eEthereumNetwork.staging]: "0x1",
+  [eEthereumNetwork.buidlerevm]: "0x7a69",
+  [eEthereumNetwork.tenderlyMain]: "0x1",
+};
+
+export const NETWORKS_CHAIN_ID_TO_HEX: { [key: string]: string } = {
+  "42": "0x2a",
+  "3": "0x3",
+  "1": "0x1",
+  "31337": "0x7a69",
+  "137": "0x89",
+  "43114": "0xa86a",
+  "1337": "0x539",
+  "80001": "0x13881",
+};
+
 export const CURRENT_BLOCK_NUMBER = 13837329;

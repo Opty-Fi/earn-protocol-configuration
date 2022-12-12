@@ -87,6 +87,14 @@ contract Registry is IRegistry, ModifiersControllerExt {
     /**
      * @inheritdoc IRegistry
      */
+    function setStrategyRegistry(address _strategyRegistry) external override onlyOperator {
+        require(IContractRegistry(_strategyRegistry).registryContract() == address(this), "!registryContract");
+        strategyRegistry = _strategyRegistry;
+    }
+
+    /**
+     * @inheritdoc IRegistry
+     */
     function approveToken(address[] memory _tokens) external override onlyOperator {
         for (uint256 _i; _i < _tokens.length; _i++) {
             _approveToken(_tokens[_i]);
@@ -524,6 +532,13 @@ contract Registry is IRegistry, ModifiersControllerExt {
      */
     function getLiquidityPoolToAdapter(address _pool) public view override returns (address) {
         return liquidityPoolToAdapter[_pool];
+    }
+
+    /**
+     * @inheritdoc IRegistry
+     */
+    function getStrategyRegistry() public view override returns (address) {
+        return strategyRegistry;
     }
 
     /**

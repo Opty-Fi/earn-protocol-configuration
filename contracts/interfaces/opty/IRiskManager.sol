@@ -34,4 +34,11 @@ interface IRiskManager {
         external
         view
         returns (DataTypes.VaultRewardStrategy memory _vaultRewardStrategy);
+
+    /**
+     * @notice checks whether a strategy is valid for a vaults risk profile code
+     * @param _strategyHash hash of strategy
+     * @param _riskProfileCode risk profile code of vault
+     */
+    function isValidStrategy(bytes32 _strategyHash, uint256 _riskProfileCode) external;
 }

@@ -36,7 +36,7 @@ describe(scenario.title, () => {
   const callers: { [key: string]: string } = {};
   const contractNames = [
     "treasury",
-    "investStrategyRegistry",
+    "strategyRegistry",
     "strategyProvider",
     "riskManager",
     "harvestCodeProvider",
@@ -98,7 +98,8 @@ describe(scenario.title, () => {
           case "getRiskManager()":
           case "getHarvestCodeProvider()":
           case "opty()":
-          case "getODEFIVaultBooster()": {
+          case "getODEFIVaultBooster()":
+          case "getStrategyRegistry()": {
             const { contractName } = <any>action.expectedValue;
             if (contractName) {
               const value = await registryContract[action.action]();
@@ -317,7 +318,6 @@ describe(scenario.title, () => {
             registryProxy.address,
           );
 
-          expect(await registryContract.investStrategyRegistry()).to.be.equal(hre.ethers.constants.AddressZero);
           expect(await registryContract.aprOracle()).to.be.equal(hre.ethers.constants.AddressZero);
           expect(await registryContract.strategyManager()).to.be.equal(hre.ethers.constants.AddressZero);
           expect(await registryContract.optyStakingRateBalancer()).to.be.equal(hre.ethers.constants.AddressZero);
@@ -358,7 +358,8 @@ describe(scenario.title, () => {
       case "setRiskManager(address)":
       case "setHarvestCodeProvider(address)":
       case "setOPTY(address)":
-      case "setODEFIVaultBooster(address)": {
+      case "setODEFIVaultBooster(address)":
+      case "setStrategyRegistry(address)": {
         const { contractName }: ARGUMENTS = action.args;
         if (contractName) {
           if (action.expect === "success") {
